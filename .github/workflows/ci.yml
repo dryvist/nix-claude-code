@@ -26,7 +26,7 @@ jobs:
       - uses: DeterminateSystems/nix-installer-action@v17
       - uses: DeterminateSystems/magic-nix-cache-action@v8
       - name: treefmt check
-        run: nix build .#checks.x86_64-linux.formatting --print-build-logs
+        run: nix build .#checks.x86_64-linux.treefmt --print-build-logs
 
   pre-commit:
     runs-on: ubuntu-latest
@@ -35,4 +35,4 @@ jobs:
       - uses: DeterminateSystems/nix-installer-action@v17
       - uses: DeterminateSystems/magic-nix-cache-action@v8
       - name: pre-commit
-        run: nix build .#checks.x86_64-linux.pre-commit-check --print-build-logs
+        run: nix build .#checks.x86_64-linux.pre-commit --print-build-logs
