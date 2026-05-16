@@ -1,0 +1,12 @@
+result
+result-*
+.direnv/
+.envrc.local
+
+.vscode/
+.idea/
+*.swp
+*~
+
+.DS_Store
+Thumbs.db
