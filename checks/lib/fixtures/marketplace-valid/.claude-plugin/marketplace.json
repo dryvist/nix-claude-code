@@ -1,0 +1,29 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "example-marketplace",
+  "owner": {
+    "name": "Test Org",
+    "email": "test@example.com"
+  },
+  "metadata": {
+    "description": "Example marketplace for parseMarketplace unit tests",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "example-plugin",
+      "source": "./",
+      "description": "First fixture plugin",
+      "version": "0.1.0",
+      "category": "development",
+      "tags": ["fixture", "testing"],
+      "keywords": ["nix", "claude-code"]
+    },
+    {
+      "name": "second-plugin",
+      "source": "./second",
+      "description": "Second fixture plugin",
+      "version": "2.3.4"
+    }
+  ]
+}
