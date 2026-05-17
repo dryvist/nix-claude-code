@@ -25,7 +25,7 @@ repos:
     hooks:
       - id: nix-fmt-check
         name: Nix formatting (nixfmt-rfc-style)
-        entry: "bash -c 'nixfmt --check \"$@\" || (echo \"Run: nix fmt\"; exit 1)' --"
+        entry: 'bash -c ''nixfmt --check "$@" || (echo "Run: nix fmt"; exit 1)'' --'
         language: system
         files: \.nix$
         types: [file]
@@ -50,4 +50,4 @@ repos:
     rev: v1.22.0
     hooks:
       - id: zizmor
-        args: ['--persona=regular', '--min-severity=medium', '--min-confidence=medium']
+        args: ["--persona=regular", "--min-severity=medium", "--min-confidence=medium"]
