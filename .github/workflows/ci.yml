@@ -13,7 +13,7 @@ jobs:
   flake-check:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: DeterminateSystems/nix-installer-action@v17
       - uses: DeterminateSystems/magic-nix-cache-action@v8
       - name: nix flake check
@@ -22,7 +22,7 @@ jobs:
   treefmt:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: DeterminateSystems/nix-installer-action@v17
       - uses: DeterminateSystems/magic-nix-cache-action@v8
       - name: treefmt check
@@ -31,7 +31,7 @@ jobs:
   pre-commit:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: DeterminateSystems/nix-installer-action@v17
       - uses: DeterminateSystems/magic-nix-cache-action@v8
       - name: pre-commit
