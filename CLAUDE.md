@@ -66,12 +66,12 @@ inputs.nix-claude-code.inputs.home-manager.follows = "home-manager";
 - Claude Code itself (the binary, `settings.json`, permission rules)
 - Plugin / marketplace / skill / agent / hook discovery and wiring
 - Statusline themes
-- MCP server *option* surface — data only; runtime implementations live elsewhere
+- MCP server _option_ surface — data only; runtime implementations live elsewhere
 - Pure lib functions parsing Anthropic plugin-spec data
 
 ### What does NOT belong here
 
-- MCP server *implementations* and runtimes — those live in nix-ai
+- MCP server _implementations_ and runtimes — those live in nix-ai
 - Non-Claude AI tools (Gemini, Copilot, Codex) — those live in nix-ai
 - Permission rule sources — sourced from `ai-assistant-instructions`
 
