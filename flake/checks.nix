@@ -19,10 +19,21 @@ _: {
         discoverHooks = import ../checks/lib/discover-hooks.nix { inherit lib; };
         parseMarketplace = import ../checks/lib/parse-marketplace.nix { inherit lib; };
         parsePlugin = import ../checks/lib/parse-plugin.nix { inherit lib; };
+        toSettingsJson = import ../checks/lib/to-settings-json.nix { inherit lib; };
       };
 
       allTests = lib.foldl' (acc: suite: acc // suite) { } (builtins.attrValues suites);
       failures = lib.runTests allTests;
+
+      # wrap-commands-as-skills needs `pkgs.runCommand`, so its test is a
+      # real derivation rather than a pure-Nix value comparison.
+      discoverCommands = import ../lib/discover-commands.nix { inherit lib; };
+      wrapCommandsAsSkills = import ../lib/wrap-commands-as-skills.nix { inherit lib pkgs; };
+      pluginFixture = ../checks/lib/fixtures/plugin-with-components;
+      synthesizedSkills = wrapCommandsAsSkills {
+        commands = discoverCommands pluginFixture;
+        name = "synthesized-skills-fixture";
+      };
     in
     {
       checks = {
@@ -39,6 +50,21 @@ _: {
               FAILURES
               exit 1
             '';
+
+        wrap-commands-as-skills = pkgs.runCommand "wrap-commands-as-skills-test" { } ''
+          set -euo pipefail
+          # Verify the synthesized tree exists and the two expected skills
+          # (`build`, `test` — from the plugin-with-components fixture)
+          # ended up with valid SKILL.md files containing frontmatter.
+          test -d ${synthesizedSkills}/skills/build
+          test -d ${synthesizedSkills}/skills/test
+          grep -q '^name: build$' ${synthesizedSkills}/skills/build/SKILL.md
+          grep -q '^name: test$' ${synthesizedSkills}/skills/test/SKILL.md
+          grep -q '^description:' ${synthesizedSkills}/skills/build/SKILL.md
+          # The `not-a-command.txt` file in the fixture must be ignored.
+          test ! -e ${synthesizedSkills}/skills/not-a-command
+          echo ok > $out
+        '';
       };
     };
 }
