@@ -8,15 +8,13 @@ with a permanent pre-1.0 cadence — see `release-please-config.json`.
 
 ## [0.1.1](https://github.com/dryvist/nix-claude-code/compare/v0.1.0...v0.1.1) (2026-05-16)
 
-
 ### Features
 
-* initial v0.1.0 scaffolding for nix-claude-code ([1dddab4](https://github.com/dryvist/nix-claude-code/commit/1dddab4e4769dadc5a3538fd46f08868aeda791a))
-
+- initial v0.1.0 scaffolding for nix-claude-code ([1dddab4](https://github.com/dryvist/nix-claude-code/commit/1dddab4e4769dadc5a3538fd46f08868aeda791a))
 
 ### Bug Fixes
 
-* **ci:** use correct flake check attribute names ([#2](https://github.com/dryvist/nix-claude-code/issues/2)) ([0ee9c1b](https://github.com/dryvist/nix-claude-code/commit/0ee9c1b2e9d3492cea049200757311d5b02166ff))
+- **ci:** use correct flake check attribute names ([#2](https://github.com/dryvist/nix-claude-code/issues/2)) ([0ee9c1b](https://github.com/dryvist/nix-claude-code/commit/0ee9c1b2e9d3492cea049200757311d5b02166ff))
 
 ## [0.1.0] - 2026-05-16
 

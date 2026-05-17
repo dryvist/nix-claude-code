@@ -1,3 +1,145 @@
 _:
 # Actions that prompt the user before execution.
-[ ]
+#
+# Vendored from ai-assistant-instructions/agentsmd/permissions/ask/*.json
+# (snapshot: 2026-05-16). Categories: cloud, containers,
+# dangerous-operations, git, package-managers, security, shell, system.
+#
+# `ask/gh.json` and `ask/python.json` are empty placeholders in the source
+# — no entries contributed from those categories.
+{
+  commands = [
+    # cloud (AWS state-changing operations)
+    "aws cloudformation create-stack"
+    "aws cloudformation delete-stack"
+    "aws cloudformation update-stack"
+    "aws ec2 authorize-security-group-ingress"
+    "aws ec2 create-security-group"
+    "aws ec2 delete-security-group"
+    "aws ec2 reboot-instances"
+    "aws ec2 revoke-security-group-ingress"
+    "aws ec2 run-instances"
+    "aws ec2 start-instances"
+    "aws ec2 stop-instances"
+    "aws ec2 terminate-instances"
+    "aws lambda delete-function"
+    "aws lambda invoke"
+    "aws lambda update-function-code"
+    "aws rds create-db-instance"
+    "aws rds delete-db-instance"
+    "aws rds modify-db-instance"
+    "aws route53 change-resource-record-sets"
+    "aws s3 cp"
+    "aws s3 rb"
+    "aws s3 rm"
+    "aws s3 sync"
+
+    # containers (mutating Docker/Kubernetes/Helm operations)
+    "docker commit"
+    "docker context create"
+    "docker context rm"
+    "docker context update"
+    "docker context use"
+    "docker cp"
+    "docker exec"
+    "docker network connect"
+    "docker network create"
+    "docker network disconnect"
+    "docker network prune"
+    "docker network rm"
+    "docker rm"
+    "docker run"
+    "docker system prune"
+    "docker update"
+    "docker volume create"
+    "docker volume prune"
+    "docker volume rm"
+    "helm delete"
+    "helm install"
+    "helm uninstall"
+    "helm upgrade"
+    "kubectl apply"
+    "kubectl create"
+    "kubectl delete"
+    "kubectl exec"
+    "kubectl patch"
+    "kubectl rollout"
+    "kubectl set"
+
+    # dangerous-operations (filesystem mutations)
+    "chmod"
+    "chown"
+    "cp"
+    "ln"
+    "ln -s"
+    "ln -sf"
+    "mv"
+    "rm"
+    "rmdir"
+    "tar -xzf"
+    "unzip"
+
+    # git (history-rewriting or destructive commands)
+    "git cherry-pick"
+    "git clean"
+    "git commit --amend"
+    "git gc"
+    "git merge"
+    "git prune"
+    "git push --force"
+    "git push --force-with-lease"
+    "git rebase"
+    "git reset"
+    "git restore"
+    "git rm"
+
+    # package-managers (runtime execution of arbitrary packages)
+    "bunx"
+    "cargo run"
+    "go run"
+    "npx"
+    "pipx"
+    "pipx run"
+    "pnpx"
+    "pyenv install"
+    "uv run"
+    "uvx"
+
+    # security (secret-revealing operations)
+    "aws secretsmanager get-secret-value"
+    "doppler run"
+    "doppler secrets get"
+    "security unlock-keychain"
+    "vault kv get"
+    "vault read"
+
+    # shell (interactive or process-killing)
+    "pkill"
+    "zsh"
+
+    # system (admin-level macOS or database CLIs)
+    "defaults delete"
+    "defaults write"
+    "gpg"
+    "gpg-agent"
+    "launchctl load"
+    "launchctl remove"
+    "launchctl start"
+    "launchctl stop"
+    "launchctl unload"
+    "log show"
+    "mongosh"
+    "mysql"
+    "obsidian eval"
+    "obsidian trash"
+    "openssl"
+    "osascript"
+    "osascript -e"
+    "psql"
+    "redis-cli"
+    "softwareupdate"
+    "sqlite3"
+    "ssh-keygen"
+    "system_profiler"
+  ];
+}
