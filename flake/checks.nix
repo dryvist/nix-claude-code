@@ -1,4 +1,5 @@
-_: {
+{ inputs, self, ... }:
+{
   perSystem =
     {
       pkgs,
@@ -34,6 +35,41 @@ _: {
         commands = discoverCommands pluginFixture;
         name = "synthesized-skills-fixture";
       };
+
+      # Build a minimal home-manager activation derivation with the given
+      # extra module slotted in. Lets us assert that each statusline theme
+      # evaluates cleanly and produces a buildable activation package.
+      mkActivation =
+        extraModule:
+        (inputs.home-manager.lib.homeManagerConfiguration {
+          inherit pkgs;
+          modules = [
+            self.homeModules.default
+            {
+              home = {
+                username = "ci-tester";
+                homeDirectory = "/tmp/ci-tester-home";
+                stateVersion = "25.11";
+              };
+            }
+            extraModule
+          ];
+        }).activationPackage;
+
+      mkStatuslineCheck =
+        theme:
+        mkActivation {
+          programs.claude = {
+            enable = true;
+            # `claude-code` is unfree; the activation check exercises
+            # module wiring only, so skip the binary install.
+            package = null;
+            statusline = {
+              enable = true;
+              inherit theme;
+            };
+          };
+        };
     in
     {
       checks = {
@@ -50,6 +86,10 @@ _: {
               FAILURES
               exit 1
             '';
+
+        statusline-powerline = mkStatuslineCheck "powerline";
+        statusline-ccstatusline = mkStatuslineCheck "ccstatusline";
+        statusline-daniel3303 = mkStatuslineCheck "daniel3303";
 
         wrap-commands-as-skills = pkgs.runCommand "wrap-commands-as-skills-test" { } ''
           set -euo pipefail
