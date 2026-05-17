@@ -6,6 +6,25 @@
 }:
 let
   cfg = config.programs.claude;
+
+  ncc = import ../lib { inherit lib; };
+
+  # `programs.claude.permissions` is the structured input that
+  # `lib.toSettingsJson` consumes. Default to `mkDefaultPermissions`
+  # (the full vendored Claude permission set from
+  # `data/permissions/*.nix`) so callers get a working, principle-of-
+  # least-surprise configuration out of the box. Set to `false` to opt
+  # out entirely.
+  defaultPermissions = ncc.mkDefaultPermissions { tool = "claude"; };
+
+  # `permissions` accepts either an attrset (use it) or `false` (skip).
+  # Use `lib.isAttrs` to discriminate — `!attrset` is a type error.
+  effectivePermissions = if lib.isAttrs cfg.permissions then cfg.permissions else null;
+
+  builtSettings = ncc.toSettingsJson {
+    permissions = effectivePermissions;
+    extraSettings = cfg.settings;
+  };
 in
 {
   options.programs.claude = {
@@ -21,17 +40,42 @@ in
       '';
     };
 
+    permissions = lib.mkOption {
+      # Either an attrset (the structured input from `mkDefaultPermissions`
+      # — or a user-supplied override) or `false` to skip writing
+      # permissions to settings.json entirely.
+      type = lib.types.either lib.types.attrs (lib.types.enum [ false ]);
+      default = defaultPermissions;
+      defaultText = lib.literalExpression ''lib.mkDefaultPermissions { tool = "claude"; }'';
+      description = ''
+        Permission lists merged into `~/.claude/settings.json`. The default
+        is the full vendored Claude permission set
+        (`lib.mkDefaultPermissions { tool = "claude"; }`). Set to `false`
+        to omit the `permissions` block entirely; pass an attrset to
+        override.
+      '';
+    };
+
     settings = lib.mkOption {
       type = lib.types.attrs;
       default = { };
       description = ''
-        Free-form contents of `~/.claude/settings.json`. Module-generated values
-        (permissions, plugins, mcpServers) are merged on top.
+        Free-form contents of `~/.claude/settings.json`. Module-generated
+        values (permissions, plugins, mcpServers, statusLine) are merged
+        first; entries here override them.
       '';
     };
   };
 
   config = lib.mkIf cfg.enable {
     home.packages = lib.optionals (cfg.package != null) [ cfg.package ];
+
+    # Render the final settings.json into the user's home directory.
+    # `home.file` is the canonical home-manager mechanism for managed
+    # config files; the file is read-only in the home-manager generation
+    # but symlinked at activation so the user's standard tools see it.
+    home.file.".claude/settings.json".source =
+      (pkgs.formats.json { }).generate "claude-settings.json"
+        builtSettings;
   };
 }
