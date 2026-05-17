@@ -1,0 +1,9 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "legacy-marketplace",
+  "description": "Older-style top-level description (pre-metadata-block)",
+  "owner": {
+    "name": "Legacy Owner"
+  },
+  "plugins": []
+}

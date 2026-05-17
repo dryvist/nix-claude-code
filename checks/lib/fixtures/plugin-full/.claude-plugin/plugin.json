@@ -1,0 +1,16 @@
+{
+  "name": "fully-populated-plugin",
+  "description": "Plugin manifest exercising every documented field",
+  "version": "1.2.3",
+  "author": {
+    "name": "Test Author",
+    "email": "author@example.com",
+    "url": "https://example.com/author"
+  },
+  "homepage": "https://example.com/fully-populated-plugin",
+  "repository": "https://github.com/example/fully-populated-plugin",
+  "license": "MIT",
+  "keywords": ["testing", "fixture", "complete"],
+  "category": "development",
+  "tags": ["polished", "documented"]
+}

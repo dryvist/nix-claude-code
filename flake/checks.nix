@@ -15,6 +15,7 @@ _: {
         permissions = import ../checks/lib/permissions.nix { inherit lib; };
         discoverSkills = import ../checks/lib/discover-skills.nix { inherit lib; };
         parseMarketplace = import ../checks/lib/parse-marketplace.nix { inherit lib; };
+        parsePlugin = import ../checks/lib/parse-plugin.nix { inherit lib; };
       };
 
       allTests = lib.foldl' (acc: suite: acc // suite) { } (builtins.attrValues suites);
