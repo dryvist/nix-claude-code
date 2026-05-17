@@ -14,6 +14,9 @@ _: {
       suites = {
         permissions = import ../checks/lib/permissions.nix { inherit lib; };
         discoverSkills = import ../checks/lib/discover-skills.nix { inherit lib; };
+        discoverCommands = import ../checks/lib/discover-commands.nix { inherit lib; };
+        discoverAgents = import ../checks/lib/discover-agents.nix { inherit lib; };
+        discoverHooks = import ../checks/lib/discover-hooks.nix { inherit lib; };
         parseMarketplace = import ../checks/lib/parse-marketplace.nix { inherit lib; };
         parsePlugin = import ../checks/lib/parse-plugin.nix { inherit lib; };
       };
