@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 with a permanent pre-1.0 cadence — see `release-please-config.json`.
 
+## [0.1.2](https://github.com/dryvist/nix-claude-code/compare/v0.1.1...v0.1.2) (2026-05-17)
+
+
+### Features
+
+* **permissions:** port allow/ask/deny/domains data from ai-assistant-instructions ([#8](https://github.com/dryvist/nix-claude-code/issues/8)) ([1823366](https://github.com/dryvist/nix-claude-code/commit/1823366e979efede352432f230ee751f1a997040))
+
 ## [0.1.1](https://github.com/dryvist/nix-claude-code/compare/v0.1.0...v0.1.1) (2026-05-16)
 
 ### Features
