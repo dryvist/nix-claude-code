@@ -15,7 +15,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: DeterminateSystems/nix-installer-action@v17
-      - uses: DeterminateSystems/magic-nix-cache-action@v8
+      - uses: DeterminateSystems/magic-nix-cache-action@v13
       - name: nix flake check
         run: nix flake check --print-build-logs
 
@@ -24,7 +24,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: DeterminateSystems/nix-installer-action@v17
-      - uses: DeterminateSystems/magic-nix-cache-action@v8
+      - uses: DeterminateSystems/magic-nix-cache-action@v13
       - name: treefmt check
         run: nix build .#checks.x86_64-linux.treefmt --print-build-logs
 
@@ -33,6 +33,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: DeterminateSystems/nix-installer-action@v17
-      - uses: DeterminateSystems/magic-nix-cache-action@v8
+      - uses: DeterminateSystems/magic-nix-cache-action@v13
       - name: pre-commit
         run: nix build .#checks.x86_64-linux.pre-commit --print-build-logs
