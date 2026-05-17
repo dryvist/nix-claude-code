@@ -1,0 +1,2 @@
+This directory deliberately has no SKILL.md.
+discoverSkills must ignore subdirectories that lack one.

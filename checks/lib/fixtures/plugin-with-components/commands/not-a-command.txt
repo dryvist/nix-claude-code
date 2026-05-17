@@ -1,0 +1,1 @@
+Plain text — should be skipped by discoverCommands (not a .md file).

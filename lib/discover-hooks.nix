@@ -1,6 +1,11 @@
-_: pluginPath:
+_: pluginRoot:
+# Read `<pluginRoot>/hooks/hooks.json` per Anthropic's plugin spec. The
+# manifest's top-level shape is `{ hooks = { <Event> = [...]; ... }; }`;
+# we pass it through unchanged for callers to merge into settings.json.
+#
+# Returns `{ }` (empty attrset) when no `hooks/hooks.json` exists so
+# callers can compose without conditional plumbing.
 let
-  hooksPath = "${pluginPath}/hooks/hooks.json";
-  hasHooks = builtins.pathExists hooksPath;
+  hooksPath = "${pluginRoot}/hooks/hooks.json";
 in
-if hasHooks then builtins.fromJSON (builtins.readFile hooksPath) else { }
+if builtins.pathExists hooksPath then builtins.fromJSON (builtins.readFile hooksPath) else { }
