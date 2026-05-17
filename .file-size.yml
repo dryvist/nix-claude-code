@@ -1,0 +1,8 @@
+# Per-repo file-size config consumed by dryvist/.github/_file-size.yml.
+#
+# All files currently fit under the upstream defaults (warn: 6KB, error: 12KB),
+# so no extended-limit overrides are declared. Files that drift toward the warn
+# threshold should be split rather than re-added to an extended.files list.
+defaults:
+  warn: 6144
+  error: 12288

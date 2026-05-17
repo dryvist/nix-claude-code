@@ -10,7 +10,7 @@
     };
 
     nix-claude-code = {
-      url = "github:JacobPEvans/nix-claude-code";
+      url = "github:dryvist/nix-claude-code";
       inputs = {
         nixpkgs.follows = "nixpkgs";
         home-manager.follows = "home-manager";
