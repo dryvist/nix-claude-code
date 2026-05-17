@@ -4,7 +4,7 @@
 > and permissions as composable home-manager modules.
 > Reproducible on macOS and Linux.
 
-[![CI](https://github.com/JacobPEvans/nix-claude-code/actions/workflows/ci.yml/badge.svg)](https://github.com/JacobPEvans/nix-claude-code/actions/workflows/ci.yml)
+[![CI](https://github.com/dryvist/nix-claude-code/actions/workflows/ci.yml/badge.svg)](https://github.com/dryvist/nix-claude-code/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Nix Flake](https://img.shields.io/badge/Nix-flake-blue.svg)](https://nixos.org)
 [![home-manager](https://img.shields.io/badge/home--manager-25.11-green.svg)](https://github.com/nix-community/home-manager)
@@ -42,7 +42,7 @@ Add `nix-claude-code` to your flake inputs:
     home-manager.url = "github:nix-community/home-manager/release-25.11";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
-    nix-claude-code.url = "github:JacobPEvans/nix-claude-code";
+    nix-claude-code.url = "github:dryvist/nix-claude-code";
     nix-claude-code.inputs.nixpkgs.follows = "nixpkgs";
     nix-claude-code.inputs.home-manager.follows = "home-manager";
   };
@@ -52,9 +52,9 @@ Add `nix-claude-code` to your flake inputs:
 Or scaffold from a template:
 
 ```bash
-nix flake init -t github:JacobPEvans/nix-claude-code#minimal
+nix flake init -t github:dryvist/nix-claude-code#minimal
 # or, if you already use flake-parts:
-nix flake init -t github:JacobPEvans/nix-claude-code#flake-parts
+nix flake init -t github:dryvist/nix-claude-code#flake-parts
 ```
 
 ## Usage
