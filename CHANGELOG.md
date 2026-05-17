@@ -8,11 +8,10 @@ with a permanent pre-1.0 cadence — see `release-please-config.json`.
 
 ## [0.1.3](https://github.com/dryvist/nix-claude-code/compare/v0.1.2...v0.1.3) (2026-05-17)
 
-
 ### Features
 
-* **lib:** implement discoverSkills/Commands/Agents/Hooks per Anthropic spec ([#11](https://github.com/dryvist/nix-claude-code/issues/11)) ([33d9538](https://github.com/dryvist/nix-claude-code/commit/33d9538bb5599013175961020dc2480992b9df5d))
-* **lib:** implement toSettingsJson and wrapCommandsAsSkills ([#13](https://github.com/dryvist/nix-claude-code/issues/13)) ([3b18dd0](https://github.com/dryvist/nix-claude-code/commit/3b18dd0b9383d98e37e04df14879617bffa0f406))
+- **lib:** implement discoverSkills/Commands/Agents/Hooks per Anthropic spec ([#11](https://github.com/dryvist/nix-claude-code/issues/11)) ([33d9538](https://github.com/dryvist/nix-claude-code/commit/33d9538bb5599013175961020dc2480992b9df5d))
+- **lib:** implement toSettingsJson and wrapCommandsAsSkills ([#13](https://github.com/dryvist/nix-claude-code/issues/13)) ([3b18dd0](https://github.com/dryvist/nix-claude-code/commit/3b18dd0b9383d98e37e04df14879617bffa0f406))
 
 ## [0.1.2](https://github.com/dryvist/nix-claude-code/compare/v0.1.1...v0.1.2) (2026-05-17)
 
