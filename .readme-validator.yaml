@@ -1,0 +1,15 @@
+# README validation config for nix-claude-code.
+# This is a Nix home-manager module repo — the root README is a usage guide for
+# adopters of the flake, not a per-module reference. Per-module READMEs in
+# modules/<name>/ get their own validator sections if added later.
+required_sections:
+  - What you get
+  - Installation
+  - Usage
+optional_sections:
+  - Architecture
+  - API
+  - Compatibility
+  - Comparison
+  - Contributing
+  - Related

@@ -9,7 +9,7 @@ See [`templates/minimal/`](../templates/minimal/) for a working starter. The sha
 ```nix
 {
   inputs.nix-claude-code = {
-    url = "github:JacobPEvans/nix-claude-code";
+    url = "github:dryvist/nix-claude-code";
     inputs.nixpkgs.follows = "nixpkgs";
     inputs.home-manager.follows = "home-manager";
   };
@@ -82,7 +82,7 @@ Use `follows` to align with your own pins:
 
 ```nix
 inputs.nix-claude-code = {
-  url = "github:JacobPEvans/nix-claude-code";
+  url = "github:dryvist/nix-claude-code";
   inputs.nixpkgs.follows = "nixpkgs";
   inputs.home-manager.follows = "home-manager";
   inputs.claude-plugins-official.follows = "claude-plugins-official";
