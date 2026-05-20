@@ -18,7 +18,7 @@ on:
   push:
     branches: [main]
   schedule:
-    - cron: '17 11 * * 1'  # Weekly Monday 11:17 UTC (off-peak minute)
+    - cron: "17 11 * * 1" # Weekly Monday 11:17 UTC (off-peak minute)
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
