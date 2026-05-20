@@ -8,11 +8,10 @@ with a permanent pre-1.0 cadence — see `release-please-config.json`.
 
 ## [0.1.4](https://github.com/dryvist/nix-claude-code/compare/v0.1.3...v0.1.4) (2026-05-17)
 
-
 ### Features
 
-* **core:** write settings.json from permissions + statusline + extras ([#16](https://github.com/dryvist/nix-claude-code/issues/16)) ([bcf2729](https://github.com/dryvist/nix-claude-code/commit/bcf272926e521e187923176c097ba14812909632))
-* **statusline:** implement powerline, ccstatusline, daniel3303 themes ([#14](https://github.com/dryvist/nix-claude-code/issues/14)) ([cadb13b](https://github.com/dryvist/nix-claude-code/commit/cadb13be440c11ade7da4d9305f1ae2353b7bb19))
+- **core:** write settings.json from permissions + statusline + extras ([#16](https://github.com/dryvist/nix-claude-code/issues/16)) ([bcf2729](https://github.com/dryvist/nix-claude-code/commit/bcf272926e521e187923176c097ba14812909632))
+- **statusline:** implement powerline, ccstatusline, daniel3303 themes ([#14](https://github.com/dryvist/nix-claude-code/issues/14)) ([cadb13b](https://github.com/dryvist/nix-claude-code/commit/cadb13be440c11ade7da4d9305f1ae2353b7bb19))
 
 ## [0.1.3](https://github.com/dryvist/nix-claude-code/compare/v0.1.2...v0.1.3) (2026-05-17)
 
