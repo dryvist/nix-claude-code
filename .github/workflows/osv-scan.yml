@@ -3,7 +3,8 @@
 # Inherits the centralized reusable workflow from JacobPEvans/.github.
 # This is a cross-org reference (dryvist -> JacobPEvans) which works for
 # public reusable workflows. SHA-pinned per zizmor unpinned-uses audit;
-# update the SHA when JacobPEvans/.github/_osv-scan.yml changes.
+# update the SHA when JacobPEvans/.github/.github/workflows/_osv-scan.yml
+# changes.
 #
 # Config: JacobPEvans/.github/osv-scanner.toml (org default) or local
 # osv-scanner.toml in this repo (takes precedence).
