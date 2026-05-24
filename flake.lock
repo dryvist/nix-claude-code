@@ -462,16 +462,15 @@
     "dryvist-github": {
       "flake": false,
       "locked": {
-        "lastModified": 1779641196,
+        "lastModified": 1779654703,
         "narHash": "sha256-y8mg05GuFYwFtrHeUtZxKoFFnf1P8hBB7QAYWp+A8LQ=",
         "owner": "dryvist",
         "repo": ".github",
-        "rev": "d033ac9622479497b0c16df1849a8b4cd85d9c1f",
+        "rev": "61f521582ffe3884a603cee263d0a21c08474eca",
         "type": "github"
       },
       "original": {
         "owner": "dryvist",
-        "ref": "feat/zizmor-policy",
         "repo": ".github",
         "type": "github"
       }
@@ -1029,11 +1028,11 @@
         "treefmt-nix": "treefmt-nix_2"
       },
       "locked": {
-        "lastModified": 1779641545,
-        "narHash": "sha256-8c6Pq7uRTHsW19pkTvlgaqK7i2faPFs3Gtec1P9ZQPM=",
+        "lastModified": 1779656577,
+        "narHash": "sha256-70IEcQXZqw4AeXoCWzN2oQnpp7HOXAf45vfUIhUm5+k=",
         "owner": "JacobPEvans",
         "repo": "nix-devenv",
-        "rev": "14028a2f5bb71faff3cfafc6415d0bb41213fbc9",
+        "rev": "a02b78f150837637bd329fb9a3dce9d7716f51ab",
         "type": "github"
       },
       "original": {
