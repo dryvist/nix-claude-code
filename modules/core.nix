@@ -23,6 +23,7 @@ let
 
   builtSettings = ncc.toSettingsJson {
     permissions = effectivePermissions;
+    inherit (cfg) defaultMode;
     extraSettings = cfg.settings;
   };
 in
@@ -53,6 +54,30 @@ in
         (`lib.mkDefaultPermissions { tool = "claude"; }`). Set to `false`
         to omit the `permissions` block entirely; pass an attrset to
         override.
+      '';
+    };
+
+    defaultMode = lib.mkOption {
+      type = lib.types.enum [
+        "default"
+        "acceptEdits"
+        "plan"
+        "auto"
+        "bypassPermissions"
+      ];
+      default = "auto";
+      description = ''
+        Default Claude Code permission mode. Lands at
+        `permissions.defaultMode` in settings.json.
+
+        "auto" is the recommended default — Claude classifies actions
+        against the curated deny/ask lists and auto-approves anything not
+        in them. Equivalent to running `claude --permission-mode auto`.
+
+        "bypassPermissions" (also reachable via the
+        `--dangerously-skip-permissions` CLI flag) skips ALL deny/ask
+        checks except credential-read protection. Reserve for trusted
+        automation where the deny list is known too aggressive.
       '';
     };
 

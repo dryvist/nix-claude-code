@@ -5,6 +5,11 @@ let
 
   emptyResult = toSettingsJson { };
   withPerms = toSettingsJson { permissions = mkDefaultPermissions { tool = "claude"; }; };
+  withMode = toSettingsJson { defaultMode = "auto"; };
+  withPermsAndMode = toSettingsJson {
+    permissions = mkDefaultPermissions { tool = "claude"; };
+    defaultMode = "auto";
+  };
 in
 {
   # Empty call: only the $schema URL is emitted.
@@ -91,5 +96,33 @@ in
         };
       }).model;
     expected = "claude-opus-4-7";
+  };
+
+  # defaultMode: lands at permissions.defaultMode, works with or without
+  # the allow/ask/deny lists.
+
+  "test (settings): defaultMode alone produces permissions.defaultMode" = {
+    expr = withMode.permissions.defaultMode;
+    expected = "auto";
+  };
+
+  "test (settings): defaultMode alone omits allow/ask/deny keys" = {
+    expr = builtins.attrNames withMode.permissions;
+    expected = [ "defaultMode" ];
+  };
+
+  "test (settings): defaultMode with permissions produces all four keys" = {
+    expr = builtins.sort builtins.lessThan (builtins.attrNames withPermsAndMode.permissions);
+    expected = [
+      "allow"
+      "ask"
+      "defaultMode"
+      "deny"
+    ];
+  };
+
+  "test (settings): null defaultMode omitted from permissions block" = {
+    expr = builtins.hasAttr "defaultMode" withPerms.permissions;
+    expected = false;
   };
 }

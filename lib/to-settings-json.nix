@@ -1,6 +1,7 @@
 { lib }:
 {
   permissions ? null,
+  defaultMode ? null,
   hooks ? null,
   statusLine ? null,
   enabledPlugins ? null,
@@ -19,6 +20,12 @@
 #   - Read-deny patterns → `Read(<glob>)`
 #   - MCP patterns       → pass-through (already in `mcp__<server>__*` form)
 #
+# `defaultMode` is Claude Code's permission-mode string (e.g. "auto",
+# "acceptEdits", "plan", "default", "bypassPermissions"). It lands under
+# `permissions.defaultMode` in settings.json. Passed independently of
+# `permissions` so callers can set the mode even when opting out of the
+# allow/ask/deny lists.
+#
 # Ordering inside each list matches the historical nix-ai output so the
 # generated settings.json diffs cleanly during the migration:
 # tool-specific entries first, then MCP, then shell commands.
@@ -35,15 +42,19 @@ let
 
   formatDeny = p: map fmtBash (p.deny or [ ]) ++ map fmtReadPattern (p.denyPatterns or [ ]);
 
-  settingsPermissions =
-    if permissions == null then
-      null
-    else
-      {
-        allow = formatAllow permissions;
-        ask = formatAsk permissions;
-        deny = formatDeny permissions;
-      };
+  permsAttrs = lib.optionalAttrs (permissions != null) {
+    allow = formatAllow permissions;
+    ask = formatAsk permissions;
+    deny = formatDeny permissions;
+  };
+
+  modeAttrs = lib.optionalAttrs (defaultMode != null) {
+    inherit defaultMode;
+  };
+
+  mergedPermissions = permsAttrs // modeAttrs;
+
+  settingsPermissions = if mergedPermissions == { } then null else mergedPermissions;
 
   # Drop keys with `null` values so the final JSON only carries inputs the
   # caller actually supplied. Anthropic's schema treats omitted keys and
