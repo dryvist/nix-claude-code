@@ -10,6 +10,39 @@ let
     permissions = mkDefaultPermissions { tool = "claude"; };
     defaultMode = "auto";
   };
+  withAutoModeAllDefaults = toSettingsJson {
+    autoMode = {
+      environment = [ "$defaults" ];
+      allow = [ "$defaults" ];
+      soft_deny = [ "$defaults" ];
+      hard_deny = [ "$defaults" ];
+    };
+  };
+  withAutoModeEnvSet = toSettingsJson {
+    autoMode = {
+      environment = [
+        "$defaults"
+        "Trusted: github.com/example-org/*"
+      ];
+      allow = [ "$defaults" ];
+      soft_deny = [ "$defaults" ];
+      hard_deny = [ "$defaults" ];
+    };
+  };
+  withAutoModePartial = toSettingsJson {
+    autoMode = {
+      environment = [
+        "$defaults"
+        "Trusted org"
+      ];
+      allow = [
+        "$defaults"
+        "Writing to s3://scratch is fine"
+      ];
+      soft_deny = [ "$defaults" ];
+      hard_deny = [ "$defaults" ];
+    };
+  };
 in
 {
   # Empty call: only the $schema URL is emitted.
@@ -123,6 +156,41 @@ in
 
   "test (settings): null defaultMode omitted from permissions block" = {
     expr = builtins.hasAttr "defaultMode" withPerms.permissions;
+    expected = false;
+  };
+
+  # autoMode: lands at top-level (NOT under permissions). Sub-fields
+  # equal to `[ "$defaults" ]` are filtered out — semantically a no-op,
+  # so settings.json stays minimal.
+
+  "test (settings): autoMode all sub-fields at default omits the block" = {
+    expr = builtins.hasAttr "autoMode" withAutoModeAllDefaults;
+    expected = false;
+  };
+
+  "test (settings): autoMode.environment customized lands at top-level autoMode.environment" = {
+    expr = withAutoModeEnvSet.autoMode.environment;
+    expected = [
+      "$defaults"
+      "Trusted: github.com/example-org/*"
+    ];
+  };
+
+  "test (settings): autoMode customized fields included, defaulted fields filtered" = {
+    expr = builtins.sort builtins.lessThan (builtins.attrNames withAutoModeEnvSet.autoMode);
+    expected = [ "environment" ];
+  };
+
+  "test (settings): autoMode partial customization keeps only non-default fields" = {
+    expr = builtins.sort builtins.lessThan (builtins.attrNames withAutoModePartial.autoMode);
+    expected = [
+      "allow"
+      "environment"
+    ];
+  };
+
+  "test (settings): autoMode lives at top-level, NOT under permissions" = {
+    expr = builtins.hasAttr "autoMode" withAutoModeEnvSet.permissions or { };
     expected = false;
   };
 }

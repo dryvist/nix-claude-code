@@ -23,7 +23,7 @@ let
 
   builtSettings = ncc.toSettingsJson {
     permissions = effectivePermissions;
-    inherit (cfg) defaultMode;
+    inherit (cfg) defaultMode autoMode;
     extraSettings = cfg.settings;
   };
 in
@@ -78,6 +78,61 @@ in
         `--dangerously-skip-permissions` CLI flag) skips ALL deny/ask
         checks except credential-read protection. Reserve for trusted
         automation where the deny list is known too aggressive.
+      '';
+    };
+
+    autoMode = lib.mkOption {
+      type = lib.types.submodule {
+        options = {
+          environment = lib.mkOption {
+            type = lib.types.listOf lib.types.str;
+            default = [ "$defaults" ];
+            description = ''
+              Trusted infrastructure entries the auto-mode classifier
+              treats as internal. Prose strings, read as natural-language
+              rules. Include `"$defaults"` to inherit the built-in
+              entries (current working repo + configured remotes) and
+              splice your entries before/after.
+            '';
+          };
+          allow = lib.mkOption {
+            type = lib.types.listOf lib.types.str;
+            default = [ "$defaults" ];
+            description = ''
+              Exceptions to `soft_deny` rules. Prose strings. Include
+              `"$defaults"` to inherit built-ins.
+            '';
+          };
+          soft_deny = lib.mkOption {
+            type = lib.types.listOf lib.types.str;
+            default = [ "$defaults" ];
+            description = ''
+              Destructive actions blocked unless overridden by explicit
+              user intent or an `allow` entry. Include `"$defaults"` to
+              inherit the built-in soft-block list (force-push,
+              `curl | bash`, production deploys, etc.).
+            '';
+          };
+          hard_deny = lib.mkOption {
+            type = lib.types.listOf lib.types.str;
+            default = [ "$defaults" ];
+            description = ''
+              Unconditional blocks. Include `"$defaults"` to inherit the
+              built-in list (data exfiltration patterns, auto-mode bypass
+              attempts, etc.).
+            '';
+          };
+        };
+      };
+      default = { };
+      description = ''
+        Auto-mode classifier configuration. Lands at top-level
+        `autoMode` in settings.json (NOT under `permissions`). See
+        https://code.claude.com/docs/en/auto-mode-config.
+
+        Sub-fields exactly equal to `[ "$defaults" ]` are omitted from
+        the generated settings.json (semantically a no-op) to keep the
+        file minimal.
       '';
     };
 
