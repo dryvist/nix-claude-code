@@ -3,6 +3,12 @@ result-*
 .direnv/
 .envrc.local
 
+# git-hooks.nix regenerates .pre-commit-config.yaml at activation time;
+# the canonical source is the dev-hygiene flakeModule pulled in via
+# inputs.nix-devenv. Tracking the YAML causes git-hooks.nix to refuse
+# to install with an "existing config" warning.
+.pre-commit-config.yaml
+
 .vscode/
 .idea/
 *.swp
