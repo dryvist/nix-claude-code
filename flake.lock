@@ -1037,7 +1037,6 @@
       },
       "original": {
         "owner": "JacobPEvans",
-        "ref": "feat/shared-pre-commit-hooks",
         "repo": "nix-devenv",
         "type": "github"
       }

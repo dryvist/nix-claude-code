@@ -16,11 +16,11 @@
 
     # Org-wide dev-hygiene: treefmt formatters, pre-commit hooks, and
     # zizmor policy. Provides flakeModules.dev-hygiene that's imported
-    # below. Pinned to the feat branch until
-    # JacobPEvans/nix-devenv#feat/shared-pre-commit-hooks merges; flip
-    # back to the default branch afterward.
+    # below. Lock currently pins to feat/shared-pre-commit-hooks HEAD
+    # (a02b78f) until nix-devenv PR #31 merges; after merge,
+    # `nix flake update nix-devenv` moves to the new default branch HEAD.
     nix-devenv = {
-      url = "github:JacobPEvans/nix-devenv/feat/shared-pre-commit-hooks";
+      url = "github:JacobPEvans/nix-devenv";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
