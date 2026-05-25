@@ -14,13 +14,13 @@
       inputs.nixpkgs-lib.follows = "nixpkgs";
     };
 
-    treefmt-nix = {
-      url = "github:numtide/treefmt-nix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    git-hooks = {
-      url = "github:cachix/git-hooks.nix";
+    # Org-wide dev-hygiene: treefmt formatters, pre-commit hooks, and
+    # zizmor policy. Provides flakeModules.dev-hygiene that's imported
+    # below. Pinned to the feat branch until
+    # JacobPEvans/nix-devenv#feat/shared-pre-commit-hooks merges; flip
+    # back to the default branch afterward.
+    nix-devenv = {
+      url = "github:JacobPEvans/nix-devenv/feat/shared-pre-commit-hooks";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -138,8 +138,9 @@
       imports = [
         ./flake/modules.nix
         ./flake/lib.nix
-        ./flake/treefmt.nix
-        ./flake/git-hooks.nix
+        # treefmt + pre-commit + zizmor (org-wide policy) all live here.
+        # See https://github.com/JacobPEvans/nix-devenv for the module.
+        inputs.nix-devenv.flakeModules.dev-hygiene
         ./flake/checks.nix
         ./flake/dev-shell.nix
         ./flake/templates.nix

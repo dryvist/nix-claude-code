@@ -98,19 +98,24 @@ when `.nix` / `flake.*` files are in context.
 - **Markdown lint:** `markdownlint-cli2` with the canonical
   `.markdownlint-cli2.yaml` synced from
   [`dryvist/.github`](https://github.com/dryvist/.github). `MD013
-  line_length: 160`; no 80-char heading/code restrictions; `MD024
-  siblings_only` scoped to `CHANGELOG.md` only.
-- **Nix toolchain:** `nixfmt-rfc-style` (formatter), `statix` (lint),
-  `deadnix` (dead code). All enforced in pre-commit.
-- **Secrets:** `gitleaks` (pre-commit + CI hook from `gitleaks/gitleaks`,
-  pinned to v8.x).
-- **nixpkgs channel:** `nixos-unstable` — keeps `markdownlint-cli2` at a
-  version that supports `MD060` natively; do not work around stale tooling
-  by disabling rules.
+  line_length: 160`; no 80-char heading/code restrictions. `CHANGELOG.md`
+  is ignored (release-please auto-generated). `MD024` strict-by-default
+  everywhere actually linted — never disabled across the board.
+- **Pre-commit / formatters / zizmor:** centralized via the
+  [`nix-devenv`](https://github.com/JacobPEvans/nix-devenv) flake module
+  `flakeModules.dev-hygiene`, imported in `flake.nix`. No
+  `.pre-commit-config.yaml` in this repo — the module declares treefmt,
+  pre-commit hooks (including `gitleaks` and the Nix toolchain
+  `nixfmt`/`statix`/`deadnix`), and zizmor policy in Nix. To run locally:
+  `nix develop` then `pre-commit run --all-files`.
+- **nixpkgs channel:** `nixos-unstable` (with `home-manager/master`) —
+  keeps `markdownlint-cli2` at a version that supports `MD060` natively;
+  do not work around stale tooling by disabling rules.
 
 Do NOT commit local copies of `.markdownlint-cli2.{jsonc,yaml}` that drift
 from the dryvist canonical, and do NOT re-introduce leniency rules to work
-around stale tooling — fix the tooling instead.
+around stale tooling. Pre-commit hook definitions belong in `nix-devenv`
+(the org's shared module), not in a per-repo `.pre-commit-config.yaml`.
 
 ## Related Repos
 
