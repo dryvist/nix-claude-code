@@ -97,10 +97,11 @@ when `.nix` / `flake.*` files are in context.
 
 - **Markdown lint:** `markdownlint-cli2` with the canonical
   `.markdownlint-cli2.yaml` synced from
-  [`dryvist/.github`](https://github.com/dryvist/.github). `MD013
-  line_length: 160`; no 80-char heading/code restrictions. `CHANGELOG.md`
-  is ignored (release-please auto-generated). `MD024` strict-by-default
-  everywhere actually linted — never disabled across the board.
+  [`dryvist/.github`](https://github.com/dryvist/.github).
+  `MD013 line_length: 160`; no 80-char heading/code restrictions.
+  `CHANGELOG.md` is ignored (release-please auto-generated).
+  `MD024` strict-by-default everywhere actually linted — never
+  disabled across the board.
 - **Pre-commit / formatters / zizmor:** centralized via the
   [`nix-devenv`](https://github.com/JacobPEvans/nix-devenv) flake module
   `flakeModules.dev-hygiene`, imported in `flake.nix`. No
