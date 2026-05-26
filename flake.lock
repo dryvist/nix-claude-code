@@ -1028,16 +1028,15 @@
         "treefmt-nix": "treefmt-nix_2"
       },
       "locked": {
-        "lastModified": 1779656577,
-        "narHash": "sha256-70IEcQXZqw4AeXoCWzN2oQnpp7HOXAf45vfUIhUm5+k=",
+        "lastModified": 1779661353,
+        "narHash": "sha256-w+690PS7JkPUvCCdW45H/bBhPWaTiSUUJVUvBFLhiq8=",
         "owner": "JacobPEvans",
         "repo": "nix-devenv",
-        "rev": "a02b78f150837637bd329fb9a3dce9d7716f51ab",
+        "rev": "c39a025e3924c47f701ad673456912020807f8b4",
         "type": "github"
       },
       "original": {
         "owner": "JacobPEvans",
-        "ref": "feat/shared-pre-commit-hooks",
         "repo": "nix-devenv",
         "type": "github"
       }
