@@ -1,25 +1,32 @@
+# Claude Code MCP Server Wiring
+#
+# Typed option lives in `./options-events.nix`. This module adds the
+# assertions that catch malformed entries at evaluation time. The actual
+# settings.json materialization happens in `./settings.nix` (which knows
+# how to format stdio vs sse/http servers and respect `disabled`).
 { config, lib, ... }:
+let
+  cfg = config.programs.claude;
+in
 {
-  options.programs.claude.mcpServers = lib.mkOption {
-    type = lib.types.attrsOf lib.types.attrs;
-    default = { };
-    example = lib.literalExpression ''
+  config = lib.mkIf cfg.enable {
+    assertions = [
       {
-        my-server = {
-          command = "''${pkgs.my-mcp-server}/bin/my-mcp-server";
-          args = [ ];
-          env = { };
-        };
+        assertion = lib.all (v: v.type != "stdio" || v.command != null) (
+          builtins.attrValues cfg.mcpServers
+        );
+        message = ''
+          MCP servers with type "stdio" must have a command set.
+          Check programs.claude.mcpServers for entries with type = "stdio" and command = null.
+        '';
       }
-    '';
-    description = ''
-      MCP server definitions written to `~/.claude/settings.json` under
-      `mcpServers`. This module only surfaces the option; populate it from
-      whichever MCP runtime you use (e.g. `nix-ai`'s `modules/mcp`).
-    '';
-  };
-
-  config = lib.mkIf config.programs.claude.enable {
-    # Stub: mcpServers are merged into settings.json in Checkpoint 1.
+      {
+        assertion = lib.all (v: v.type == "stdio" || v.url != null) (builtins.attrValues cfg.mcpServers);
+        message = ''
+          MCP servers with type "sse" or "http" must have a url set.
+          Check programs.claude.mcpServers for entries with type = "sse"/"http" and url = null.
+        '';
+      }
+    ];
   };
 }

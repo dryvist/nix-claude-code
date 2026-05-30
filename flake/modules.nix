@@ -46,6 +46,11 @@ in
     hooks = wrap ../modules/hooks.nix;
     mcp = wrap ../modules/mcp.nix;
     latest = wrap ../modules/latest.nix;
+    components = wrap ../modules/components.nix;
+    registry = wrap ../modules/registry.nix;
+    orphan-cleanup = wrap ../modules/orphan-cleanup.nix;
+    settings = wrap ../modules/settings.nix;
+    api-key-helper = wrap ../modules/api-key-helper.nix;
   };
 
   flake.homeManagerModules = self.homeModules;
