@@ -70,6 +70,17 @@
             };
           };
         };
+
+      # Bare-minimum activation: verifies the full `programs.claude` option
+      # set evaluates cleanly with only `enable = true;`. Catches schema
+      # regressions (e.g. typed options that demand non-default input,
+      # cross-option assertions firing for empty configs).
+      programsClaudeEval = mkActivation {
+        programs.claude = {
+          enable = true;
+          package = null; # claude-code is unfree; skip the binary install.
+        };
+      };
     in
     {
       checks = {
@@ -90,6 +101,9 @@
         statusline-powerline = mkStatuslineCheck "powerline";
         statusline-ccstatusline = mkStatuslineCheck "ccstatusline";
         statusline-daniel3303 = mkStatuslineCheck "daniel3303";
+
+        # Eval-time regression guard for the `programs.claude` module schema.
+        programs-claude-eval = programsClaudeEval;
 
         wrap-commands-as-skills = pkgs.runCommand "wrap-commands-as-skills-test" { } ''
           set -euo pipefail

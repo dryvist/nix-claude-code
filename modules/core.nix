@@ -136,15 +136,10 @@ in
       '';
     };
 
-    settings = lib.mkOption {
-      type = lib.types.attrs;
-      default = { };
-      description = ''
-        Free-form contents of `~/.claude/settings.json`. Module-generated
-        values (permissions, plugins, mcpServers, statusLine) are merged
-        first; entries here override them.
-      '';
-    };
+    # `settings` is declared in `./options-settings.nix` with structured
+    # sub-options (alwaysThinkingEnabled, cleanupPeriodDays, permissions,
+    # env, sandbox, …) AND a freeform attrs type so callers can pass arbitrary
+    # keys. We don't re-declare it here.
   };
 
   config = lib.mkIf cfg.enable {
