@@ -6,6 +6,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 with a permanent pre-1.0 cadence — see `release-please-config.json`.
 
+## [0.1.5](https://github.com/dryvist/nix-claude-code/compare/v0.1.4...v0.1.5) (2026-05-30)
+
+
+### Features
+
+* **core:** defaultMode + autoMode options; adopt nix-devenv dev-hygiene ([#21](https://github.com/dryvist/nix-claude-code/issues/21)) ([6d2c1bc](https://github.com/dryvist/nix-claude-code/commit/6d2c1bc86797dff29a6db84090a99769a7a7ba5f))
+* **modules:** port programs.claude.* module from nix-ai ([#26](https://github.com/dryvist/nix-claude-code/issues/26)) ([5276fb5](https://github.com/dryvist/nix-claude-code/commit/5276fb566c8cf8078f808d8dbd5923bcd0e00c1a))
+
+
+### Bug Fixes
+
+* **ci:** retarget reusable-workflow uses: refs to current org homes ([#25](https://github.com/dryvist/nix-claude-code/issues/25)) ([8c42ead](https://github.com/dryvist/nix-claude-code/commit/8c42eadc4b5b7e2c3013db81a883f266816dcaba))
+
 ## [0.1.4](https://github.com/dryvist/nix-claude-code/compare/v0.1.3...v0.1.4) (2026-05-17)
 
 ### Features
