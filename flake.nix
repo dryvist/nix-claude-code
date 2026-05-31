@@ -14,25 +14,14 @@
       inputs.nixpkgs-lib.follows = "nixpkgs";
     };
 
-    # Dev-hygiene direct inputs (treefmt + pre-commit + zizmor).
-    # Previously routed via nix-devenv.flakeModules.dev-hygiene, but
-    # that convenience wrapper dragged in devenv + crate2nix + devshell
-    # as transitive flake.lock nodes for no benefit here. The module
-    # equivalent lives at ./flake/dev-hygiene.nix.
-    treefmt-nix = {
-      url = "github:numtide/treefmt-nix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    git-hooks = {
-      url = "github:cachix/git-hooks.nix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    # Sources the org-wide zizmor.yml trusted-publisher policy. Consumed
-    # via `--config` in ./flake/dev-hygiene.nix, so this repo doesn't
-    # ship its own zizmor.yml.
+    # Org-wide dev-hygiene (treefmt + pre-commit + zizmor) is imported as a
+    # flake-module from dryvist/.github (see imports below). That flake is
+    # lean — treefmt-nix + git-hooks only — so this stays free of the
+    # devenv / crate2nix / devshell baggage nix-devenv would drag in, while
+    # keeping the config in one org-wide home instead of inlined here.
     dryvist-github = {
       url = "github:dryvist/.github";
-      flake = false;
+      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     ai-assistant-instructions = {
@@ -153,10 +142,9 @@
       imports = [
         ./flake/modules.nix
         ./flake/lib.nix
-        # treefmt + pre-commit + zizmor (org-wide policy) all live here.
-        # Mirrors nix-devenv's flakeModules.dev-hygiene but without the
-        # devenv / crate2nix / devshell transitive flake.lock baggage.
-        ./flake/dev-hygiene.nix
+        # treefmt + pre-commit + zizmor — org-wide flake-module from
+        # dryvist/.github (lean: no devenv/crate2nix/devshell baggage).
+        inputs.dryvist-github.flakeModules.dev-hygiene
         ./flake/checks.nix
         ./flake/dev-shell.nix
         ./flake/templates.nix
