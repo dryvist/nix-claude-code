@@ -8,9 +8,8 @@
 # Claude Code self-updates thereafter via `claude update`. This script is only
 # responsible for bootstrapping a missing install (and forced re-install on demand).
 #
-# Invoked by:
-#   - LaunchAgent (RunAtLoad=true, no-op normally) launched by ./latest.nix
-#   - Manual `claude-latest-install` command (writeShellApplication on PATH)
+# Invoked manually as `claude-latest-install` (writeShellApplication on PATH,
+# exposed by ./latest.nix when `programs.claude.latest.enable = true`).
 #
 # Exit codes:
 #   0 - Already installed (no-op) OR installer succeeded
