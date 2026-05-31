@@ -89,6 +89,10 @@
       url = "github:JacobPEvans/claude-code-plugins";
       flake = false;
     };
+    karpathy-skills = {
+      url = "github:forrestchang/andrej-karpathy-skills";
+      flake = false;
+    };
     lunar-claude = {
       url = "github:basher83/lunar-claude";
       flake = false;

@@ -63,6 +63,17 @@ let
   # Marketplace Definitions
   # ============================================================================
   marketplaces = {
+    # --- Personal Plugins ---
+    # JacobPEvans's curated plugins. Consumers register a synthetic
+    # derivation (see jacobpevansMarketplace in marketplace-overrides.nix)
+    # because the upstream marketplace.json doesn't list every plugin dir.
+    "jacobpevans-cc-plugins" = {
+      source = {
+        type = "github";
+        url = "JacobPEvans/claude-code-plugins";
+      };
+    };
+
     # --- Official Anthropic ---
     "claude-plugins-official" = {
       source = {
@@ -222,6 +233,15 @@ let
       source = {
         type = "github";
         url = "danielmiessler/fabric";
+      };
+    };
+
+    # Karpathy skills — workflow patterns from Andrej Karpathy's
+    # forrestchang/andrej-karpathy-skills repo.
+    "karpathy-skills" = {
+      source = {
+        type = "github";
+        url = "forrestchang/andrej-karpathy-skills";
       };
     };
   };
