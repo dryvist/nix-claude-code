@@ -15,6 +15,7 @@ let
       claude-code-workflows
       claude-skills
       jacobpevans-cc-plugins
+      karpathy-skills
       lunar-claude
       obsidian-skills
       openai-codex
