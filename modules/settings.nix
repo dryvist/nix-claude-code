@@ -74,6 +74,18 @@ let
     else
       cfg.defaultMode;
 
+  # Auto-mode classifier configuration. Sub-fields exactly equal to the
+  # literal default `[ "$defaults" ]` are filtered (they're semantically
+  # a no-op — the classifier already uses defaults when unset). Only
+  # surface autoMode in settings.json when at least one sub-field carries
+  # caller-supplied content.
+  autoModeAttrs =
+    let
+      isDefaultOnly = v: v == [ "$defaults" ];
+      kept = lib.filterAttrs (_: v: !isDefaultOnly v) cfg.autoMode;
+    in
+    kept;
+
   # Build the settings object materialized into ~/.claude/settings.json.
   settings = {
     "$schema" = cfg.settings.schemaUrl;
@@ -84,6 +96,7 @@ let
       showTurnDuration
       ;
   }
+  // lib.optionalAttrs (autoModeAttrs != { }) { autoMode = autoModeAttrs; }
   // lib.optionalAttrs (cfg.effortLevel != null) { inherit (cfg) effortLevel; }
   // lib.optionalAttrs (cfg.attribution != { }) { inherit (cfg) attribution; }
   // {
