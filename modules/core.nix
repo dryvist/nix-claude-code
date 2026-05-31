@@ -17,15 +17,6 @@ let
   # out entirely.
   defaultPermissions = ncc.mkDefaultPermissions { tool = "claude"; };
 
-  # `permissions` accepts either an attrset (use it) or `false` (skip).
-  # Use `lib.isAttrs` to discriminate — `!attrset` is a type error.
-  effectivePermissions = if lib.isAttrs cfg.permissions then cfg.permissions else null;
-
-  builtSettings = ncc.toSettingsJson {
-    permissions = effectivePermissions;
-    inherit (cfg) defaultMode autoMode;
-    extraSettings = cfg.settings;
-  };
 in
 {
   options.programs.claude = {
@@ -145,12 +136,15 @@ in
   config = lib.mkIf cfg.enable {
     home.packages = lib.optionals (cfg.package != null) [ cfg.package ];
 
-    # Render the final settings.json into the user's home directory.
-    # `home.file` is the canonical home-manager mechanism for managed
-    # config files; the file is read-only in the home-manager generation
-    # but symlinked at activation so the user's standard tools see it.
-    home.file.".claude/settings.json".source =
-      (pkgs.formats.json { }).generate "claude-settings.json"
-        builtSettings;
+    # `~/.claude/settings.json` is written by the activation merge in
+    # `./settings.nix` (`claudeSettingsMerge`), not by `home.file`. The
+    # activation path produces the full settings shape (including
+    # `enabledPlugins`, `extraKnownMarketplaces`, and a correct
+    # `permissions.defaultMode` value) AND yields a real writable file
+    # rather than a symlink — required so Claude Code's runtime mutations
+    # to the file are not blocked. Keeping a `home.file` install here
+    # caused `linkGeneration` to overwrite the merged result with a
+    # symlink to a smaller, inconsistent render (missing
+    # `enabledPlugins`, and `permissions.defaultMode = null`).
   };
 }
