@@ -25,6 +25,17 @@ let
   claudeRegistry = import ../lib/claude-registry.nix { inherit lib; };
   inherit (claudeRegistry) toClaudeMarketplaceFormat;
 
+  # Wrap merge-json-settings.sh in a writeShellApplication so the Nix store
+  # copy carries the executable bit, has jq on PATH, and passes shellcheck.
+  # Path interpolation (`${./scripts/merge-json-settings.sh}`) preserves the
+  # source git mode (0644), which produces a non-executable store path —
+  # direct exec then fails with EACCES and aborts activation under set -e.
+  mergeJsonSettings = pkgs.writeShellApplication {
+    name = "merge-json-settings";
+    runtimeInputs = [ pkgs.jq ];
+    text = builtins.readFile ./scripts/merge-json-settings.sh;
+  };
+
   # Build the env attribute (merge user env vars with API_KEY_HELPER if enabled)
   envAttrs =
     cfg.settings.env
@@ -184,15 +195,13 @@ in
       '';
 
       claudeSettingsMerge = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-        export PATH="${pkgs.jq}/bin:$PATH"
-        $DRY_RUN_CMD ${./scripts/merge-json-settings.sh} \
+        $DRY_RUN_CMD ${mergeJsonSettings}/bin/merge-json-settings \
           "${settingsJson}" \
           "${homeDir}/.claude/settings.json"
       '';
 
       knownMarketplacesMerge = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-        export PATH="${pkgs.jq}/bin:$PATH"
-        $DRY_RUN_CMD ${./scripts/merge-json-settings.sh} \
+        $DRY_RUN_CMD ${mergeJsonSettings}/bin/merge-json-settings \
           "${knownMarketplacesJson}" \
           "${homeDir}/.claude/plugins/known_marketplaces.json"
       '';
