@@ -6,6 +6,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 with a permanent pre-1.0 cadence — see `release-please-config.json`.
 
+## [0.1.6](https://github.com/dryvist/nix-claude-code/compare/v0.1.5...v0.1.6) (2026-05-31)
+
+
+### Features
+
+* **catalog:** promote jacobpevans-cc-plugins + karpathy-skills upstream ([#29](https://github.com/dryvist/nix-claude-code/issues/29)) ([9fe7a2e](https://github.com/dryvist/nix-claude-code/commit/9fe7a2e86265a96d69f97e6514a5a3e012743b9c))
+
+
+### Bug Fixes
+
+* **devshell:** warn before pre-commit installer hits core.hooksPath block ([#31](https://github.com/dryvist/nix-claude-code/issues/31)) ([9fc82a2](https://github.com/dryvist/nix-claude-code/commit/9fc82a2c31f2244838eaf3d1fe3dbe43673fb7b2))
+* **settings:** render autoMode in ~/.claude/settings.json ([#28](https://github.com/dryvist/nix-claude-code/issues/28)) ([60c0488](https://github.com/dryvist/nix-claude-code/commit/60c0488a90acd8c9183f681117ba5ea2cade8213))
+
 ## [0.1.5](https://github.com/dryvist/nix-claude-code/compare/v0.1.4...v0.1.5) (2026-05-30)
 
 ### Features
