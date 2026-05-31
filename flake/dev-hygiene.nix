@@ -40,14 +40,21 @@
           shfmt.enable = true;
           taplo.enable = true;
         };
-        settings.formatter.prettier.options = [
-          "--print-width"
-          "100"
-        ];
-        settings.formatter.shfmt.options = [
-          "--indent"
-          "2"
-        ];
+        settings = {
+          # CHANGELOG.md is owned by release-please, which regenerates it with
+          # `*` bullets each release; excluding it keeps prettier from fighting
+          # the generator (and failing the treefmt/pre-commit checks). Mirrors
+          # the markdownlint-cli2 exclude below.
+          global.excludes = [ "CHANGELOG.md" ];
+          formatter.prettier.options = [
+            "--print-width"
+            "100"
+          ];
+          formatter.shfmt.options = [
+            "--indent"
+            "2"
+          ];
+        };
       };
 
       pre-commit.settings.hooks = {
