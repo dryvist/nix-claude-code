@@ -88,9 +88,9 @@
       default = null;
       description = ''
         Override the default model. Accepts aliases ("opus", "sonnet", "haiku")
-        or full names ("claude-opus-4-8").
-        null = account-tier default (Opus 4.8 on Max/Team Premium/Enterprise-PAYG/API;
-        Sonnet 4.6 on Pro/Team Standard). See: https://code.claude.com/docs/en/model-config
+        or full names. null = account-tier default (opus on Max/Team Premium/
+        Enterprise-PAYG/API; sonnet on Pro/Team Standard).
+        See: https://code.claude.com/docs/en/model-config
       '';
     };
 
@@ -107,9 +107,9 @@
       description = ''
         Adaptive reasoning effort for Opus and Sonnet. ("max" is session-only
         and not accepted here.)
-        - null: Use upstream default ("high" on Opus 4.8/Sonnet 4.6; "xhigh" on Opus 4.7)
-        - "high": Recommended. Balances token spend and intelligence; upstream default on Opus 4.8
-        - "xhigh": Deeper reasoning at higher token spend; often too slow on Opus 4.8
+        - null: Use upstream default (varies by model; see /effort docs)
+        - "high": Recommended. Balances token spend and intelligence
+        - "xhigh": Deeper reasoning at higher token spend; heavier on opus
         - "medium": Reduced token usage; trades off some intelligence
         - "low": Minimal reasoning, fastest and cheapest
         Override per-session via /effort command.
