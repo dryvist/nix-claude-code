@@ -97,6 +97,26 @@ let
     in
     kept;
 
+  # Freeform passthrough: keys set on cfg.settings that the builder does not
+  # model explicitly (e.g. statusLine from the statusline submodules) flow
+  # through verbatim. Restores the contract documented in options-settings.nix
+  # after the #39 settings.json rewrite dropped it.
+  #
+  # This list must mirror the top-level named options in options-settings.nix.
+  # When adding a new mkOption there, add the key name here too.
+  knownSettingsKeys = [
+    "alwaysThinkingEnabled"
+    "cleanupPeriodDays"
+    "skillListingBudgetFraction"
+    "skillOverrides"
+    "permissions"
+    "additionalDirectories"
+    "env"
+    "schemaUrl"
+    "sandbox"
+  ];
+  freeformSettings = builtins.removeAttrs cfg.settings knownSettingsKeys;
+
   # Build the settings object materialized into ~/.claude/settings.json.
   settings = {
     "$schema" = cfg.settings.schemaUrl;
@@ -139,7 +159,8 @@ let
     // lib.optionalAttrs (cfg.settings.sandbox.excludedCommands != [ ]) {
       inherit (cfg.settings.sandbox) excludedCommands;
     };
-  };
+  }
+  // freeformSettings;
 
   # All Nix-managed marketplaces need entries in known_marketplaces.json
   # so Claude Code reads them from the Nix-managed symlink instead of
