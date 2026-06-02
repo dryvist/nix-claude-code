@@ -50,6 +50,18 @@
       '';
     };
 
+    # In-app auto-updater toggle for the Claude Code binary.
+    # Stored in ~/.claude.json (global config) via home.activation.
+    autoUpdates = lib.mkOption {
+      type = lib.types.nullOr lib.types.bool;
+      default = null;
+      description = ''
+        Enable Claude Code's built-in auto-updater (writes ~/.claude.json).
+        Pairs with autoUpdatesChannel to pick the release channel.
+        null = leave unmanaged (Claude Code default is true).
+      '';
+    };
+
     # Show turn duration in UI
     showTurnDuration = lib.mkOption {
       type = lib.types.bool;
