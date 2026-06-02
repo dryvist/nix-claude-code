@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 with a permanent pre-1.0 cadence — see `release-please-config.json`.
 
+## [0.1.9](https://github.com/dryvist/nix-claude-code/compare/v0.1.8...v0.1.9) (2026-06-02)
+
+
+### Bug Fixes
+
+* **settings:** restore freeform settings passthrough for statusLine ([#42](https://github.com/dryvist/nix-claude-code/issues/42)) ([e88f6f0](https://github.com/dryvist/nix-claude-code/commit/e88f6f030d4738662bbbbe2af7cb3675fb0f20cb))
+
 ## [0.1.8](https://github.com/dryvist/nix-claude-code/compare/v0.1.7...v0.1.8) (2026-05-31)
 
 
