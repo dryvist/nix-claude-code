@@ -63,6 +63,9 @@ let
   }
   // lib.optionalAttrs (cfg.remoteControlAtStartup != null) {
     inherit (cfg) remoteControlAtStartup;
+  }
+  // lib.optionalAttrs (cfg.autoUpdates != null) {
+    inherit (cfg) autoUpdates;
   };
 
   claudeJsonOverlayFile =
