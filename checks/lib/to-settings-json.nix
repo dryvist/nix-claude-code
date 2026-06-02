@@ -121,6 +121,19 @@ in
   # extraSettings: caller-supplied overrides merge over the computed
   # output (and the $schema URL).
 
+  "test (settings): statusLine in extraSettings lands in output" = {
+    expr =
+      (toSettingsJson {
+        extraSettings = {
+          statusLine = {
+            type = "command";
+            command = "/some/script";
+          };
+        };
+      }).statusLine.type;
+    expected = "command";
+  };
+
   "test (settings): extraSettings overrides computed keys" = {
     expr =
       (toSettingsJson {
