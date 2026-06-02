@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 with a permanent pre-1.0 cadence — see `release-please-config.json`.
 
+## [0.1.10](https://github.com/dryvist/nix-claude-code/compare/v0.1.9...v0.1.10) (2026-06-02)
+
+
+### Features
+
+* add autoUpdates option for ~/.claude.json ([#45](https://github.com/dryvist/nix-claude-code/issues/45)) ([9d0a82c](https://github.com/dryvist/nix-claude-code/commit/9d0a82c6a0d045b42fa414a25baf9010c95501bb))
+* **ci:** dispatch lock-update event to nix-ai on release ([#44](https://github.com/dryvist/nix-claude-code/issues/44)) ([8f12850](https://github.com/dryvist/nix-claude-code/commit/8f12850f51f44da2e43ed59378732c6650551044))
+
 ## [0.1.9](https://github.com/dryvist/nix-claude-code/compare/v0.1.8...v0.1.9) (2026-06-02)
 
 
