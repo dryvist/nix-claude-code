@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 with a permanent pre-1.0 cadence — see `release-please-config.json`.
 
+## [0.1.11](https://github.com/dryvist/nix-claude-code/compare/v0.1.10...v0.1.11) (2026-06-04)
+
+
+### Bug Fixes
+
+* **ci:** replace inlined release-please-action@v4 with org thin wrapper ([#47](https://github.com/dryvist/nix-claude-code/issues/47)) ([bea25c4](https://github.com/dryvist/nix-claude-code/commit/bea25c46b74954143290f8d775ffc4badb1eceaf))
+
 ## [0.1.10](https://github.com/dryvist/nix-claude-code/compare/v0.1.9...v0.1.10) (2026-06-02)
 
 
