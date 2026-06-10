@@ -6,6 +6,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 with a permanent pre-1.0 cadence — see `release-please-config.json`.
 
+## [0.1.12](https://github.com/dryvist/nix-claude-code/compare/v0.1.11...v0.1.12) (2026-06-10)
+
+
+### Features
+
+* **permissions:** true-up vendored data to current ai-assistant-instructions JSON ([#50](https://github.com/dryvist/nix-claude-code/issues/50)) ([3441c86](https://github.com/dryvist/nix-claude-code/commit/3441c8651f124bef8b3328e1c8338475076310b1))
+
+
+### Bug Fixes
+
+* **cleanup:** remove stale-generation symlinks orphan-cleanup misses ([#49](https://github.com/dryvist/nix-claude-code/issues/49)) ([c68fe9c](https://github.com/dryvist/nix-claude-code/commit/c68fe9c14fe34d17c97005b03caf364ce1b30939))
+* **renovate:** enable the opt-in nix manager so flake.lock is maintained ([#51](https://github.com/dryvist/nix-claude-code/issues/51)) ([77db0fb](https://github.com/dryvist/nix-claude-code/commit/77db0fbdcc8dffda0c52bfee39f14185be6b001d))
+
 ## [0.1.11](https://github.com/dryvist/nix-claude-code/compare/v0.1.10...v0.1.11) (2026-06-04)
 
 
