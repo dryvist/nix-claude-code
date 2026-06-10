@@ -1,0 +1,10 @@
+# README validation config for data/permissions/.
+# This README documents vendored permission data for maintainers — it is not
+# an adopter-facing usage guide, so the root's What you get / Installation /
+# Usage sections do not apply. Required sections here are the load-bearing
+# maintainer rules that must never be dropped.
+required_sections:
+  - Format rules
+  - Precedence model
+optional_sections:
+  - Consumers filter, data does not

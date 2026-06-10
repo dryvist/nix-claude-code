@@ -2,7 +2,7 @@ _:
 # Actions that prompt the user before execution.
 #
 # Vendored from ai-assistant-instructions/agentsmd/permissions/ask/*.json
-# (snapshot: 2026-05-16). Categories: cloud, containers,
+# (snapshot: 2026-06-09, source rev 3128b52). Categories: cloud, containers,
 # dangerous-operations, git, package-managers, security, shell, system.
 #
 # `ask/gh.json` and `ask/python.json` are empty placeholders in the source

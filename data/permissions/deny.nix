@@ -2,7 +2,7 @@ _:
 # Hard-denied actions and file-path patterns.
 #
 # Vendored from ai-assistant-instructions/agentsmd/permissions/deny/*.json
-# (snapshot: 2026-05-16). Categories: dangerous (catastrophic system
+# (snapshot: 2026-06-09, source rev 3128b52). Categories: dangerous (catastrophic system
 # operations), git (hook-bypassing operations), network (mutating HTTP
 # verbs), package-install (package-manager installs that need explicit
 # user confirmation each time), shell (inline interpreter invocations).
