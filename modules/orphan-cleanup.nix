@@ -11,6 +11,9 @@
 #
 # Phase 2 (AFTER linkGeneration):
 # - Removes broken symlinks (targets that no longer exist) inside component dirs.
+# - Removes stale-generation symlinks: links into a previous generation's
+#   home-manager-files store path. These still resolve until GC, so the
+#   broken-symlink pass misses them, and home-manager no longer tracks them.
 #
 # Phase 3 (AFTER linkGeneration):
 # - Verifies plugin cache integrity when marketplace symlinks change.
@@ -79,10 +82,12 @@ in
       '';
 
       # Phase 2: Remove orphan symlinks AFTER linkGeneration creates new ones.
-      cleanupOrphanComponents = lib.hm.dag.entryAfter [ "linkGeneration" ] ''
-        . ${./scripts/cleanup-common.sh}
-        . ${./scripts/cleanup-broken-symlinks.sh} \
-          ${lib.escapeShellArgs (
+      # Two passes: broken symlinks (target gone), then stale-generation
+      # symlinks (target is a previous generation's home-manager-files store
+      # path that still exists, so the broken pass misses it).
+      cleanupOrphanComponents =
+        let
+          componentArgs = lib.escapeShellArgs (
             [
               "command"
               "${homeDir}/.claude/commands"
@@ -98,8 +103,15 @@ in
               "marketplace file"
               dir
             ]) marketplaceDirs)
-          )}
-      '';
+          );
+        in
+        lib.hm.dag.entryAfter [ "linkGeneration" ] ''
+          . ${./scripts/cleanup-common.sh}
+          . ${./scripts/cleanup-broken-symlinks.sh} \
+            ${componentArgs}
+          . ${./scripts/cleanup-stale-generation-symlinks.sh} \
+            ${componentArgs}
+        '';
 
       # Phase 3: Verify plugin cache integrity AFTER linkGeneration.
       # See: https://github.com/anthropics/claude-code/issues/17361
