@@ -3,7 +3,7 @@ _:
 #
 # Vendored from
 # ai-assistant-instructions/agentsmd/permissions/domains/webfetch.json
-# (snapshot: 2026-05-16). Domains are deliberately broad so subdomains
+# (snapshot: 2026-06-09, source rev 3128b52). Domains are deliberately broad so subdomains
 # resolve (subdomains of `github.com` are covered by listing `github.com`).
 {
   webfetch = [

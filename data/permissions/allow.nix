@@ -2,7 +2,7 @@ _:
 # Auto-approved actions.
 #
 # Vendored from ai-assistant-instructions/agentsmd/permissions/allow/*.json
-# (snapshot: 2026-05-16). Source-of-truth lives here; the
+# (snapshot: 2026-06-09, source rev 3128b52). Source-of-truth lives here; the
 # ai-assistant-instructions copy will be retired in Checkpoint 3.
 #
 # Categories mirror the source split: core, network, nix, nodejs, python,
