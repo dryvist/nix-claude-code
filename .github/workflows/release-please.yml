@@ -12,5 +12,12 @@ jobs:
       contents: write
       pull-requests: write
     uses: dryvist/.github/.github/workflows/_release-please.yml@main
+    with:
+      # Config-free (non-manifest) mode: no release-please-config.json /
+      # .release-please-manifest.json in this repo. Behaviour comes from these
+      # inputs; version state is read from the repo's git tags/releases.
+      release-type: simple
+      config-file: ""
+      manifest-file: ""
     secrets:
       GH_ACTION_RELEASE_PLEASE_PRIVATE_KEY: ${{ secrets.GH_ACTION_RELEASE_PLEASE_PRIVATE_KEY }}
