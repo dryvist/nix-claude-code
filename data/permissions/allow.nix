@@ -72,6 +72,7 @@ _:
     "pwd"
     "realpath"
     "rg"
+    "rm"
     "rustc"
     "rustup"
     "sed"
