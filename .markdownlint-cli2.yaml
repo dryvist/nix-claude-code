@@ -1,6 +1,7 @@
 # Copy of the dryvist/.github canonical .markdownlint-cli2.yaml plus
 # repo-specific ignores. Source of truth:
 # https://github.com/dryvist/.github/blob/main/.markdownlint-cli2.yaml
+# Delta vs canon: adds the `.github/aw/**` ignore for gh-aw artifacts.
 # Sync mechanism: manual for now; Renovate custom manager TBD.
 #
 # Per-file rule overrides are NOT a top-level markdownlint-cli2 schema key

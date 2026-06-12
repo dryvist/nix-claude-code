@@ -1,12 +1,10 @@
 # Periodic + per-PR OSV vulnerability scan.
 #
-# Inherits the centralized reusable workflow from JacobPEvans-personal/.github.
-# This is a cross-org reference (dryvist -> JacobPEvans-personal) which works for
-# public reusable workflows. SHA-pinned per zizmor unpinned-uses audit;
-# update the SHA when JacobPEvans-personal/.github/.github/workflows/_osv-scan.yml
-# changes.
+# Inherits the centralized reusable workflow from dryvist/.github.
+# SHA-pinned per zizmor unpinned-uses audit; update the SHA when
+# dryvist/.github/.github/workflows/_osv-scan.yml changes.
 #
-# Config: JacobPEvans-personal/.github/osv-scanner.toml (org default) or local
+# Config: dryvist/.github/osv-scanner.toml (org default) or local
 # osv-scanner.toml in this repo (takes precedence).
 #
 # Make this a required check via branch protection on `main` after merge.
@@ -29,7 +27,7 @@ permissions:
 
 jobs:
   scan:
-    # SHA pin → JacobPEvans-personal/.github main as of 2026-05-20
-    uses: JacobPEvans-personal/.github/.github/workflows/_osv-scan.yml@a76cf8faec4ea24036c9042bf52d18b573f172ae
+    # SHA pin → dryvist/.github main as of 2026-06-12
+    uses: dryvist/.github/.github/workflows/_osv-scan.yml@57c5cc6ac8f080137f551c745a2e2a0c6dcde62a
     with:
       runner_label: ubuntu-latest
