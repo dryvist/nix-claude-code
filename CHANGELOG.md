@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 with a permanent pre-1.0 cadence — see `release-please-config.json`.
 
+## [0.1.14](https://github.com/dryvist/nix-claude-code/compare/v0.1.13...v0.1.14) (2026-06-12)
+
+
+### Bug Fixes
+
+* **ci:** repoint shared osv-scan workflow to dryvist hub ([#57](https://github.com/dryvist/nix-claude-code/issues/57)) ([c86e169](https://github.com/dryvist/nix-claude-code/commit/c86e1694d30d0cd7d181ceae5e026bb7c61ca703))
+
 ## [0.1.13](https://github.com/dryvist/nix-claude-code/compare/v0.1.12...v0.1.13) (2026-06-11)
 
 
