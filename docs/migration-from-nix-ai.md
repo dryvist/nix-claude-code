@@ -44,11 +44,12 @@ In `nix-ai`:
    `inputs.nix-claude-code.lib.permissions.*`.
 6. CI runs both paths, asserts identical output.
 
-## Checkpoint 3 — cutover
+## Checkpoint 3 — cutover (done)
 
 1. Flip `useExternalModule` default to `true`.
-2. Remove `*-permissions.json` from `ai-assistant-instructions` (now sourced from
-   `nix-claude-code.lib.permissions`).
+2. ✅ Done — the `agentsmd/permissions/` JSON tree was removed from
+   `ai-assistant-instructions` (dryvist/ai-assistant-instructions#680); all
+   tools now source from `nix-claude-code.lib.permissions`.
 3. Soak for at least two `nix-ai` releases.
 
 ## Checkpoint 4 — deletion

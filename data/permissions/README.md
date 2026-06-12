@@ -1,10 +1,10 @@
-# Vendored Permission Data
+# Permission Data (source of truth)
 
-Tool-agnostic permission data vendored from
+Tool-agnostic permission data. **This directory is the single source of
+truth.** Checkpoint 3 is complete: the data was originally vendored from
 `ai-assistant-instructions/agentsmd/permissions/` (see the snapshot date and
-source rev in each `.nix` header). Per the Checkpoint 3 plan this directory
-becomes the single source of truth: first the data is trued-up against the
-JSON, then nix-ai flips to read from here, then the JSON copy is retired.
+source rev in each `.nix` header), nix-ai now reads from here, and the
+upstream JSON copy has been retired (dryvist/ai-assistant-instructions#680).
 
 Per-category background (what each file holds, which source JSONs fed it)
 lives in the header comments of the `.nix` files. This README only carries

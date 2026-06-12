@@ -1,11 +1,12 @@
 _:
 # Auto-approved actions.
 #
-# Vendored from ai-assistant-instructions/agentsmd/permissions/allow/*.json
-# (snapshot: 2026-06-09, source rev 3128b52). Source-of-truth lives here; the
-# ai-assistant-instructions copy will be retired in Checkpoint 3.
+# Source of truth for auto-approved actions (Checkpoint 3 complete: the
+# ai-assistant-instructions/agentsmd/permissions JSON copy has been retired —
+# see dryvist/ai-assistant-instructions#680). Originally vendored from that
+# tree (snapshot: 2026-06-09, source rev 3128b52).
 #
-# Categories mirror the source split: core, network, nix, nodejs, python,
+# Categories mirror the original split: core, network, nix, nodejs, python,
 # rust, security, system, tools (shell command families) and mcp (Anthropic
 # MCP-server tool-name patterns). Entries are sorted within each category
 # to preserve a stable diff against the source JSONs.
@@ -107,6 +108,7 @@ _:
     "zip"
 
     # network (read-only HTTP verbs and lookup tools)
+    "arp -a"
     "curl --request GET"
     "curl --silent --request GET"
     "curl --silent -X GET"
@@ -120,6 +122,7 @@ _:
     "nslookup"
     "pgrep"
     "ping -c"
+    "route get"
 
     # nix
     "cachix list"
@@ -133,6 +136,8 @@ _:
     "devbox version"
     "devenv info"
     "devenv version"
+    "direnv allow"
+    "direnv exec"
     "direnv reload"
     "direnv status"
     "nix --version"
