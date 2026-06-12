@@ -1,12 +1,11 @@
 _:
 # Actions that prompt the user before execution.
 #
-# Vendored from ai-assistant-instructions/agentsmd/permissions/ask/*.json
-# (snapshot: 2026-06-09, source rev 3128b52). Categories: cloud, containers,
-# dangerous-operations, git, package-managers, security, shell, system.
-#
-# `ask/gh.json` and `ask/python.json` are empty placeholders in the source
-# — no entries contributed from those categories.
+# Source of truth (Checkpoint 3 complete: the ai-assistant-instructions JSON
+# copy has been retired — see dryvist/ai-assistant-instructions#680).
+# Originally vendored from that tree's ask/*.json (snapshot: 2026-06-09,
+# source rev 3128b52). Categories: cloud, containers, dangerous-operations,
+# git, package-managers, security, shell, system.
 {
   commands = [
     # cloud (AWS state-changing operations)

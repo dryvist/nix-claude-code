@@ -1,8 +1,10 @@
 _:
 # Hard-denied actions and file-path patterns.
 #
-# Vendored from ai-assistant-instructions/agentsmd/permissions/deny/*.json
-# (snapshot: 2026-06-09, source rev 3128b52). Categories: dangerous (catastrophic system
+# Source of truth (Checkpoint 3 complete: the ai-assistant-instructions JSON
+# copy has been retired — see dryvist/ai-assistant-instructions#680).
+# Originally vendored from that tree's deny/*.json (snapshot: 2026-06-09,
+# source rev 3128b52). Categories: dangerous (catastrophic system
 # operations), git (hook-bypassing operations), network (mutating HTTP
 # verbs), package-install (package-manager installs that need explicit
 # user confirmation each time), shell (inline interpreter invocations).
