@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 with a permanent pre-1.0 cadence — see `release-please-config.json`.
 
+## [0.1.15](https://github.com/dryvist/nix-claude-code/compare/v0.1.14...v0.1.15) (2026-06-12)
+
+
+### Features
+
+* **permissions:** adopt source-of-truth role + add curated survivors ([#56](https://github.com/dryvist/nix-claude-code/issues/56)) ([5c514e7](https://github.com/dryvist/nix-claude-code/commit/5c514e703180b8326ec1c9b3489cbd6b4a3bbfe4))
+
 ## [0.1.14](https://github.com/dryvist/nix-claude-code/compare/v0.1.13...v0.1.14) (2026-06-12)
 
 
