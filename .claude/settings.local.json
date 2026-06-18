@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//Users/jevans/git/nix-darwin/feat/automode-environment/**)",
+      "Bash(jq 'del\\(.nodes[\"nix-ai\"].original.ref\\)' flake.lock)",
+      "Read(//Users/jevans/git/nix-claude-code/chore/precommit-and-automode/**)"
+    ]
+  }
+}
