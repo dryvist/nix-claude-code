@@ -132,10 +132,10 @@
       type = lib.types.attrsOf (lib.types.either lib.types.str lib.types.bool);
       default = { };
       description = ''
-        Commit/PR attribution settings. String keys are trailers (e.g. `commit`
-        uses the Linux kernel-style `Assisted-by` format); boolean keys are
-        toggles such as `sessionUrl = false` to omit the claude.ai session link
-        from commits and PRs.
+        Commit/PR attribution settings. Keys with string values are trailers
+        (e.g. `commit` uses the Linux kernel-style `Assisted-by` format); keys
+        with boolean values are toggles such as `sessionUrl = false` to omit
+        the claude.ai session link from commits and PRs.
       '';
     };
   };
