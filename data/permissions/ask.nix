@@ -141,7 +141,6 @@ _:
     "psql"
     "redis-cli"
     "softwareupdate"
-    "sqlite3"
     "ssh-keygen"
     "system_profiler"
   ];
