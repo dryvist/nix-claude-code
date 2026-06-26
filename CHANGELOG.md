@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 with a permanent pre-1.0 cadence — see `release-please-config.json`.
 
+## [0.3.2](https://github.com/dryvist/nix-claude-code/compare/v0.3.1...v0.3.2) (2026-06-26)
+
+
+### Bug Fixes
+
+* **orphan-cleanup:** run verify-cache-integrity via pkgs.bash; narrow attribution type ([#66](https://github.com/dryvist/nix-claude-code/issues/66)) ([c0e9988](https://github.com/dryvist/nix-claude-code/commit/c0e99881f1e03e64ab77a5b185486204d06f3533))
+
 ## [0.3.1](https://github.com/dryvist/nix-claude-code/compare/v0.3.0...v0.3.1) (2026-06-24)
 
 
