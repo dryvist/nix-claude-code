@@ -21,6 +21,7 @@
 {
   config,
   lib,
+  pkgs,
   ...
 }:
 
@@ -115,8 +116,12 @@ in
 
       # Phase 3: Verify plugin cache integrity AFTER linkGeneration.
       # See: https://github.com/anthropics/claude-code/issues/17361
+      # Invoke via bash explicitly: the script is a ${./...} store path (mode
+      # 0444, no execute bit) and uses `set -e`/`exit`, so it can neither be
+      # run directly (Permission denied) nor sourced (its exits would abort
+      # activation).
       verifyCacheIntegrity = lib.hm.dag.entryAfter [ "linkGeneration" ] ''
-        $DRY_RUN_CMD ${./scripts/verify-cache-integrity.sh} "${homeDir}"
+        $DRY_RUN_CMD ${pkgs.bash}/bin/bash ${./scripts/verify-cache-integrity.sh} "${homeDir}"
       '';
     };
   };

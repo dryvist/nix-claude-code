@@ -129,13 +129,15 @@
     };
 
     attribution = lib.mkOption {
-      type = lib.types.attrsOf (lib.types.either lib.types.str lib.types.bool);
+      type = lib.types.attrsOf lib.types.str;
       default = { };
       description = ''
-        Commit/PR attribution settings. Keys with string values are trailers
-        (e.g. `commit` uses the Linux kernel-style `Assisted-by` format); keys
-        with boolean values are toggles such as `sessionUrl = false` to omit
-        the claude.ai session link from commits and PRs.
+        Commit/PR attribution settings, emitted verbatim into settings.json.
+        Claude Code's schema (https://json.schemastore.org/claude-code-settings.json)
+        defines only `commit` and `pr` here, both free-form trailer strings
+        (e.g. `commit` uses the Linux kernel-style `Assisted-by` format); an
+        empty string hides that attribution. Unknown keys are rejected by the
+        schema, so this is `attrsOf str`, not a boolean-toggle map.
       '';
     };
   };
