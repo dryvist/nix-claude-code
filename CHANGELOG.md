@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 with a permanent pre-1.0 cadence — see `release-please-config.json`.
 
+## [0.4.0](https://github.com/dryvist/nix-claude-code/compare/v0.3.2...v0.4.0) (2026-07-03)
+
+
+### Features
+
+* add AI PR care caller (dep review + release highlights) ([#68](https://github.com/dryvist/nix-claude-code/issues/68)) ([13bfbd9](https://github.com/dryvist/nix-claude-code/commit/13bfbd91314b3c34cb083f619556af053cb50eb5))
+
 ## [0.3.2](https://github.com/dryvist/nix-claude-code/compare/v0.3.1...v0.3.2) (2026-06-26)
 
 
