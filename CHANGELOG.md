@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 with a permanent pre-1.0 cadence — see `release-please-config.json`.
 
+## [0.4.2](https://github.com/dryvist/nix-claude-code/compare/v0.4.1...v0.4.2) (2026-07-04)
+
+
+### Bug Fixes
+
+* stop churning HM-managed marketplace symlinks on every activation ([#78](https://github.com/dryvist/nix-claude-code/issues/78)) ([91b2acf](https://github.com/dryvist/nix-claude-code/commit/91b2acf80a6373afa0614c8446890c22085a649d))
+
 ## [0.4.1](https://github.com/dryvist/nix-claude-code/compare/v0.4.0...v0.4.1) (2026-07-03)
 
 
