@@ -110,7 +110,6 @@ _:
 
     # security (secret-revealing operations)
     "aws secretsmanager get-secret-value"
-    "doppler run"
     "doppler secrets get"
     "security unlock-keychain"
     "vault kv get"
