@@ -140,5 +140,15 @@
         schema, so this is `attrsOf str`, not a boolean-toggle map.
       '';
     };
+
+    # Post-activation settings.json schema check. Off by default: it shells
+    # out to `nix shell nixpkgs#check-jsonschema` and fetches `settings.schemaUrl`
+    # over the network, so enabling it trades a bit of activation time/network
+    # dependency for early warning on schema drift. Never blocks activation —
+    # see modules/scripts/validate-settings.sh.
+    validateSettings.enable = lib.mkEnableOption ''
+      warn-only JSON Schema validation of the deployed settings.json against
+      `programs.claude.settings.schemaUrl` after each activation
+    '';
   };
 }

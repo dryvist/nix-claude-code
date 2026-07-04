@@ -52,6 +52,31 @@ In `nix-ai`:
    tools now source from `nix-claude-code.lib.permissions`.
 3. Soak for at least two `nix-ai` releases.
 
+## Checkpoint 3.5 — Claude-only mechanisms upstreamed (in progress)
+
+Beyond the structural checkpoints above, individual Claude-only _mechanisms_
+that nix-ai hardcoded are moved upstream as they're identified, each behind
+an override-friendly default (see `docs/settings.md`):
+
+- **Settings schema validation** — `nix-ai/modules/scripts/validate-claude-settings.sh`
+  → `modules/scripts/validate-settings.sh` + `programs.claude.validateSettings.enable`
+  (default `false`; nix-ai flips it on).
+- **Universal `additionalDirectories`** (`~/.claude/`, `/tmp/`) — builder-merged
+  in `modules/settings.nix` rather than an option default, so nix-ai's
+  host-specific entries keep concatenating rather than being replaced.
+- **Sensible `env` defaults** (`MCP_TIMEOUT`, `MCP_TOOL_TIMEOUT`,
+  `ENABLE_TOOL_SEARCH`, `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS`) — same
+  builder-merge pattern, merged _under_ `programs.claude.settings.env` so a
+  per-key override in nix-ai still wins.
+
+**nix-ai follow-up (tracked separately):** once this lands on `nix-claude-code`
+main, bump the pin, set `validateSettings.enable = true`, delete
+`nix-ai/modules/scripts/validate-claude-settings.sh` and its activation
+entry, drop the now-redundant keys from `nix-ai/modules/claude/settings-env.nix`
+(keep the OTEL/telemetry block — that stays personal) and the two universal
+entries from `nix-ai/modules/claude/settings-paths.nix` (keep the
+host-specific ones), then re-run the byte-equivalence check + `darwin-rebuild`.
+
 ## Checkpoint 4 — deletion
 
 Hard-delete from `nix-ai`:
