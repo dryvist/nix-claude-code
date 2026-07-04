@@ -15,5 +15,8 @@ jobs:
   dispatch:
     uses: dryvist/.github/.github/workflows/_dispatch-flake-consumers.yml@main
     # source_input defaults to the calling repo name (nix-claude-code).
-    secrets:
-      GH_APP_PRIVATE_KEY: ${{ secrets.GH_APP_PRIVATE_KEY }}
+    # Pass the app private key via `secrets: inherit` as the reusable workflow
+    # documents; the explicit block form resolved GH_APP_PRIVATE_KEY empty here
+    # and the token step failed with "401 - JSON web token could not be decoded"
+    # (nix-home uses inherit and dispatches successfully).
+    secrets: inherit
