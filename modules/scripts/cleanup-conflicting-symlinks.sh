@@ -1,27 +1,20 @@
 #!/usr/bin/env bash
-# Remove entries that conflict with home-manager's link generation.
-# Handles both directory symlinks (normal case) and real directories
-# (one-time migration from recursive=true to directory symlinks).
+# Remove real directories left over from the one-time migration from
+# recursive=true to directory symlinks. Marketplace directory-symlinks and
+# component dirs are left to home-manager, which relinks idempotently —
+# pre-emptively removing HM-owned symlinks here only churned ~24 marketplace
+# symlinks on every activation.
 # Usage (sourced): . this-script dir1 dir2 ...
 # Requires: DRY_RUN_CMD from activation scope.
 
 # Requires: log_info, log_warn from cleanup-common.sh (sourced by caller)
 
 for dir in "$@"; do
-  if [ -L "$dir" ]; then
-    TARGET=$(readlink "$dir")
-    if [[ $TARGET == /nix/store/* ]]; then
-      if $DRY_RUN_CMD rm "$dir"; then
-        log_info "Removed conflicting directory symlink: $dir"
-        log_info "  (was: $TARGET)"
-      else
-        log_warn "Failed to remove directory symlink: $dir"
-      fi
-    fi
-  elif [ -d "$dir" ]; then
-    # Real directory left over from old recursive=true setup.
-    # Only remove if under the marketplaces path — component dirs (commands, agents,
-    # skills) may contain user-created content and must never be rm -rf'd.
+  # Only genuine real directories (not symlinks-to-dirs). `! -L` keeps
+  # HM-managed marketplace symlinks untouched — home-manager owns them.
+  # Component dirs (commands, agents, skills) hold per-file symlinks and may
+  # contain user-created content, so only the marketplaces path is removed.
+  if [ -d "$dir" ] && [ ! -L "$dir" ]; then
     case "$dir" in
     */.claude/plugins/marketplaces/*)
       if $DRY_RUN_CMD rm -rf "$dir"; then
@@ -29,9 +22,6 @@ for dir in "$@"; do
       else
         log_warn "Failed to remove real directory: $dir"
       fi
-      ;;
-    *)
-      log_warn "Skipping rm -rf for non-marketplace directory: $dir"
       ;;
     esac
   fi
