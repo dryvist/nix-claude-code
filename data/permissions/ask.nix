@@ -109,11 +109,7 @@ _:
     "uvx"
 
     # security (secret-revealing operations)
-    "aws secretsmanager get-secret-value"
-    "doppler secrets get"
     "security unlock-keychain"
-    "vault kv get"
-    "vault read"
 
     # shell (interactive or process-killing)
     "pkill"
@@ -129,7 +125,6 @@ _:
     "launchctl start"
     "launchctl stop"
     "launchctl unload"
-    "log show"
     "mongosh"
     "mysql"
     "obsidian eval"
@@ -141,6 +136,5 @@ _:
     "redis-cli"
     "softwareupdate"
     "ssh-keygen"
-    "system_profiler"
   ];
 }
