@@ -30,6 +30,6 @@ fi
 
 # Ephemeral nix shell keeps this out of the persistent closure; warn but
 # never fail activation on validation errors (including no network).
-nix shell nixpkgs#check-jsonschema -c check-jsonschema --schemafile "$SCHEMA_URL" "$SETTINGS" || {
+nix --extra-experimental-features "nix-command flakes" shell nixpkgs#check-jsonschema -c check-jsonschema --schemafile "$SCHEMA_URL" "$SETTINGS" || {
   echo "Warning: Claude Code settings.json failed schema validation against $SCHEMA_URL" >&2
 }

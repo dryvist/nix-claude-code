@@ -176,7 +176,7 @@ let
       # concatenated with caller-supplied entries. `lib.unique` keeps the
       # merged list clean if a caller redundantly lists one of these too.
       additionalDirectories = lib.unique (
-        universalAdditionalDirectories ++ cfg.settings.additionalDirectories
+        map (lib.removeSuffix "/") (universalAdditionalDirectories ++ cfg.settings.additionalDirectories)
       );
     }
     // lib.optionalAttrs (resolvedDefaultMode != null) {
