@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 with a permanent pre-1.0 cadence — see `release-please-config.json`.
 
+## [0.5.0](https://github.com/dryvist/nix-claude-code/compare/v0.4.3...v0.5.0) (2026-07-05)
+
+
+### Features
+
+* **settings:** curate typed settings.json options, upstream Claude-only defaults ([#77](https://github.com/dryvist/nix-claude-code/issues/77)) ([c63cb9f](https://github.com/dryvist/nix-claude-code/commit/c63cb9fe63dfde747541ff65f7175638fb4806f2))
+
 ## [0.4.3](https://github.com/dryvist/nix-claude-code/compare/v0.4.2...v0.4.3) (2026-07-04)
 
 
