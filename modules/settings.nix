@@ -25,6 +25,15 @@ let
   claudeRegistry = import ../lib/claude-registry.nix { inherit lib; };
   inherit (claudeRegistry) toClaudeMarketplaceFormat;
 
+  # Directories every adopter needs Claude Code to reach without prompting.
+  # `~/.claude/` is Claude's own config/plugin tree; `/tmp/` covers scratch
+  # files agents commonly write. See `additionalDirectories` in the
+  # `permissions` block below for how these merge with caller entries.
+  universalAdditionalDirectories = [
+    "~/.claude/"
+    "/tmp/"
+  ];
+
   # Wrap merge-json-settings.sh in a writeShellApplication so the Nix store
   # copy carries the executable bit, has jq on PATH, and passes shellcheck.
   # Path interpolation (`${./scripts/merge-json-settings.sh}`) preserves the
@@ -36,9 +45,27 @@ let
     text = builtins.readFile ./scripts/merge-json-settings.sh;
   };
 
-  # Build the env attribute (merge user env vars with API_KEY_HELPER if enabled)
+  validateSettings = pkgs.writeShellApplication {
+    name = "validate-claude-settings";
+    text = builtins.readFile ./scripts/validate-settings.sh;
+  };
+
+  # Sensible env defaults every adopter benefits from (MCP timeouts long
+  # enough for slow servers, deferred MCP tool-schema loading, agent teams).
+  # Merged *under* `cfg.settings.env` so overriding any single key wins
+  # per-key rather than requiring the whole map to be redeclared.
+  upstreamEnvDefaults = {
+    MCP_TIMEOUT = "300000";
+    MCP_TOOL_TIMEOUT = "300000";
+    ENABLE_TOOL_SEARCH = "auto:10";
+    CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS = "1";
+  };
+
+  # Build the env attribute (merge upstream defaults, user env vars, and
+  # API_KEY_HELPER if enabled — later entries win on key conflict).
   envAttrs =
-    cfg.settings.env
+    upstreamEnvDefaults
+    // cfg.settings.env
     // lib.optionalAttrs cfg.apiKeyHelper.enable {
       API_KEY_HELPER = "${homeDir}/${cfg.apiKeyHelper.scriptPath}";
     };
@@ -101,12 +128,15 @@ let
     kept;
 
   # Freeform passthrough: keys set on cfg.settings that the builder does not
-  # model explicitly (e.g. statusLine from the statusline submodules) flow
-  # through verbatim. Restores the contract documented in options-settings.nix
-  # after the #39 settings.json rewrite dropped it.
+  # model explicitly (e.g. statusLine from the statusline submodules, or the
+  # curated catalog in options-settings.nix like `outputStyle`) flow through
+  # verbatim. Restores the contract documented in options-settings.nix after
+  # the #39 settings.json rewrite dropped it.
   #
-  # This list must mirror the top-level named options in options-settings.nix.
-  # When adding a new mkOption there, add the key name here too.
+  # This list must mirror the top-level named options in options-settings.nix
+  # that this builder emits *explicitly* below. Curated `nullOr` options are
+  # deliberately NOT added here — they ride this freeform path instead, and
+  # the null-filter is what keeps their default (unset) from ever emitting.
   knownSettingsKeys = [
     "alwaysThinkingEnabled"
     "cleanupPeriodDays"
@@ -118,7 +148,12 @@ let
     "schemaUrl"
     "sandbox"
   ];
-  freeformSettings = builtins.removeAttrs cfg.settings knownSettingsKeys;
+  # Null-valued keys are dropped so a curated option left at its `null`
+  # ("use Claude's upstream default") default is omitted from the generated
+  # settings.json entirely, rather than emitted as an explicit `null`.
+  freeformSettings = lib.filterAttrs (_: v: v != null) (
+    builtins.removeAttrs cfg.settings knownSettingsKeys
+  );
 
   # Build the settings object materialized into ~/.claude/settings.json.
   settings = {
@@ -136,7 +171,13 @@ let
   // {
     permissions = {
       inherit (cfg.settings.permissions) allow deny ask;
-      inherit (cfg.settings) additionalDirectories;
+      # Universal directories every adopter needs Claude Code to reach
+      # without prompting (its own config dir, and /tmp for scratch files),
+      # concatenated with caller-supplied entries. `lib.unique` keeps the
+      # merged list clean if a caller redundantly lists one of these too.
+      additionalDirectories = lib.unique (
+        map (lib.removeSuffix "/") (universalAdditionalDirectories ++ cfg.settings.additionalDirectories)
+      );
     }
     // lib.optionalAttrs (resolvedDefaultMode != null) {
       defaultMode = resolvedDefaultMode;
@@ -223,7 +264,17 @@ in
           "${settingsJson}" \
           "${homeDir}/.claude/settings.json"
       '';
-
+    }
+    // lib.optionalAttrs cfg.validateSettings.enable {
+      # Warn-only schema check; runs after the merge above so it validates
+      # the actual deployed file, not just the Nix-generated overlay.
+      validateClaudeSettings = lib.hm.dag.entryAfter [ "claudeSettingsMerge" ] ''
+        $DRY_RUN_CMD ${validateSettings}/bin/validate-claude-settings \
+          "${homeDir}/.claude/settings.json" \
+          "${cfg.settings.schemaUrl}"
+      '';
+    }
+    // {
       knownMarketplacesMerge = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
         $DRY_RUN_CMD ${mergeJsonSettings}/bin/merge-json-settings \
           "${knownMarketplacesJson}" \

@@ -105,6 +105,9 @@ claude   # ready to go
 Want only permissions, nothing else? Import `homeModules.core` and skip the rest. Want
 the plugins but not the statusline? Import `homeModules.core` + `homeModules.plugins`.
 
+See [docs/settings.md](docs/settings.md) for the full `settings.json` option catalog,
+including the freeform passthrough for keys with no typed option yet.
+
 ### Already on flake-parts?
 
 ```nix
