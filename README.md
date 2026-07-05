@@ -7,7 +7,7 @@
 [![CI](https://github.com/dryvist/nix-claude-code/actions/workflows/ci.yml/badge.svg)](https://github.com/dryvist/nix-claude-code/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Nix Flake](https://img.shields.io/badge/Nix-flake-blue.svg)](https://nixos.org)
-[![home-manager](https://img.shields.io/badge/home--manager-25.11-green.svg)](https://github.com/nix-community/home-manager)
+[![home-manager](https://img.shields.io/badge/home--manager-26.05-green.svg)](https://github.com/nix-community/home-manager)
 [![Anthropic Spec](https://img.shields.io/badge/spec-Anthropic_official-orange.svg)](https://code.claude.com/docs/en/plugins)
 
 A Nix flake that ships [Claude Code](https://www.anthropic.com/claude-code) as composable
@@ -37,9 +37,9 @@ Add `nix-claude-code` to your flake inputs:
 ```nix
 {
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
 
-    home-manager.url = "github:nix-community/home-manager/release-25.11";
+    home-manager.url = "github:nix-community/home-manager/release-26.05";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
     nix-claude-code.url = "github:dryvist/nix-claude-code";
@@ -171,8 +171,8 @@ in
 | Component    | Supported                                                                    |
 | ------------ | ---------------------------------------------------------------------------- |
 | Claude Code  | latest stable (auto-tracked from Anthropic upstreams)                        |
-| nixpkgs      | `nixos-25.11` (override via `inputs.nix-claude-code.inputs.nixpkgs.follows`) |
-| home-manager | `release-25.11`                                                              |
+| nixpkgs      | `nixos-26.05` (override via `inputs.nix-claude-code.inputs.nixpkgs.follows`) |
+| home-manager | `release-26.05`                                                              |
 | Platforms    | `aarch64-darwin`, `x86_64-darwin`, `aarch64-linux`, `x86_64-linux`           |
 | Plugin spec  | [Anthropic official](https://code.claude.com/docs/en/plugins-reference)      |
 

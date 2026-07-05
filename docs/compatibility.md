@@ -5,8 +5,8 @@
 | Component       | Tested / required                                                  |
 | --------------- | ------------------------------------------------------------------ |
 | Claude Code     | latest stable (Anthropic upstreams float; no version pin)          |
-| nixpkgs         | `nixos-25.11`                                                      |
-| home-manager    | `release-25.11`                                                    |
+| nixpkgs         | `nixos-26.05`                                                      |
+| home-manager    | `release-26.05`                                                    |
 | `flake-parts`   | latest                                                             |
 | `treefmt-nix`   | latest                                                             |
 | `git-hooks.nix` | latest                                                             |
