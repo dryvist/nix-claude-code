@@ -192,6 +192,33 @@
           '';
         };
 
+        # Not a settings.json key (Claude Code exposes no such key — see
+        # https://github.com/anthropics/claude-code/issues/46695). Rides the
+        # curated catalog for discoverability/validation, but is consumed by
+        # ./settings.nix into the CLAUDE_AUTOCOMPACT_PCT_OVERRIDE env var
+        # rather than emitted as a top-level JSON key (see knownSettingsKeys
+        # in ./settings.nix). Deliberately defaults to a repo opinion (60)
+        # rather than null/upstream — context windows are trending toward 1M
+        # tokens, and Claude's own default (~90%+ of window) leaves too
+        # little headroom for the summarization pass itself at that scale.
+        autoCompactThresholdPercent = lib.mkOption {
+          type = lib.types.nullOr lib.types.int;
+          default = 60;
+          example = 60;
+          description = ''
+            Percent of the context window used at which auto-compaction
+            fires. Lower = compact sooner with more headroom for the
+            summarization pass; at 60% a 1M-token window still leaves ~600K
+            tokens of working space.
+
+            Emitted as the `CLAUDE_AUTOCOMPACT_PCT_OVERRIDE` environment
+            variable in the `env` block — setting
+            `env.CLAUDE_AUTOCOMPACT_PCT_OVERRIDE` directly overrides this
+            option. `null` = omit entirely (Claude's upstream default,
+            ~90%+). Only applies when `autoCompactEnabled` is not `false`.
+          '';
+        };
+
         outputStyle = lib.mkOption {
           type = lib.types.nullOr lib.types.str;
           default = null;
