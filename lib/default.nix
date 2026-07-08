@@ -10,6 +10,7 @@ let
   permissions = import ./permissions.nix { inherit lib; };
   mkDefaultPermissions = import ./mk-default-permissions.nix { inherit lib; };
   claudeRegistry = import ./claude-registry.nix { inherit lib; };
+  hookEventMapping = import ./hook-event-mapping.nix;
 in
 {
   inherit
@@ -23,6 +24,7 @@ in
     permissions
     mkDefaultPermissions
     claudeRegistry
+    hookEventMapping
     ;
 
   wrapCommandsAsSkills = { pkgs }: import ./wrap-commands-as-skills.nix { inherit lib pkgs; };
