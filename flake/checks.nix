@@ -81,6 +81,19 @@
           package = null; # claude-code is unfree; skip the binary install.
         };
       };
+
+      # Regression guard for the typed-hooks → settings.json registration
+      # bug: writing ~/.claude/hooks/session-start.sh alone does nothing,
+      # since Claude Code only invokes hooks registered under settings.json's
+      # `hooks` key. Asserts refreshMarketplaces actually produces that
+      # registration, not just the script file.
+      hooksRegistrationActivation = mkActivation {
+        programs.claude = {
+          enable = true;
+          package = null;
+          hooks.refreshMarketplaces = true;
+        };
+      };
     in
     {
       checks = {
@@ -104,6 +117,23 @@
 
         # Eval-time regression guard for the `programs.claude` module schema.
         programs-claude-eval = programsClaudeEval;
+
+        # Asserts `hooks.refreshMarketplaces` actually registers
+        # ~/.claude/hooks/session-start.sh under settings.json's `hooks` key
+        # — the whole point of the typed hook, not just the file existing.
+        hooks-registration =
+          pkgs.runCommand "hooks-registration-test" { nativeBuildInputs = [ pkgs.jq ]; }
+            ''
+              set -euo pipefail
+              settings_json=$(grep -o '/nix/store/[a-z0-9]*-claude-settings\.json' \
+                ${hooksRegistrationActivation}/activate | head -1)
+              command=$(jq -r '.hooks.SessionStart[0].hooks[0].command' "$settings_json")
+              [[ "$command" == *".claude/hooks/session-start.sh" ]] || {
+                echo "expected hooks.SessionStart to register session-start.sh, got: $command" >&2
+                exit 1
+              }
+              echo ok > $out
+            '';
 
         wrap-commands-as-skills = pkgs.runCommand "wrap-commands-as-skills-test" { } ''
           set -euo pipefail

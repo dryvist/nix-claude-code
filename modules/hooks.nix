@@ -10,15 +10,7 @@
 let
   cfg = config.programs.claude;
 
-  hookMapping = {
-    preToolUse = "pre-tool-use.sh";
-    postToolUse = "post-tool-use.sh";
-    userPromptSubmit = "user-prompt-submit.sh";
-    stop = "stop.sh";
-    subagentStop = "subagent-stop.sh";
-    sessionStart = "session-start.sh";
-    sessionEnd = "session-end.sh";
-  };
+  hookEventMapping = import ../lib/hook-event-mapping.nix;
 
   mkHookFile =
     _hookName: fileName: hookValue:
@@ -40,8 +32,9 @@ let
       };
 
   allHookFiles = lib.mapAttrs' (
-    hookName: fileName: lib.nameValuePair hookName (mkHookFile hookName fileName cfg.hooks.${hookName})
-  ) hookMapping;
+    hookName: mapping:
+    lib.nameValuePair hookName (mkHookFile hookName mapping.fileName cfg.hooks.${hookName})
+  ) hookEventMapping;
 
   # lib.mkMerge is for option values, not attrsets; flatten manually.
   hookFiles = lib.foldl' (a: b: a // b) { } (builtins.attrValues allHookFiles);

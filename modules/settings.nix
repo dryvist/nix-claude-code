@@ -24,6 +24,31 @@ let
 
   claudeRegistry = import ../lib/claude-registry.nix { inherit lib; };
   inherit (claudeRegistry) toClaudeMarketplaceFormat;
+  hookEventMapping = import ../lib/hook-event-mapping.nix;
+
+  # Register each configured typed hook (modules/hooks.nix writes the
+  # script file; this makes Claude Code actually invoke it) under its
+  # Claude Code event name. `cfg.settings.hooks` (freeform passthrough)
+  # is merged on top so a caller-supplied entry for the same event wins.
+  typedHooksAttrs = lib.mapAttrs' (
+    _hookName: mapping:
+    lib.nameValuePair mapping.claudeEvent [
+      {
+        matcher = "";
+        hooks = [
+          {
+            type = "command";
+            command = "${homeDir}/.claude/hooks/${mapping.fileName}";
+          }
+        ];
+      }
+    ]
+  ) (lib.filterAttrs (hookName: _: cfg.hooks.${hookName} != null) hookEventMapping);
+
+  # `hooks` is freeform (no typed option), so an unset value must be
+  # accessed with `or { }` — the submodule attrset only materializes keys
+  # a caller actually set.
+  hooksAttrs = typedHooksAttrs // (cfg.settings.hooks or { });
 
   # Directories every adopter needs Claude Code to reach without prompting.
   # `~/.claude/` is Claude's own config/plugin tree; `/tmp/` covers scratch
@@ -151,6 +176,9 @@ let
   # a curated `nullOr` option, because it has no settings.json key of its
   # own — it's consumed above into `autoCompactEnv`/`envAttrs` instead, so
   # letting it ride freeform would leak a bogus top-level JSON key.
+  # `hooks` is also listed here (unlike the freeform-only convention its
+  # comment above describes) because it needs the typed-hooks merge above,
+  # not a verbatim passthrough — see `hooksAttrs`.
   knownSettingsKeys = [
     "alwaysThinkingEnabled"
     "cleanupPeriodDays"
@@ -162,6 +190,7 @@ let
     "schemaUrl"
     "sandbox"
     "autoCompactThresholdPercent"
+    "hooks"
   ];
   # Null-valued keys are dropped so a curated option left at its `null`
   # ("use Claude's upstream default") default is omitted from the generated
@@ -183,6 +212,7 @@ let
   // lib.optionalAttrs (autoModeAttrs != { }) { autoMode = autoModeAttrs; }
   // lib.optionalAttrs (cfg.effortLevel != null) { inherit (cfg) effortLevel; }
   // lib.optionalAttrs (cfg.attribution != { }) { inherit (cfg) attribution; }
+  // lib.optionalAttrs (hooksAttrs != { }) { hooks = hooksAttrs; }
   // {
     permissions = {
       inherit (cfg.settings.permissions) allow deny ask;

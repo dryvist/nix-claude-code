@@ -77,6 +77,15 @@ letting callers add to or override individual entries:
   `autoCompactThresholdPercent` above), merged _under_
   `programs.claude.settings.env` — set any of these keys yourself to override
   just that one.
+- **`hooks`** registers each configured `programs.claude.hooks.<event>`
+  (`preToolUse`, `sessionStart`, etc. — see `modules/options-events.nix`)
+  under its Claude Code event name (`PreToolUse`, `SessionStart`, ...),
+  pointing at the script `modules/hooks.nix` writes to
+  `~/.claude/hooks/<event>.sh`. Writing the script alone does nothing —
+  Claude Code only runs hooks registered in `settings.json`, and has no
+  directory-convention auto-discovery — so this registration is required,
+  not cosmetic. Merged _under_ `programs.claude.settings.hooks`, so a
+  caller-supplied entry for the same event wins.
 
 ## Schema validation (opt-in)
 
