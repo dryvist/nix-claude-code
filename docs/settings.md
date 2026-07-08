@@ -20,13 +20,23 @@
 
 ## Typed, non-default settings
 
-These two ship with a non-`null` default because the upstream default is
+These ship with a non-`null` default because the upstream default is
 either surprising or actively unhelpful:
 
-| Option                                            | Default | Why it's set                                                                        |
-| ------------------------------------------------- | ------- | ----------------------------------------------------------------------------------- |
-| `programs.claude.settings.askUserQuestionTimeout` | `"5m"`  | Real runtime default is `"never"` despite the docs — blocks a session indefinitely. |
-| `programs.claude.settings.useAutoModeDuringPlan`  | `true`  | Runs plan mode through the cheaper/faster auto-mode classifier, not its own gating. |
+| Option                                                 | Default | Why it's set                                                                        |
+| ------------------------------------------------------ | ------- | ----------------------------------------------------------------------------------- |
+| `programs.claude.settings.askUserQuestionTimeout`      | `"5m"`  | Real runtime default is `"never"` despite the docs — blocks a session indefinitely. |
+| `programs.claude.settings.useAutoModeDuringPlan`       | `true`  | Runs plan mode through the cheaper/faster auto-mode classifier, not its own gating. |
+| `programs.claude.settings.autoCompactThresholdPercent` | `60`    | Compact well before the hard limit — see below for the full rationale and override. |
+
+`autoCompactThresholdPercent` isn't a real settings.json key — Claude Code has
+none for this (context windows are trending toward 1M tokens, and Claude's own
+default of ~90%+ used leaves too little headroom for the summarization pass
+itself at that scale). It's emitted as the `CLAUDE_AUTOCOMPACT_PCT_OVERRIDE`
+env var instead (see "Builder-merged defaults" below). Set it to `null` to
+omit and fall back to Claude's own default, or set
+`programs.claude.settings.env.CLAUDE_AUTOCOMPACT_PCT_OVERRIDE` directly to
+override just the env var.
 
 `programs.claude.defaultMode` (`"auto"`, in `modules/core.nix`) and
 `programs.claude.autoUpdatesChannel` (`"latest"`, in
@@ -62,9 +72,11 @@ letting callers add to or override individual entries:
   `/tmp/`, concatenated with `programs.claude.settings.additionalDirectories`
   (deduplicated).
 - **`env`** always includes `MCP_TIMEOUT`, `MCP_TOOL_TIMEOUT`,
-  `ENABLE_TOOL_SEARCH`, and `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS`, merged
-  _under_ `programs.claude.settings.env` — set any of these keys yourself to
-  override just that one.
+  `ENABLE_TOOL_SEARCH`, `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS`, and
+  `CLAUDE_AUTOCOMPACT_PCT_OVERRIDE` (derived from
+  `autoCompactThresholdPercent` above), merged _under_
+  `programs.claude.settings.env` — set any of these keys yourself to override
+  just that one.
 
 ## Schema validation (opt-in)
 

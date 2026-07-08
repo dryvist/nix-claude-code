@@ -61,10 +61,20 @@ let
     CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS = "1";
   };
 
-  # Build the env attribute (merge upstream defaults, user env vars, and
-  # API_KEY_HELPER if enabled — later entries win on key conflict).
+  # autoCompactThresholdPercent is a curated option (options-settings.nix),
+  # not a real settings.json key — Claude Code only exposes this via the
+  # CLAUDE_AUTOCOMPACT_PCT_OVERRIDE env var. Merged before cfg.settings.env
+  # so a caller-supplied raw env entry for the same var still wins.
+  autoCompactEnv = lib.optionalAttrs (cfg.settings.autoCompactThresholdPercent != null) {
+    CLAUDE_AUTOCOMPACT_PCT_OVERRIDE = toString cfg.settings.autoCompactThresholdPercent;
+  };
+
+  # Build the env attribute (merge upstream defaults, the auto-compact
+  # threshold, user env vars, and API_KEY_HELPER if enabled — later entries
+  # win on key conflict).
   envAttrs =
     upstreamEnvDefaults
+    // autoCompactEnv
     // cfg.settings.env
     // lib.optionalAttrs cfg.apiKeyHelper.enable {
       API_KEY_HELPER = "${homeDir}/${cfg.apiKeyHelper.scriptPath}";
@@ -137,6 +147,10 @@ let
   # that this builder emits *explicitly* below. Curated `nullOr` options are
   # deliberately NOT added here — they ride this freeform path instead, and
   # the null-filter is what keeps their default (unset) from ever emitting.
+  # Exception: `autoCompactThresholdPercent` IS listed here even though it's
+  # a curated `nullOr` option, because it has no settings.json key of its
+  # own — it's consumed above into `autoCompactEnv`/`envAttrs` instead, so
+  # letting it ride freeform would leak a bogus top-level JSON key.
   knownSettingsKeys = [
     "alwaysThinkingEnabled"
     "cleanupPeriodDays"
@@ -147,6 +161,7 @@ let
     "env"
     "schemaUrl"
     "sandbox"
+    "autoCompactThresholdPercent"
   ];
   # Null-valued keys are dropped so a curated option left at its `null`
   # ("use Claude's upstream default") default is omitted from the generated
@@ -293,6 +308,14 @@ in
           Environment variable names must match POSIX convention: ^[A-Z_][A-Z0-9_]*$
           (uppercase letters, digits, and underscores only; must start with letter or underscore)
         '';
+      }
+      {
+        assertion =
+          cfg.settings.autoCompactThresholdPercent == null
+          || (
+            cfg.settings.autoCompactThresholdPercent >= 1 && cfg.settings.autoCompactThresholdPercent <= 100
+          );
+        message = "programs.claude.settings.autoCompactThresholdPercent must be between 1 and 100 (percent of context window).";
       }
     ];
   };
