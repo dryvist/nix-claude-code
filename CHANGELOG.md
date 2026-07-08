@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 with a permanent pre-1.0 cadence — see `release-please-config.json`.
 
+## [0.6.1](https://github.com/dryvist/nix-claude-code/compare/v0.6.0...v0.6.1) (2026-07-08)
+
+
+### Bug Fixes
+
+* **hooks:** register typed hooks in settings.json so Claude Code actually runs them ([cb44eef](https://github.com/dryvist/nix-claude-code/commit/cb44eefa1294b9494b7a2835ef3cb3819e088682))
+
 ## [0.6.0](https://github.com/dryvist/nix-claude-code/compare/v0.5.0...v0.6.0) (2026-07-08)
 
 
