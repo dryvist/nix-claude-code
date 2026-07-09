@@ -177,6 +177,15 @@
           '';
         };
 
+        advisorModel = lib.mkOption {
+          type = lib.types.nullOr lib.types.str;
+          default = null;
+          description = ''
+            Configure a persistent default advisor model. null = upstream
+            default (unset).
+          '';
+        };
+
         # Curated catalog of documented settings.json keys with no typed
         # home elsewhere in this module. All default to `null` (omitted from
         # the generated settings.json — see `freeformSettings` in
