@@ -180,6 +180,7 @@
         advisorModel = lib.mkOption {
           type = lib.types.nullOr lib.types.str;
           default = null;
+          example = "opus";
           description = ''
             Configure a persistent default advisor model. null = upstream
             default (unset).
