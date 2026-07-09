@@ -1,15 +1,4 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["config:recommended", ":dependencyDashboard", "local>dryvist/.github"],
-  "nix": {
-    "enabled": true
-  },
-  "packageRules": [
-    {
-      "matchManagers": ["nix"],
-      "matchUpdateTypes": ["digest"],
-      "groupName": "flake inputs",
-      "schedule": ["before 9am on monday"]
-    }
-  ]
+  "extends": ["local>dryvist/.github:renovate-nix"]
 }
