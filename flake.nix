@@ -1,4 +1,5 @@
 {
+  # ci: verify cache-free nix validate (dryvist/.github#69)
   description = "Declarative Claude Code in Nix — plugins, marketplaces, skills, hooks, MCP, and permissions as composable home-manager modules. Reproducible on macOS and Linux.";
 
   inputs = {
