@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # Refresh marketplace indexes after Nix rebuilds change store paths.
 # Consumes the .nix-refresh-needed marker written by verify-cache-integrity.sh.
-# Best-effort: failures rewrite the marker for next-session retry.
+# Best-effort: an update failure OR an incomplete reinstall rewrites the marker
+# for next-session retry.
 
 set -euo pipefail
 
@@ -33,6 +34,22 @@ while IFS='=' read -r key value; do
         claude plugin install "$plugin_id" >/dev/null 2>&1 || true
       done < <(claude plugin list --json 2>/dev/null |
         jq -r --arg mp "$mp" '.[]? | select(.enabled and (.id | type == "string" and endswith("@" + $mp))) | [.id, .installPath] | @tsv' 2>/dev/null)
+
+      # Re-scan after the reinstall attempt: if any enabled plugin for this
+      # marketplace still points at a missing installPath, the reinstall did not
+      # take (transient install failure). Re-queue the marketplace so the next
+      # session retries — otherwise the marker is cleared below and the plugin
+      # stays broken with no retry.
+      # ponytail: unbounded retry if a plugin is permanently removed upstream;
+      # acceptable — best-effort, next-session cadence, same ceiling the existing
+      # marketplace-update-failure path already accepts.
+      still_missing=$(claude plugin list --json 2>/dev/null |
+        jq -r --arg mp "$mp" '.[]? | select(.enabled and (.id | type == "string" and endswith("@" + $mp))) | .installPath // empty' 2>/dev/null |
+        while IFS= read -r p; do [[ -n $p && ! -e $p ]] && echo x || :; done | wc -l | tr -d ' ')
+      if [[ ${still_missing:-0} -gt 0 ]]; then
+        log_info "Reinstall incomplete: $mp ($still_missing plugin(s) unresolved) — will retry next session"
+        echo "marketplace=$mp" >>"$failures_tmp"
+      fi
     fi
   else
     log_info "Failed: $mp (will retry next session)"
