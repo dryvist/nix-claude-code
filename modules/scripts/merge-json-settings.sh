@@ -28,9 +28,13 @@ mkdir -p "$TARGET_DIR"
 if [[ -f $TARGET ]] && [[ ! -L $TARGET ]]; then
   # File exists and is a real file (not symlink) - merge
   # Strip Nix-authoritative sections from existing config before merge.
-  # This prevents stale entries (e.g. removed MCP servers) from persisting.
-  # del(.mcpServers) is a no-op on files without that key (safe for Claude settings.json).
-  if ! STRIPPED=$(jq 'del(.mcpServers)' "$TARGET" 2>/dev/null); then
+  # This prevents stale entries (e.g. removed MCP servers, or a marketplace
+  # whose source shape changed) from persisting. Both keys are regenerated in
+  # full from Nix every activation, so a deep merge would only fossilize stale
+  # sub-keys — e.g. a leftover `repo` on a directory source, which fails the
+  # settings schema's additionalProperties:false. The del()s are no-ops on
+  # files without those keys (safe for Claude settings.json).
+  if ! STRIPPED=$(jq 'del(.mcpServers) | del(.extraKnownMarketplaces)' "$TARGET" 2>/dev/null); then
     echo "$(date '+%Y-%m-%d %H:%M:%S') [WARN] Failed to strip Nix-managed keys from existing ${TARGET_NAME}, using existing file contents as-is" >&2
     if ! STRIPPED=$(cat "$TARGET"); then
       echo "$(date '+%Y-%m-%d %H:%M:%S') [WARN] Failed to read existing ${TARGET_NAME}, using Nix config" >&2
