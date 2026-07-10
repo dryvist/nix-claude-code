@@ -43,11 +43,18 @@ while IFS='=' read -r key value; do
       # ponytail: unbounded retry if a plugin is permanently removed upstream;
       # acceptable — best-effort, next-session cadence, same ceiling the existing
       # marketplace-update-failure path already accepts.
-      still_missing=$(claude plugin list --json 2>/dev/null |
+      # Wrap the substitution in `if` so a transient `claude`/`jq` failure is
+      # caught (and re-queued) instead of tripping `set -e` and aborting the
+      # whole loop before the remaining marketplaces are processed.
+      if still_missing=$(claude plugin list --json 2>/dev/null |
         jq -r --arg mp "$mp" '.[]? | select(.enabled and (.id | type == "string" and endswith("@" + $mp))) | .installPath // empty' 2>/dev/null |
-        while IFS= read -r p; do [[ -n $p && ! -e $p ]] && echo x || :; done | wc -l | tr -d ' ')
-      if [[ ${still_missing:-0} -gt 0 ]]; then
-        log_info "Reinstall incomplete: $mp ($still_missing plugin(s) unresolved) — will retry next session"
+        while IFS= read -r p; do [[ -n $p && ! -e $p ]] && echo x || :; done | wc -l | tr -d ' '); then
+        if [[ ${still_missing:-0} -gt 0 ]]; then
+          log_info "Reinstall incomplete: $mp ($still_missing plugin(s) unresolved) — will retry next session"
+          echo "marketplace=$mp" >>"$failures_tmp"
+        fi
+      else
+        log_info "Re-scan failed for $mp — will retry next session"
         echo "marketplace=$mp" >>"$failures_tmp"
       fi
     fi
