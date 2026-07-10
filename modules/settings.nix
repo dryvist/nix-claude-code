@@ -1,8 +1,9 @@
 # Claude Code Settings (activation-time merge)
 #
-# Manages ~/.claude/settings.json and ~/.claude.json via activation-time merge
-# (not home.file symlinks). Merges plugin marketplaces, permissions, hooks,
-# MCP servers, etc.
+# Manages ~/.claude/settings.json via activation-time merge (not home.file
+# symlinks). Merges plugin marketplaces, permissions, hooks, etc.
+# The ~/.claude.json and known_marketplaces.json overlays live in
+# `claude-json.nix`.
 #
 # Uses `toClaudeMarketplaceFormat` from `lib/claude-registry.nix` as the
 # single source of truth for marketplace format transformation.
@@ -108,38 +109,6 @@ let
   # Validate POSIX environment variable names: ^[A-Z_][A-Z0-9_]*$
   isValidEnvVarName = name: builtins.match "^[A-Z_][A-Z0-9_]*$" name != null;
   invalidEnvVars = lib.filterAttrs (name: _: !isValidEnvVarName name) envAttrs;
-
-  # Build Claude Code JSON for enabled (non-disabled) MCP servers.
-  activeMcpServers = lib.filterAttrs (_: v: !v.disabled) cfg.mcpServers;
-  mcpServersAttrs = lib.mapAttrs (
-    _: v:
-    if v.type == "stdio" then
-      { inherit (v) command args; } // lib.optionalAttrs (v.env != { }) { inherit (v) env; }
-    else
-      { inherit (v) type url; } // lib.optionalAttrs (v.headers != { }) { inherit (v) headers; }
-  ) activeMcpServers;
-
-  # Static JSON overlay merged into ~/.claude.json at activation time.
-  claudeJsonOverlay = {
-    mcpServers = mcpServersAttrs;
-  }
-  // lib.optionalAttrs (cfg.remoteControlAtStartup != null) {
-    inherit (cfg) remoteControlAtStartup;
-  }
-  // lib.optionalAttrs (cfg.autoUpdates != null) {
-    inherit (cfg) autoUpdates;
-  };
-
-  claudeJsonOverlayFile =
-    pkgs.runCommand "claude-json-overlay.json"
-      {
-        nativeBuildInputs = [ pkgs.jq ];
-        passAsFile = [ "json" ];
-        json = builtins.toJSON claudeJsonOverlay;
-      }
-      ''
-        jq '.' "$jsonPath" > $out
-      '';
 
   # `defaultMode` precedence (conflict resolution #4):
   #   1. cfg.settings.permissions.defaultMode (if non-null)  → wins
@@ -251,34 +220,6 @@ let
   }
   // freeformSettings;
 
-  # All Nix-managed marketplaces need entries in known_marketplaces.json
-  # so Claude Code reads them from the Nix-managed symlink instead of
-  # fetching them from GitHub at runtime.
-  nixManagedMarketplaces = lib.filterAttrs (_: m: m.flakeInput != null) cfg.plugins.marketplaces;
-  knownMarketplacesOverlay = lib.mapAttrs (
-    name: m:
-    let
-      formatted = toClaudeMarketplaceFormat name m;
-      marketplaceName = lib.last (lib.splitString "/" name);
-    in
-    {
-      inherit (formatted) source;
-      installLocation = "${homeDir}/.claude/plugins/marketplaces/${marketplaceName}";
-      lastUpdated = "1970-01-01T00:00:00.000Z";
-    }
-  ) nixManagedMarketplaces;
-
-  knownMarketplacesJson =
-    pkgs.runCommand "known-marketplaces-overlay.json"
-      {
-        nativeBuildInputs = [ pkgs.jq ];
-        passAsFile = [ "json" ];
-        json = builtins.toJSON knownMarketplacesOverlay;
-      }
-      ''
-        jq '.' "$jsonPath" > $out
-      '';
-
   settingsJson =
     pkgs.runCommand "claude-settings.json"
       {
@@ -292,18 +233,7 @@ let
 in
 {
   config = lib.mkIf cfg.enable {
-    # Merge runtime keys into ~/.claude.json (global config) at activation time.
-    # These keys live in the global config file (not settings.json), so home.file
-    # cannot be used directly — the file is runtime-mutable. One unified script
-    # deep-merges all keys.
     home.activation = {
-      claudeJsonMerge = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-        export PATH="${pkgs.jq}/bin:$PATH"
-        OVERLAY_FILE="${claudeJsonOverlayFile}"
-        TRUSTED_PROJECT_DIRS=${lib.escapeShellArg (builtins.toJSON cfg.trustedProjectDirs)}
-        . ${./scripts/claude-json-merge.sh}
-      '';
-
       claudeSettingsMerge = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
         $DRY_RUN_CMD ${mergeJsonSettings}/bin/merge-json-settings \
           "${settingsJson}" \
@@ -317,13 +247,6 @@ in
         $DRY_RUN_CMD ${validateSettings}/bin/validate-claude-settings \
           "${homeDir}/.claude/settings.json" \
           "${cfg.settings.schemaUrl}"
-      '';
-    }
-    // {
-      knownMarketplacesMerge = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-        $DRY_RUN_CMD ${mergeJsonSettings}/bin/merge-json-settings \
-          "${knownMarketplacesJson}" \
-          "${homeDir}/.claude/plugins/known_marketplaces.json"
       '';
     };
 
