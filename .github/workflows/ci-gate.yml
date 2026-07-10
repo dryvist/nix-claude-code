@@ -1,0 +1,40 @@
+# CI Gate — thin wrapper over the dryvist org reusable workflow
+#
+# Delegates the standard checks to the org orchestrator
+# `dryvist/.github/.github/workflows/_ci-gate.yml@main`; its `Merge Gate`
+# summary job always reports, making it safe to require in rulesets.
+
+name: CI Gate
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  # Job id `gate` is the org-canonical caller shape: the required status
+  # check context is `gate / Merge Gate` on every consumer.
+  gate:
+    permissions:
+      contents: read
+      pull-requests: read
+      # The org gate's queue watchdog cancels stuck sibling jobs via the
+      # Actions API; a called workflow can never exceed the caller's grant,
+      # so `actions: write` must be granted here or the run fails at graph
+      # validation (startup_failure).
+      actions: write
+    uses: dryvist/.github/.github/workflows/_ci-gate.yml@main
+    with:
+      markdown_lint: true
+      file_size: true
+      filters: |
+        markdown:
+          - '**.md'
+          - '.markdownlint*'
