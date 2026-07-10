@@ -21,6 +21,7 @@
     ./registry.nix
     ./orphan-cleanup.nix
     ./settings.nix
+    ./claude-json.nix
     ./api-key-helper.nix
     ./statusline
 

@@ -51,6 +51,7 @@ in
     registry = wrap ../modules/registry.nix;
     orphan-cleanup = wrap ../modules/orphan-cleanup.nix;
     settings = wrap ../modules/settings.nix;
+    claude-json = wrap ../modules/claude-json.nix;
     api-key-helper = wrap ../modules/api-key-helper.nix;
   };
 
