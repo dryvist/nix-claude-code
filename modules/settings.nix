@@ -22,7 +22,7 @@ let
   cfg = config.programs.claude;
   homeDir = config.home.homeDirectory;
 
-  claudeRegistry = import ../lib/claude-registry.nix { inherit lib; };
+  claudeRegistry = import ../lib/claude-registry.nix { inherit lib homeDir; };
   inherit (claudeRegistry) toClaudeMarketplaceFormat;
   hookEventMapping = import ../lib/hook-event-mapping.nix;
 

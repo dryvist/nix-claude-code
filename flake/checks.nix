@@ -19,6 +19,7 @@
         discoverAgents = import ../checks/lib/discover-agents.nix { inherit lib; };
         discoverHooks = import ../checks/lib/discover-hooks.nix { inherit lib; };
         parseMarketplace = import ../checks/lib/parse-marketplace.nix { inherit lib; };
+        claudeRegistry = import ../checks/lib/claude-registry.nix { inherit lib; };
         parsePlugin = import ../checks/lib/parse-plugin.nix { inherit lib; };
         toSettingsJson = import ../checks/lib/to-settings-json.nix { inherit lib; };
       };

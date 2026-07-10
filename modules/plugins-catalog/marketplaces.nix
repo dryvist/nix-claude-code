@@ -13,8 +13,11 @@
 # DO NOT use arbitrary keys like "skills" or GitHub paths like "anthropics/skills"
 #
 # Required fields per marketplace:
-#   - source.type: "github" (lowercase, always)
-#   - source.url: "owner/repo" format (GitHub path)
+#   - source.type: "github" for normal repos; "local" for synthetic
+#     marketplaces whose upstream has no marketplace.json (Nix generates it) —
+#     a "local" type emits a Claude "directory" source pinned to the local
+#     Nix-managed dir instead of a git-cloned "github" source.
+#   - source.url: "owner/repo" format (GitHub path; upstream provenance for "local")
 #
 # IMPORTANT: Marketplace URL Format and Plugin References
 # ========================================================================
@@ -209,9 +212,15 @@ let
     # flakeInput for these is overridden by callers with a derivation from
     # marketplace-overrides.nix that wraps the raw skills into a proper
     # .claude-plugin directory layout.
+    #
+    # source.type = "local": these upstream repos have NO .claude-plugin/marketplace.json
+    # (Nix synthesizes it), so registering them as "github" makes Claude Code
+    # git-clone the raw upstream over the Nix-managed dir and break the plugin.
+    # A "local"/"directory" source pins Claude to the local Nix content instead.
+    # `url` stays as the upstream provenance (unused for a directory source).
     "browser-use-skills" = {
       source = {
-        type = "github";
+        type = "local";
         url = "browser-use/browser-use";
       };
     };
@@ -220,7 +229,7 @@ let
     # Bare .claude/skills/ layout; wrapped into synthetic marketplace.
     "vct-cribl-pack-validator-skills" = {
       source = {
-        type = "github";
+        type = "local";
         url = "VisiCore/vct-cribl-pack-validator";
       };
     };
@@ -231,7 +240,7 @@ let
     # marketplace-overrides.nix). Patterns become individual Claude Code skills.
     "fabric-patterns" = {
       source = {
-        type = "github";
+        type = "local";
         url = "danielmiessler/fabric";
       };
     };

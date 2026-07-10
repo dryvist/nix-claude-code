@@ -19,9 +19,13 @@
 # Parameters:
 #   lib: nixpkgs lib (required)
 #   lastUpdated: ISO 8601 timestamp (default: epoch, caller should provide current time)
+#   homeDir: absolute home path used to build `directory`-source paths for
+#     local (synthetic) marketplaces. Default is a placeholder; the deployed
+#     module (modules/settings.nix) imports with the real home directory.
 {
   lib,
   lastUpdated ? "1970-01-01T00:00:00.000Z",
+  homeDir ? "/home/user",
 }:
 
 let
@@ -51,25 +55,52 @@ let
   #   - Both type="github" and type="git" become source="github" in output
   #   - The URL field becomes the repo value (the actual GitHub path for fetching)
   #   - The KEY can differ from URL for display purposes (e.g., "wakatime" vs "wakatime/claude-code-wakatime")
-  #   - Non-GitHub types keep their source type and url unchanged
+  #   - type "local"/"directory" become a "directory" source pointing at the
+  #     local Nix-managed marketplace dir (synthetic marketplaces — see
+  #     modules/plugins-catalog/marketplaces.nix). This keeps Claude Code from
+  #     git-cloning the upstream repo over Nix-generated content.
+  #   - Any other type keeps its source type and url unchanged
   #
   # Usage: Import this function in any module that needs to transform marketplaces:
-  #   claudeRegistry = import ../lib/claude-registry.nix { inherit lib; };
+  #   claudeRegistry = import ../lib/claude-registry.nix { inherit lib homeDir; };
   #   transformed = claudeRegistry.toClaudeMarketplaceFormat name marketplace;
   #
-  toClaudeMarketplaceFormat = _name: m: {
-    source =
-      if m.source.type == "github" || m.source.type == "git" then
-        {
-          source = "github";
-          repo = m.source.url; # Use URL for GitHub path (allows key to differ for display)
-        }
-      else
-        {
-          source = m.source.type;
-          inherit (m.source) url;
-        };
-  };
+  getMarketplaceName = name: lib.last (lib.splitString "/" name);
+  toClaudeMarketplaceFormat =
+    name: m:
+    let
+      # github/git: Claude fetches from the upstream repo.
+      githubSource = {
+        source = "github";
+        repo = m.source.url; # URL is the GitHub path (key may differ for display)
+      };
+      # local/directory: synthetic marketplace whose upstream repo has no
+      # marketplace.json (Nix generates it). Point Claude at the local
+      # Nix-managed dir so it reads that content instead of git-cloning the
+      # upstream repo over it. `path` mirrors the plugins.nix symlink location.
+      directorySource = {
+        source = "directory";
+        path = lib.concatStringsSep "/" [
+          homeDir
+          ".claude/plugins/marketplaces"
+          (getMarketplaceName name)
+        ];
+      };
+      # Fallback: pass the declared type/url straight through.
+      passthroughSource = {
+        source = m.source.type;
+        inherit (m.source) url;
+      };
+      byType = {
+        github = githubSource;
+        git = githubSource;
+        local = directorySource;
+        directory = directorySource;
+      };
+    in
+    {
+      source = byType.${m.source.type} or passthroughSource;
+    };
 in
 {
   # Export the transformation function for use by other modules
