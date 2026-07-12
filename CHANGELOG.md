@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 with a permanent pre-1.0 cadence — see `release-please-config.json`.
 
+## [0.7.3](https://github.com/dryvist/nix-claude-code/compare/v0.7.2...v0.7.3) (2026-07-12)
+
+
+### Bug Fixes
+
+* **merge-settings:** strip enabledPlugins before deep merge ([#103](https://github.com/dryvist/nix-claude-code/issues/103)) ([c3375d3](https://github.com/dryvist/nix-claude-code/commit/c3375d3d94e2785eb86a8d34d87e06a4b5064524))
+* **merge-settings:** strip extraKnownMarketplaces before deep merge ([#101](https://github.com/dryvist/nix-claude-code/issues/101)) ([d63a213](https://github.com/dryvist/nix-claude-code/commit/d63a213af4f2c90ce3d576a2aab0c3a3ff2e4b12))
+
 ## [0.7.2](https://github.com/dryvist/nix-claude-code/compare/v0.7.1...v0.7.2) (2026-07-10)
 
 
