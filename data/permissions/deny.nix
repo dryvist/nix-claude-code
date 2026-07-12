@@ -11,12 +11,14 @@ _:
 {
   commands = [
     # dangerous (catastrophic destruction)
-    "diskutil apfs delete"
     "diskutil apfs deleteContainer"
+    "diskutil apfs deleteVolume"
+    "diskutil apfs eraseVolume"
     "diskutil eraseDisk"
     "diskutil eraseVolume"
     "diskutil partitionDisk"
     "diskutil reformat"
+    "diskutil secureErase"
     "diskutil unmountDisk force"
     "diskutil zeroDisk"
     "fdisk"
