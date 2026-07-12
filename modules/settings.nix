@@ -61,7 +61,7 @@ let
   ];
 
   # Wrap merge-json-settings.sh in a writeShellApplication so the Nix store
-  # copy carries the executable bit and has jq on PATH.
+  # copy carries the executable bit, has jq on PATH, and passes shellcheck.
   # Path interpolation (`${./scripts/merge-json-settings.sh}`) preserves the
   # source git mode (0644), which produces a non-executable store path —
   # direct exec then fails with EACCES and aborts activation under set -e.
