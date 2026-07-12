@@ -347,6 +347,7 @@ _:
     "redis-cli info"
     "redis-cli ping"
     "ruff"
+    "shellcheck"
     "ssh-add -L"
     "ssh-add -l"
     "tflint"
