@@ -264,6 +264,8 @@ _:
 
     # system
     "defaults read"
+    "diskutil info"
+    "diskutil list"
     "htop"
     "launchctl list"
     "launchctl print"
