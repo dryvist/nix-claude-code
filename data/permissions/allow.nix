@@ -83,7 +83,6 @@ _:
     "tail"
     "tar"
     "terraform"
-    "terragrunt"
     "test"
     "time"
     "timeout"
