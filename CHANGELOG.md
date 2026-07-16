@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 with a permanent pre-1.0 cadence — see `release-please-config.json`.
 
+## [0.7.4](https://github.com/dryvist/nix-claude-code/compare/v0.7.3...v0.7.4) (2026-07-16)
+
+
+### Bug Fixes
+
+* **permissions:** relax diskutil deny to destructive verbs only ([#105](https://github.com/dryvist/nix-claude-code/issues/105)) ([6a4a356](https://github.com/dryvist/nix-claude-code/commit/6a4a356b0c6e7b2d52c7cef5a33241a06317847d))
+
 ## [0.7.3](https://github.com/dryvist/nix-claude-code/compare/v0.7.2...v0.7.3) (2026-07-12)
 
 
