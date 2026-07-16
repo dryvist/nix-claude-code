@@ -207,12 +207,6 @@ See [docs/adopters.md](docs/adopters.md) for the full integration guide.
 
 MIT © Jacob P. Evans — see [LICENSE](LICENSE).
 
-## Related
+---
 
-- [JacobPEvans/nix-ai](https://github.com/JacobPEvans/nix-ai) — multi-tool AI workspace
-  (Claude, Gemini, Codex, Copilot, MCP, MLX) that consumes this flake.
-- [JacobPEvans/nix-home](https://github.com/JacobPEvans/nix-home) — user dev environment in Nix.
-- [JacobPEvans/nix-devenv](https://github.com/JacobPEvans/nix-devenv) — reusable devshells.
-- [anthropics/claude-code](https://github.com/anthropics/claude-code) — Claude Code itself.
-- [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official) —
-  Anthropic's official plugin marketplace.
+> Part of a [larger ecosystem of ~40 repos](https://docs.jacobpevans.com) — see how it all fits together.
