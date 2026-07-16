@@ -83,7 +83,6 @@ _:
     "tail"
     "tar"
     "terraform"
-    "terragrunt"
     "test"
     "time"
     "timeout"
@@ -264,6 +263,8 @@ _:
 
     # system
     "defaults read"
+    "diskutil info"
+    "diskutil list"
     "htop"
     "launchctl list"
     "launchctl print"
