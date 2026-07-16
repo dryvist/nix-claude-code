@@ -75,6 +75,18 @@ inputs.nix-claude-code.inputs.home-manager.follows = "home-manager";
 - Non-Claude AI tools (Gemini, Copilot, Codex) — those live in nix-ai
 - Permission rule sources — sourced from `ai-assistant-instructions`
 
+### nix-ai vs nix-claude-code boundary
+
+`nix-claude-code` = the Claude Code option schema (incl. `rules.fromFlakeInputs`),
+the `settings.json` renderer, permission data (`data/permissions/*`), and the
+marketplace catalog (the "what the config looks like"). `nix-ai` = discovery,
+consumption, MCP, plugin tiers, MLX, and the glue that feeds
+`ai-assistant-instructions` content through this repo's options (the "what content
+flows and how"). Tiered rule delivery — top-level `agentsmd/rules/*.md` delivered,
+`on-demand/` not — is a property of nix-ai's discovery (`discoverMarkdownFiles`),
+using this repo's `rules` option verbatim. Mirror in
+[nix-ai `CLAUDE.md`](https://github.com/JacobPEvans/nix-ai/blob/main/CLAUDE.md).
+
 ### Package placement
 
 The `nix-package-placement` rule lives in
