@@ -3,7 +3,7 @@
 # cc-dep-review posts one AI risk-assessment comment on Renovate major/minor
 # PRs. This repo has no release-please, so the release-notes job is omitted.
 #
-# Permissions are job-scoped and the secret is passed explicitly (zizmor:
+# Permissions are job-scoped and credentials are passed explicitly (zizmor:
 # excessive-permissions, secrets-inherit). No concurrency block on purpose: a
 # caller sharing the reusable workflow's exact concurrency group causes an
 # opaque 0-job startup_failure.
@@ -23,3 +23,4 @@ jobs:
     uses: dryvist/ai-workflows/.github/workflows/cc-dep-review.yml@main
     secrets:
       GH_ACTION_AI_API_KEY: ${{ secrets.GH_ACTION_AI_API_KEY }}
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
