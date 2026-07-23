@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 with a permanent pre-1.0 cadence — see `release-please-config.json`.
 
+## [0.8.0](https://github.com/dryvist/nix-claude-code/compare/v0.7.4...v0.8.0) (2026-07-23)
+
+
+### Features
+
+* auto-approve terragrunt read subcommands ([53300c7](https://github.com/dryvist/nix-claude-code/commit/53300c7c5ab384bfbf94c7a6a7e2c6c43488d266))
+* auto-approve terragrunt read subcommands ([476a4bb](https://github.com/dryvist/nix-claude-code/commit/476a4bb49113488bbde4ba0027e4a2c10c2f6949))
+
 ## [0.7.4](https://github.com/dryvist/nix-claude-code/compare/v0.7.3...v0.7.4) (2026-07-16)
 
 
