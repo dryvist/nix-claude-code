@@ -349,6 +349,10 @@ _:
     "shellcheck"
     "ssh-add -L"
     "ssh-add -l"
+    "terragrunt output"
+    "terragrunt plan"
+    "terragrunt validate"
+    "terragrunt validate-inputs"
     "tflint"
     "yamllint"
   ];
