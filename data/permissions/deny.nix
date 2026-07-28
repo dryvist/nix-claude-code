@@ -1,16 +1,35 @@
 _:
 # Hard-denied actions and file-path patterns.
 #
-# Source of truth (Checkpoint 3 complete: the ai-assistant-instructions JSON
-# copy has been retired — see dryvist/ai-assistant-instructions#680).
-# Originally vendored from that tree's deny/*.json (snapshot: 2026-06-09,
-# source rev 3128b52). Categories: dangerous (catastrophic system
-# operations), git (hook-bypassing operations), network (mutating HTTP
-# verbs), package-install (package-manager installs that need explicit
-# user confirmation each time), shell (inline interpreter invocations).
+# ADMISSION BAR — a command belongs here only if it is potentially
+# catastrophic: it costs real money, or it permanently destroys something
+# that cannot be rebuilt or restored. Everything that is merely destructive
+# but reversible (undo, re-clone, re-run, restore from git) belongs in
+# allow.nix, not here.
+#
+# Deny is the ONLY restrictive tier. There is no `ask` tier — see ask.nix
+# for why a prompt is an outage in an unattended run. That means every
+# entry added here silently becomes an unconditional block, so the bar
+# above is a hard gate, not a guideline.
+#
+# Two categories are policy rather than physics, and are deliberate:
+#
+#   git            — hook-bypass and history-corruption. Denied because the
+#                    guard rails themselves are the target; an agent that can
+#                    disable pre-commit or rewrite core.hooksPath can then do
+#                    anything unobserved. Not reversible in the sense that
+#                    matters: the damage is the missing check.
+#   package-install — language-level package managers. Every environment here
+#                    is defined by Nix (or Homebrew, or bun/bunx); an ad-hoc
+#                    `npm install` / `pip install` mutates state that Nix
+#                    believes it owns and that no rebuild will restore.
+#
+# Originally vendored from ai-assistant-instructions deny/*.json (snapshot:
+# 2026-06-09, source rev 3128b52); re-derived against the bar above in the
+# 2026-07 ask-tier removal.
 {
   commands = [
-    # dangerous (catastrophic destruction)
+    # dangerous — permanent, unrecoverable destruction of storage or system
     "diskutil apfs deleteContainer"
     "diskutil apfs deleteVolume"
     "diskutil apfs eraseVolume"
@@ -36,7 +55,28 @@ _:
     "sudo rm"
     "sudo su"
 
-    # git (hook-bypass and history-corruption)
+    # cloud — billable resource creation, or irreversible deletion of a
+    # resource holding state that no rebuild recovers.
+    "aws cloudformation delete-stack"
+    "aws ec2 run-instances"
+    "aws ec2 terminate-instances"
+    "aws lambda delete-function"
+    "aws rds create-db-instance"
+    "aws rds delete-db-instance"
+    "aws s3 rb"
+    "aws s3 rm"
+
+    # credentials and publishing — actions an agent's own credentials can
+    # perform that a filesystem boundary cannot undo.
+    "gh auth"
+    "gh repo archive"
+    "gh repo delete"
+    "gh secret"
+    "npm publish"
+    "cargo publish"
+
+    # git — hook-bypass and history-corruption. Disabling the check IS the
+    # damage; never route around a blocker by removing the blocker.
     "chmod -x .git/hooks/"
     "git -c core.hooksPath"
     "git cherry-pick --no-verify"
@@ -51,22 +91,9 @@ _:
     "rm .git/hooks"
     "rm .git/hooks/"
 
-    # network (mutating HTTP verbs and inbound listeners)
-    "curl --data"
-    "curl --request DELETE"
-    "curl --request PATCH"
-    "curl --request POST"
-    "curl --request PUT"
-    "curl -X DELETE"
-    "curl -X PATCH"
-    "curl -X POST"
-    "curl -X PUT"
-    "curl -d"
-    "nc -l"
-    "ncat -l"
-    "socat"
-
-    # package-install (force confirmation for installs)
+    # package-install — environments are Nix-defined (or Homebrew, or
+    # bun/bunx). Ad-hoc installs mutate state Nix believes it owns.
+    # `npm run` / `npm test` are NOT installs and are allowed.
     "bundle install"
     "cargo install"
     "composer install"
@@ -79,60 +106,37 @@ _:
     "npm ci"
     "npm i"
     "npm install"
-    "npm run"
-    "npm test"
+    "npx"
     "pip install"
     "pip3 install"
     "pnpm add"
     "pnpm install"
+    "pnpx"
     "poetry add"
     "poetry install"
     "python -m pip install"
     "python3 -m pip install"
     "yarn add"
     "yarn install"
-
-    # shell (inline interpreter execution and temp-file writes)
-    "bash -c"
-    "cat > /tmp/"
-    "cat >> /tmp/"
-    "dash -c"
-    "fish -c"
-    "ksh -c"
-    "node --eval"
-    "node -e"
-    "perl -c"
-    "perl -e"
-    "python -"
-    "python -c"
-    "python /dev/"
-    "python /tmp/"
-    "python <<"
-    "python3 -"
-    "python3 -c"
-    "python3 /dev/"
-    "python3 /tmp/"
-    "python3 <<"
-    "ruby --eval"
-    "ruby -e"
-    "sh -c"
-    "tee /tmp/"
-    "zsh -c"
   ];
 
-  # File-path glob patterns to deny across all `Read`/`Edit`/`Write` calls.
-  # Contributed only by `deny/dangerous.json` in the source split.
+  # File-path glob patterns denied across all `Read`/`Edit`/`Write` calls.
+  # Scoped to files that hold live secret material — a leaked key cannot be
+  # un-leaked. Deliberately NOT blanket-blocking `.env.*` or `secrets/**`:
+  # those catch committed, non-secret documentation (`.env.example`,
+  # `.env.sample`, a `secrets/` docs hierarchy) and blocking them costs real
+  # work for no security gain. Only the conventionally-gitignored env
+  # variants (`.env`, `.env.local`, `.env.<name>.local`) are denied.
   patterns = [
     "**/*_dsa"
     "**/*_ecdsa"
     "**/*_ed25519"
     "**/*_rsa"
     "**/.env"
-    "**/.env.*"
+    "**/.env.*.local"
+    "**/.env.local"
     "**/credentials/**"
-    "**/secrets/**"
     ".env"
-    ".env.*"
     "~/.aws/credentials"
     "~/.gnupg/**"
     "~/.ssh/id_*"

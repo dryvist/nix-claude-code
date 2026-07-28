@@ -16,9 +16,13 @@ in
     expected = true;
   };
 
-  "test: ask.commands is non-empty" = {
-    expr = builtins.length permissions.ask.commands > 0;
-    expected = true;
+  # The ASK tier is permanently empty: an `ask` entry stalls any unattended
+  # run (cron, CI, container, overnight session) on a prompt nobody can
+  # answer. This gate is what keeps it from drifting back. See ask.nix.
+
+  "test: ask.commands is empty" = {
+    expr = permissions.ask.commands;
+    expected = [ ];
   };
 
   "test: deny.commands is non-empty" = {
