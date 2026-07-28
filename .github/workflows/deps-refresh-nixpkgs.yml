@@ -1,0 +1,18 @@
+# Renovate's `nix` manager bumps a flake input only when its reference
+# changes. The root nixpkgs pin is a moving channel branch (nixos-unstable)
+# whose reference never changes, so Renovate never advances the locked rev —
+# this schedule is the only thing that does.
+name: Refresh nixpkgs channel
+
+on:
+  schedule:
+    - cron: "0 8 * * 1" # Weekly Monday 08:00 UTC
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  refresh:
+    uses: dryvist/.github/.github/workflows/_refresh-nixpkgs-channel.yml@main
+    secrets:
+      GH_APP_PRIVATE_KEY: ${{ secrets.GH_APP_PRIVATE_KEY }}
