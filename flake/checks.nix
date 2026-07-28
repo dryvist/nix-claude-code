@@ -22,6 +22,7 @@
         claudeRegistry = import ../checks/lib/claude-registry.nix { inherit lib; };
         parsePlugin = import ../checks/lib/parse-plugin.nix { inherit lib; };
         toSettingsJson = import ../checks/lib/to-settings-json.nix { inherit lib; };
+        renderAutonomous = import ../checks/lib/render-autonomous.nix { inherit lib; };
       };
 
       allTests = lib.foldl' (acc: suite: acc // suite) { } (builtins.attrValues suites);
