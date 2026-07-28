@@ -308,6 +308,8 @@ _:
     "brew outdated"
     "brew search"
     "bun test"
+    # bunx is the sanctioned ad-hoc package runner (npx/pnpx are denied).
+    "bunx"
     "check-jsonschema"
     "claude config get"
     "claude config list"

@@ -94,8 +94,8 @@ don't drag `pkgs` into call sites.
 ```text
 data/permissions/
 ├── allow.nix         # Auto-approved actions, mirrors ai-assistant-instructions/permissions/allow/
-├── ask.nix           # Prompt-before-execute actions
-├── deny.nix          # Hard-denied actions
+├── ask.nix           # Permanently empty — an ask stalls unattended runs
+├── deny.nix          # Hard-denied actions (catastrophic only)
 ├── domains.nix       # Per-feature domain allowlists (WebFetch)
 └── tool-specific.nix # Per-tool overrides (claude/codex/gemini)
 ```
