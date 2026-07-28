@@ -29,5 +29,10 @@ in
 
   wrapCommandsAsSkills = { pkgs }: import ./wrap-commands-as-skills.nix { inherit lib pkgs; };
 
+  # Autonomous container-image render. Deferred like wrapCommandsAsSkills
+  # because the caller supplies `residualDeny` (and optionally `homeDir`).
+  # lib-only on purpose — see lib/render-autonomous.nix.
+  renderAutonomous = args: import ./render-autonomous.nix ({ inherit lib; } // args);
+
   schemaVersion = 1;
 }
