@@ -1,140 +1,30 @@
 _:
-# Actions that prompt the user before execution.
+# The ASK tier is intentionally empty and must stay that way.
 #
-# Source of truth (Checkpoint 3 complete: the ai-assistant-instructions JSON
-# copy has been retired — see dryvist/ai-assistant-instructions#680).
-# Originally vendored from that tree's ask/*.json (snapshot: 2026-06-09,
-# source rev 3128b52). Categories: cloud, containers, dangerous-operations,
-# git, package-managers, security, shell, system.
+# An `ask` entry stops the agent mid-task and waits for a human. When no
+# human is present — a scheduled run, a CI job, a headless container, an
+# overnight session — that wait never ends: the run stalls until timeout
+# and the session goal is abandoned. A prompt nobody can answer is not a
+# safety control; it is an outage.
+#
+# So every command is classified into exactly two tiers:
+#
+#   deny  — potentially catastrophic: real money, or permanent destruction
+#           of a resource that cannot be rebuilt or restored. See deny.nix.
+#   allow — everything else, including destructive-but-reversible work.
+#           Intent-level judgment is handled by Claude Code's auto-mode
+#           classifier and by the PreToolUse guard hooks (git-guards,
+#           script-guards, content-guards), which evaluate the *situation*
+#           rather than pattern-matching a command prefix.
+#
+# There is no third tier. If a command is dangerous enough to warrant a
+# prompt it belongs in deny.nix; if it is not, it belongs in allow.nix.
+#
+# The file is kept (rather than deleted) so the empty list stays explicit
+# and the renderers in lib/ keep a stable shape across every downstream CLI
+# (Claude Code, Codex, Antigravity/agy, opencode, qwen).
+#
+# Enforced by checks/lib/permissions.nix: "ask.commands is empty".
 {
-  commands = [
-    # cloud (AWS state-changing operations)
-    "aws cloudformation create-stack"
-    "aws cloudformation delete-stack"
-    "aws cloudformation update-stack"
-    "aws ec2 authorize-security-group-ingress"
-    "aws ec2 create-security-group"
-    "aws ec2 delete-security-group"
-    "aws ec2 reboot-instances"
-    "aws ec2 revoke-security-group-ingress"
-    "aws ec2 run-instances"
-    "aws ec2 start-instances"
-    "aws ec2 stop-instances"
-    "aws ec2 terminate-instances"
-    "aws lambda delete-function"
-    "aws lambda invoke"
-    "aws lambda update-function-code"
-    "aws rds create-db-instance"
-    "aws rds delete-db-instance"
-    "aws rds modify-db-instance"
-    "aws route53 change-resource-record-sets"
-    "aws s3 cp"
-    "aws s3 rb"
-    "aws s3 rm"
-    "aws s3 sync"
-
-    # containers (mutating Docker/Kubernetes/Helm operations)
-    "docker commit"
-    "docker context create"
-    "docker context rm"
-    "docker context update"
-    "docker context use"
-    "docker cp"
-    "docker exec"
-    "docker network connect"
-    "docker network create"
-    "docker network disconnect"
-    "docker network prune"
-    "docker network rm"
-    "docker rm"
-    "docker run"
-    "docker system prune"
-    "docker update"
-    "docker volume create"
-    "docker volume prune"
-    "docker volume rm"
-    "helm delete"
-    "helm install"
-    "helm uninstall"
-    "helm upgrade"
-    "kubectl apply"
-    "kubectl create"
-    "kubectl delete"
-    "kubectl exec"
-    "kubectl patch"
-    "kubectl rollout"
-    "kubectl set"
-
-    # dangerous-operations (filesystem mutations)
-    "chmod"
-    "chown"
-    "cp"
-    "ln"
-    "ln -s"
-    "ln -sf"
-    "mv"
-    "rm -f -r"
-    "rm -fr"
-    "rm -r"
-    "rm -rf"
-    "rm --recursive"
-    "rmdir"
-    "tar -xzf"
-    "unzip"
-
-    # git (history-rewriting or destructive commands)
-    "git cherry-pick"
-    "git clean"
-    "git commit --amend"
-    "git gc"
-    "git merge"
-    "git prune"
-    "git push --force"
-    "git push --force-with-lease"
-    "git rebase"
-    "git reset"
-    "git restore"
-    "git rm"
-
-    # package-managers (runtime execution of arbitrary packages)
-    "bunx"
-    "cargo run"
-    "go run"
-    "npx"
-    "pipx"
-    "pipx run"
-    "pnpx"
-    "pyenv install"
-    "uv run"
-    "uvx"
-
-    # security (secret-revealing operations)
-    "security unlock-keychain"
-
-    # shell (interactive or process-killing)
-    "pkill"
-    "zsh"
-
-    # system (admin-level macOS or database CLIs)
-    "defaults delete"
-    "defaults write"
-    "gpg"
-    "gpg-agent"
-    "launchctl load"
-    "launchctl remove"
-    "launchctl start"
-    "launchctl stop"
-    "launchctl unload"
-    "mongosh"
-    "mysql"
-    "obsidian eval"
-    "obsidian trash"
-    "openssl"
-    "osascript"
-    "osascript -e"
-    "psql"
-    "redis-cli"
-    "softwareupdate"
-    "ssh-keygen"
-  ];
+  commands = [ ];
 }

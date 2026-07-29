@@ -2,6 +2,9 @@
   description = "Declarative Claude Code in Nix — plugins, marketplaces, skills, hooks, MCP, and permissions as composable home-manager modules. Reproducible on macOS and Linux.";
 
   inputs = {
+    # Channel branch = the intended major-version pin. Renovate cannot bump
+    # this: a branch's reference never changes, only the commits on it do, so
+    # Renovate has nothing to diff. deps-refresh-nixpkgs.yml relocks it weekly.
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 
     home-manager = {
