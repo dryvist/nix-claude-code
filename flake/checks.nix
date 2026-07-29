@@ -113,6 +113,19 @@
               exit 1
             '';
 
+        # The autonomous profile (bypassPermissions, and the Codex/agy
+        # equivalents) is only safe inside a container, where the boundary
+        # is the safety model. On a workstation there is no such boundary.
+        # This fails the build if any home-manager module imports the
+        # autonomous renderers or assigns one of those postures — the
+        # shared check from dryvist/.github, so all per-CLI repos enforce
+        # the same rule. Declaring the values in a types.enum and
+        # describing them in prose stays legal; only assignment is flagged.
+        autonomous-containment = inputs.dryvist-github.lib.autonomousContainment {
+          inherit pkgs;
+          homeManagerModules = ../modules;
+        };
+
         statusline-powerline = mkStatuslineCheck "powerline";
         statusline-ccstatusline = mkStatuslineCheck "ccstatusline";
         statusline-daniel3303 = mkStatuslineCheck "daniel3303";
