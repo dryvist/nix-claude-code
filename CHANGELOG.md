@@ -6,6 +6,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 with a permanent pre-1.0 cadence — see `release-please-config.json`.
 
+## [1.0.0](https://github.com/dryvist/nix-claude-code/compare/v0.8.0...v1.0.0) (2026-07-29)
+
+
+### ⚠ BREAKING CHANGES
+
+* **permissions:** `lib.permissions.ask.commands` is now always empty. Consumers rendering an ask tier will emit an empty list.
+
+### Features
+
+* **lib:** add renderAutonomous for autonomous container-image config ([#121](https://github.com/dryvist/nix-claude-code/issues/121)) ([2404416](https://github.com/dryvist/nix-claude-code/commit/240441695492048d193d7afc03109fe9fe4f4cd4))
+* **permissions:** remove the ASK tier, narrow DENY to catastrophic only ([#123](https://github.com/dryvist/nix-claude-code/issues/123)) ([6dc8bd2](https://github.com/dryvist/nix-claude-code/commit/6dc8bd20ca9815af12c128acd2dc33bf1e28813e))
+
 ## [0.8.0](https://github.com/dryvist/nix-claude-code/compare/v0.7.4...v0.8.0) (2026-07-23)
 
 
