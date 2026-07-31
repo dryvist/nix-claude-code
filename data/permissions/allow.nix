@@ -254,9 +254,14 @@ _:
     # security (read-only secret/key lookups)
     "aws secretsmanager describe-secret"
     "aws secretsmanager list-secrets"
+    "deployment-json fetch"
     "doppler configs"
     "doppler environments"
     "doppler projects"
+    # `doppler run` is deliberately NOT auto-approved on its own: it injects an
+    # environment and then executes whatever follows, so approving the prefix
+    # approves arbitrary commands. Only the specific read below is listed.
+    "doppler run -- deployment-json fetch"
     "doppler secrets"
     "vault kv list"
     "vault list"
