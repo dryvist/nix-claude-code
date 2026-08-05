@@ -4,7 +4,8 @@
   inputs = {
     # Channel branch = the intended major-version pin. Renovate cannot bump
     # this: a branch's reference never changes, only the commits on it do, so
-    # Renovate has nothing to diff. deps-refresh-nixpkgs.yml relocks it weekly.
+    # Renovate has nothing to diff. deps-flake-lock.yml relocks the whole file
+    # weekly.
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 
     home-manager = {
