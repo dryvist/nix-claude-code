@@ -10,7 +10,15 @@ let
   # PR review without instantiating a full home-manager activation.
   ciClaudeSettingsJson =
     let
-      permissions = ncc.mkDefaultPermissions { tool = "claude"; };
+      # Empty by design, matching what the home-manager modules deploy: no
+      # hard-coded allow/ask/deny rules for Claude Code, with the auto-mode
+      # classifier as the only gate. `defaultMode` keeps the `permissions`
+      # block itself present in the render.
+      permissions = {
+        allow = [ ];
+        ask = [ ];
+        deny = [ ];
+      };
     in
     builtins.toJSON (
       ncc.toSettingsJson {
