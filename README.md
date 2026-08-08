@@ -21,8 +21,11 @@ declared in Nix, reproducible across machines, rolled back with one command.
   `anthropic-agent-skills`) plus 15+ curated community marketplaces, wired up to refresh automatically.
 - **Plugins as data.** Every plugin you enable is declared in `programs.claude.enabledPlugins`,
   version-pinned in `flake.lock`, rolled back atomically with `darwin-rebuild --rollback`.
-- **Permissions you can read.** Auto-approved tools, deny lists, and WebFetch allowlist as
-  structured Nix data — the same data feeds Codex, Gemini, and any other AI agent you wire up.
+- **Full-trust auto mode.** Claude Code ships with `defaultMode = "auto"` and **zero** hard-coded
+  allow/ask/deny rules — every tool call goes to the auto-mode classifier, which reads the
+  conversation and the repo instead of pattern-matching a command prefix. The structured
+  permission data is still here and still exported for Codex, Gemini, and any other agent that
+  has no classifier of its own.
 - **Statusline themes.** Pick `powerline`, `ccstatusline`, or `daniel3303`'s theme with one option.
 - **MCP plumbing.** Surface `programs.claude.mcpServers` from your favorite MCP runtime; we wire
   them into Claude's `settings.json` exactly the way Anthropic specifies.
@@ -95,15 +98,16 @@ claude   # ready to go
 | ------------------------ | ------------------------------------------------------------------- |
 | `homeModules.default`    | All of the below, sane defaults — the 95% answer                    |
 | `homeModules.claude`     | Alias of `default`                                                  |
-| `homeModules.core`       | `settings.json`, permissions, the `claude-code` binary              |
+| `homeModules.core`       | `settings.json`, auto-mode posture, the `claude-code` binary        |
 | `homeModules.plugins`    | Marketplace + plugin management                                     |
 | `homeModules.statusline` | Powerline / ccstatusline / daniel3303 themes                        |
 | `homeModules.hooks`      | Session-output capture + marketplace-refresh hooks                  |
 | `homeModules.mcp`        | `programs.claude.mcpServers` option (you populate from any runtime) |
 | `homeModules.latest`     | Opt-in auto-installer for the latest Claude Code release            |
 
-Want only permissions, nothing else? Import `homeModules.core` and skip the rest. Want
-the plugins but not the statusline? Import `homeModules.core` + `homeModules.plugins`.
+Want only `settings.json` and the permission posture, nothing else? Import `homeModules.core`
+and skip the rest. Want the plugins but not the statusline? Import `homeModules.core` +
+`homeModules.plugins`.
 
 See [docs/settings.md](docs/settings.md) for the full `settings.json` option catalog,
 including the freeform passthrough for keys with no typed option yet.
@@ -125,10 +129,10 @@ including the freeform passthrough for keys with no typed option yet.
 flowchart LR
     A[17 marketplace inputs<br/>flake.nix] --> B[lib.parseMarketplace]
     C[data/permissions/*.nix<br/>Nix-native data] --> D[lib.mkDefaultPermissions]
+    D --> P[Codex / Gemini / other<br/>agents without a classifier]
     B --> E[modules/plugins.nix]
-    D --> F[modules/core.nix]
-    E --> G[~/.claude/settings.json]
-    F --> G
+    F[modules/core.nix<br/>defaultMode=auto, no rules] --> G[~/.claude/settings.json]
+    E --> G
     H[modules/statusline] --> I[~/.claude/statusline]
     J[modules/hooks] --> K[~/.claude/hooks/]
     L[modules/mcp<br/>mcpServers option] --> G
@@ -151,7 +155,9 @@ let
   # skills :: [{ name; path; pluginRoot; }]
 
   perms = inputs.nix-claude-code.lib.mkDefaultPermissions { tool = "codex"; };
-  # perms :: { allow; ask; deny; webfetchDomains; }
+  # perms :: { allow; allowMcp; ask; deny; denyPatterns; webfetchDomains; }
+  # (`ask` is always empty — see data/permissions/README.md. Claude Code
+  #  itself no longer consumes this; auto mode is its gate.)
 in
   # ... build whatever you need
 ```
@@ -195,7 +201,9 @@ in
 - **Add a marketplace**: append to `flake.nix` inputs and the wiring in `flake/modules.nix`.
 - **Add a statusline theme**: drop a `<name>.nix` file in `modules/statusline/`.
 - **Add a permission rule**: edit `data/permissions/*.nix`. These are the **source of truth** for
-  permission rules across all AI agent tools, not just Claude.
+  permission rules across AI agent tools that have no classifier of their own (Codex, Gemini).
+  Claude Code does not consume them — teach the auto-mode classifier instead, via
+  `programs.claude.autoMode`.
 - **Add a lib helper**: write a pure function in `lib/`, add a `nix-unit` test in `checks/lib/`.
 
 Pre-commit hooks run `treefmt`, `deadnix`, `statix`, and YAML/TOML validation. CI runs

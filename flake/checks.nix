@@ -133,6 +133,39 @@
         # Eval-time regression guard for the `programs.claude` module schema.
         programs-claude-eval = programsClaudeEval;
 
+        # The auto-mode-only permission posture, asserted against the file
+        # that actually gets deployed rather than against option defaults.
+        # A default `programs.claude.enable = true` must ship no allow, ask,
+        # or deny rules: the classifier is the only gate, and nothing may
+        # resolve before it. `askUserQuestionTimeout` is checked here too —
+        # upstream's default is "never", so a regression to it would let a
+        # dialog hold a session open indefinitely.
+        claude-settings-render =
+          pkgs.runCommand "claude-settings-render-test" { nativeBuildInputs = [ pkgs.jq ]; }
+            ''
+              set -euo pipefail
+              settings_json=$(grep -o '/nix/store/[a-z0-9]*-claude-settings\.json' \
+                ${programsClaudeEval}/activate | head -1)
+
+              expect() {
+                local filter="$1" want="$2" got
+                got=$(jq -c "$filter" "$settings_json")
+                [[ "$got" == "$want" ]] || {
+                  echo "$filter: expected $want, got $got" >&2
+                  exit 1
+                }
+              }
+
+              expect '.permissions.allow' '[]'
+              expect '.permissions.ask' '[]'
+              expect '.permissions.deny' '[]'
+              expect '.permissions.defaultMode' '"auto"'
+              expect '.autoMode.classifyAllShell' 'true'
+              expect '.askUserQuestionTimeout' '"5m"'
+              expect '.useAutoModeDuringPlan' 'true'
+              echo ok > $out
+            '';
+
         # Asserts `hooks.refreshMarketplaces` actually registers
         # ~/.claude/hooks/session-start.sh under settings.json's `hooks` key
         # — the whole point of the typed hook, not just the file existing.
