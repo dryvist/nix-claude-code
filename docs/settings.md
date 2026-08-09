@@ -56,12 +56,12 @@ repo on a given branch the way a static list never could.
 
 Supporting settings:
 
-| Setting                                            | Value   | Effect                                                                     |
-| -------------------------------------------------- | ------- | -------------------------------------------------------------------------- |
-| `permissions.defaultMode`                          | `auto`  | Everything not resolved by an explicit rule goes to the classifier.        |
-| `permissions.allow` / `.ask` / `.deny`             | `[ ]`   | Nothing resolves before the classifier.                                    |
-| `autoMode.classifyAllShell`                        | `true`  | Suspends any shell allow rule that reaches the file from outside Nix.      |
-| `useAutoModeDuringPlan`                            | `true`  | Plan mode uses the classifier instead of prompting.                        |
+| Setting                                | Value  | Effect                                                                |
+| -------------------------------------- | ------ | --------------------------------------------------------------------- |
+| `permissions.defaultMode`              | `auto` | Everything not resolved by an explicit rule goes to the classifier.   |
+| `permissions.allow` / `.ask` / `.deny` | `[ ]`  | Nothing resolves before the classifier.                               |
+| `autoMode.classifyAllShell`            | `true` | Suspends any shell allow rule that reaches the file from outside Nix. |
+| `useAutoModeDuringPlan`                | `true` | Plan mode uses the classifier instead of prompting.                   |
 
 `~/.claude/settings.json` is a writable runtime file, so the activation merge
 in `modules/scripts/merge-json-settings.sh` deletes `permissions.allow`,
