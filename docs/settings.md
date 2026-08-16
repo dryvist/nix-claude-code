@@ -38,10 +38,73 @@ omit and fall back to Claude's own default, or set
 `programs.claude.settings.env.CLAUDE_AUTOCOMPACT_PCT_OVERRIDE` directly to
 override just the env var.
 
-`programs.claude.defaultMode` (`"auto"`, in `modules/core.nix`) and
 `programs.claude.autoUpdatesChannel` (`"latest"`, in
-`modules/options-runtime.nix`) are also non-default-upstream but predate this
-document — see those files for rationale.
+`modules/options-runtime.nix`) is also non-default-upstream but predates this
+document — see that file for rationale.
+`programs.claude.defaultMode` (`"auto"`, in `modules/core.nix`) has a section
+of its own below.
+
+## Permissions: full-trust auto mode
+
+This module ships **no** hard-coded permission rules for Claude Code.
+`programs.claude.settings.permissions.allow`, `.ask`, and `.deny` all render as
+empty lists, and `permissions.defaultMode` is `"auto"`, so every tool call is
+routed to the [auto-mode classifier][auto-mode]. A prefix list can only
+pattern-match a command string; the classifier reads the conversation, the
+working repo, and your CLAUDE.md, so it can weigh a given command in a given
+repo on a given branch the way a static list never could.
+
+Supporting settings:
+
+| Setting                                | Value  | Effect                                                                |
+| -------------------------------------- | ------ | --------------------------------------------------------------------- |
+| `permissions.defaultMode`              | `auto` | Everything not resolved by an explicit rule goes to the classifier.   |
+| `permissions.allow` / `.ask` / `.deny` | `[ ]`  | Nothing resolves before the classifier.                               |
+| `autoMode.classifyAllShell`            | `true` | Suspends any shell allow rule that reaches the file from outside Nix. |
+| `useAutoModeDuringPlan`                | `true` | Plan mode uses the classifier instead of prompting.                   |
+
+`~/.claude/settings.json` is a writable runtime file, so the activation merge
+in `modules/scripts/merge-json-settings.sh` deletes `permissions.allow`,
+`.ask`, and `.deny` from the existing file before overlaying the Nix render.
+Without that, jq's index-wise array merge would keep every previously-deployed
+entry alive forever. **This also removes rules you add at runtime through
+`/permissions`** — they are not durable; put a durable rule in Nix.
+
+### Denials never wait for a human
+
+A classifier denial is returned to Claude as a blocked tool call with the
+reason `Blocked by classifier`; Claude tries an alternative and the session
+keeps moving. Nothing pauses for a human.
+
+The one rule class that breaks this is `permissions.ask`: ask rules are
+evaluated _before_ the classifier and always force a prompt, even in auto
+mode. `modules/settings.nix` therefore **asserts the ask list is empty** — a
+non-empty one fails evaluation. Use `deny` for a hard boundary (it blocks
+without waiting on anyone) or `autoMode.soft_deny` / `.hard_deny` to teach the
+classifier.
+
+### The one thing that is not configurable
+
+If the classifier blocks an action **3 times in a row or 20 times total** in a
+session, auto mode pauses and Claude Code resumes prompting.
+[Those thresholds are not configurable][fallback] — no setting in this module
+or in Claude Code removes that fallback. The mitigation is to make blocks rarer
+by describing your infrastructure to the classifier via
+`programs.claude.autoMode.environment`, so it stops treating your own repos,
+registries, and internal hosts as external. Run `claude auto-mode config` to
+confirm your entries took effect.
+
+### Human-wait dialogs are capped at five minutes
+
+`askUserQuestionTimeout` defaults to `"5m"` (upstream's real default is
+`"never"`). `dialogExpiry` — the deadline for dialogs forwarded to Remote
+Control and SDK hosts — is left at Claude Code's own `"5m"` default, which is
+already within the cap. `modules/settings.nix` asserts that neither exceeds
+five minutes and rejects `"never"`, so no dialog can hold a session open
+indefinitely.
+
+[auto-mode]: https://code.claude.com/docs/en/permission-modes#eliminate-prompts-with-auto-mode
+[fallback]: https://code.claude.com/docs/en/permission-modes#when-auto-mode-falls-back
 
 ## Curated catalog (opt-in, default `null`)
 
@@ -60,6 +123,11 @@ Declared in `modules/options-settings.nix`, all default to `null` — meaning
 | `plansDirectory`             | str                   | `~/.claude/plans`            |
 | `language`                   | str                   | unset (follows conversation) |
 | `fallbackModel`              | list of str           | unset (no fallback)          |
+| `dialogExpiry`               | str                   | `"5m"`                       |
+
+`dialogExpiry` is the one entry here whose upstream default is already inside
+this module's five-minute human-wait cap, so it is left unset deliberately —
+set it only to go lower. See "Permissions: full-trust auto mode" above.
 
 ## Builder-merged defaults (always present, per-key overridable)
 

@@ -10,6 +10,19 @@ Per-category background (what each file holds, which source JSONs fed it)
 lives in the header comments of the `.nix` files. This README only carries
 the maintainer rules that would otherwise be lost with the JSON tree.
 
+## Claude Code is not a consumer
+
+This data serves agents that have **no permission classifier of their own** —
+Codex, Gemini, and anything else wired up through `lib.mkDefaultPermissions`.
+
+Claude Code's home-manager modules deliberately render `permissions.allow`,
+`.ask`, and `.deny` as empty lists and set `permissions.defaultMode = "auto"`,
+so its auto-mode classifier evaluates every call in context. A prefix list can
+only match a command string; the classifier reads the conversation, the working
+repo, and CLAUDE.md. To steer it, use `programs.claude.autoMode` (prose rules)
+rather than adding entries here. See
+[docs/settings.md](../../docs/settings.md#permissions-full-trust-auto-mode).
+
 ## Format rules
 
 - Entries are bare commands with **no trailing `*` wildcard**. The per-tool

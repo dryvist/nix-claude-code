@@ -101,7 +101,10 @@ when `.nix` / `flake.*` files are in context.
 - `flake/modules.nix` — Module composition
 - `modules/` — home-manager modules
 - `lib/` — Pure functions (`parseMarketplace`, `parsePlugin`, `discoverSkills`, etc.)
-- `data/permissions/` — Permission rule sources consumed by `lib.mkDefaultPermissions`
+- `data/permissions/` — Permission rule sources consumed by `lib.mkDefaultPermissions`,
+  for agents with no classifier of their own (Codex, Gemini). Claude Code does **not**
+  consume them: it ships `defaultMode = "auto"` with empty allow/ask/deny lists and relies
+  entirely on the auto-mode classifier
 - `templates/` — Flake init scaffolds (`minimal`, `flake-parts`)
 - `checks/` — nix-unit regression tests for lib functions
 
