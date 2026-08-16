@@ -163,6 +163,7 @@
               expect '.autoMode.classifyAllShell' 'true'
               expect '.askUserQuestionTimeout' '"5m"'
               expect '.useAutoModeDuringPlan' 'true'
+              expect 'has("advisorModel")' 'false'
               echo ok > $out
             '';
 
