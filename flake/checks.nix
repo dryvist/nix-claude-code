@@ -164,6 +164,48 @@
           test ! -e ${synthesizedSkills}/skills/not-a-command
           echo ok > $out
         '';
+
+        # Regression guard: claude-json-merge.sh's final chmod must not abort
+        # activation when it fails (e.g. ~/.claude.json owned by a different
+        # user). Runs the script exactly as home-manager sources it, under
+        # set -eu -o pipefail, with a stub `chmod` on PATH that always fails
+        # — standing in as a permission error, which a sandboxed build can't
+        # otherwise fabricate. Before the fix this aborted the whole build;
+        # after, it must exit 0 and log a warning naming the file.
+        claude-json-merge-chmod-soft-fail =
+          pkgs.runCommand "claude-json-merge-chmod-soft-fail-test" { nativeBuildInputs = [ pkgs.jq ]; }
+            ''
+              set -euo pipefail
+              export HOME=$(mktemp -d)
+              echo '{}' > "$HOME/.claude.json"
+
+              fakebin=$(mktemp -d)
+              printf '#!/bin/sh\nexit 1\n' > "$fakebin/chmod"
+              chmod +x "$fakebin/chmod"
+              export PATH="$fakebin:$PATH"
+
+              export OVERLAY_FILE=$(mktemp)
+              echo '{"mcpServers":{}}' > "$OVERLAY_FILE"
+              export TRUSTED_PROJECT_DIRS='[]'
+              export DRY_RUN_CMD=""
+
+              set +e
+              bash -euo pipefail -c ". ${../modules/scripts/claude-json-merge.sh}" 2>stderr.log
+              rc=$?
+              set -e
+
+              [ "$rc" -eq 0 ] || {
+                echo "activation aborted when chmod failed (rc=$rc):" >&2
+                cat stderr.log >&2
+                exit 1
+              }
+              grep -q "claude.json" stderr.log || {
+                echo "expected a warning naming the file on chmod failure, got:" >&2
+                cat stderr.log >&2
+                exit 1
+              }
+              echo ok > $out
+            '';
       };
     };
 }
