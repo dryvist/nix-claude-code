@@ -184,10 +184,14 @@
         advisorModel = lib.mkOption {
           type = lib.types.nullOr lib.types.str;
           default = null;
-          example = "opus";
+          example = "fable";
           description = ''
-            Configure a persistent default advisor model. null = upstream
-            default (unset).
+            Model for the server-side advisor tool. The advisor is disabled by
+            default: `null` omits the key from settings.json. Set an alias
+            ("fable", "opus", or "sonnet") or a full model id to enable it.
+
+            Fable is available as an explicit advisor choice when the account
+            has Fable access.
           '';
         };
 

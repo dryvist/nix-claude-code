@@ -29,6 +29,10 @@ either surprising or actively unhelpful:
 | `programs.claude.settings.useAutoModeDuringPlan`       | `true`  | Runs plan mode through the cheaper/faster auto-mode classifier, not its own gating. |
 | `programs.claude.settings.autoCompactThresholdPercent` | `60`    | Compact well before the hard limit — see below for the full rationale and override. |
 
+`programs.claude.settings.advisorModel` is opt-in: its default `null` omits the
+setting and disables the advisor. Set it to `"fable"`, `"opus"`, `"sonnet"`,
+or a full model ID to enable the server-side advisor.
+
 `autoCompactThresholdPercent` isn't a real settings.json key — Claude Code has
 none for this (context windows are trending toward 1M tokens, and Claude's own
 default of ~90%+ used leaves too little headroom for the summarization pass

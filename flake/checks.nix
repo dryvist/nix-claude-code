@@ -133,6 +133,21 @@
         # Eval-time regression guard for the `programs.claude` module schema.
         programs-claude-eval = programsClaudeEval;
 
+        # `advisorModel` is opt-in. Its null default must omit the key from
+        # the generated settings.json, which keeps the advisor disabled.
+        claude-settings-render =
+          pkgs.runCommand "claude-settings-render-test" { nativeBuildInputs = [ pkgs.jq ]; }
+            ''
+              set -euo pipefail
+              settings_json=$(grep -o '/nix/store/[a-z0-9]*-claude-settings\.json' \
+                ${programsClaudeEval}/activate | head -1)
+              [[ $(jq -c 'has("advisorModel")' "$settings_json") == false ]] || {
+                echo "advisorModel must be absent by default" >&2
+                exit 1
+              }
+              echo ok > $out
+            '';
+
         # Asserts `hooks.refreshMarketplaces` actually registers
         # ~/.claude/hooks/session-start.sh under settings.json's `hooks` key
         # — the whole point of the typed hook, not just the file existing.
