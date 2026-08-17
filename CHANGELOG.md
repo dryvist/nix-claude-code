@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 with a permanent pre-1.0 cadence — see `release-please-config.json`.
 
+## [1.3.1](https://github.com/dryvist/nix-claude-code/compare/v1.3.0...v1.3.1) (2026-08-17)
+
+
+### Bug Fixes
+
+* **settings:** keep advisor disabled by default ([1af2785](https://github.com/dryvist/nix-claude-code/commit/1af2785edf6b6d768ce35e21618c3226e82227b7))
+* **settings:** keep advisor disabled by default ([3a468d5](https://github.com/dryvist/nix-claude-code/commit/3a468d56829d5759a441f50443614cc10a534059))
+
 ## [1.3.0](https://github.com/dryvist/nix-claude-code/compare/v1.2.0...v1.3.0) (2026-08-05)
 
 
