@@ -79,4 +79,6 @@ else
     '. + {projects: $trust}' "$OVERLAY_FILE"
 fi
 
-[ -f "$CLAUDE_JSON" ] && $DRY_RUN_CMD chmod 600 "$CLAUDE_JSON"
+if [ -f "$CLAUDE_JSON" ] && ! $DRY_RUN_CMD chmod 600 "$CLAUDE_JSON"; then
+  echo "warning: could not chmod 600 \"$CLAUDE_JSON\" (not owned by this user?); permissions left unchanged — the file may be more permissive than intended." >&2
+fi

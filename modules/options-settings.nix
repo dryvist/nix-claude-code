@@ -77,11 +77,19 @@
         };
 
         # Permissions (raw lists merged into settings.json).
-        # Note: the top-level `programs.claude.permissions` option (declared
-        # in `./core.nix`) is the structured input to `lib.toSettingsJson`
-        # and is the canonical entrypoint. The `settings.permissions.*`
-        # lists below are an additional, lower-level escape hatch and
-        # remain valid input.
+        #
+        # These lists ARE what `./settings.nix` renders into
+        # `~/.claude/settings.json` — the top-level
+        # `programs.claude.permissions` option in `./core.nix` is a
+        # structured input for `lib.toSettingsJson` callers and is not read
+        # by the renderer.
+        #
+        # All three default to `[ ]` by design. This module ships no
+        # hard-coded rules: `programs.claude.defaultMode` is `"auto"`, so
+        # the auto-mode classifier evaluates every call in context. The
+        # lists stay settable for adopters who need a hard boundary the
+        # classifier cannot express, with one exception — see the `ask`
+        # option and the assertion in `./settings.nix`.
         permissions = lib.mkOption {
           default = { };
           type = lib.types.submodule {
@@ -90,17 +98,37 @@
               allow = lib.mkOption {
                 type = lib.types.listOf lib.types.str;
                 default = [ ];
-                description = "Commands and operations to auto-approve without prompting";
+                description = ''
+                  Commands and operations to auto-approve without
+                  prompting. Empty by design — an allow rule resolves
+                  before the classifier and so removes an action from its
+                  review. `autoMode.classifyAllShell` additionally
+                  suspends shell allow rules while auto mode is active.
+                '';
               };
               deny = lib.mkOption {
                 type = lib.types.listOf lib.types.str;
                 default = [ ];
-                description = "Commands and operations to permanently block";
+                description = ''
+                  Commands and operations to permanently block. Blocks
+                  before the classifier is consulted and cannot be
+                  overridden by user intent. Empty by design; a deny entry
+                  does not stall a session, so this is the one list that is
+                  safe to populate when you need an absolute boundary.
+                '';
               };
               ask = lib.mkOption {
                 type = lib.types.listOf lib.types.str;
                 default = [ ];
-                description = "Commands and operations requiring user confirmation";
+                description = ''
+                  Commands and operations requiring user confirmation.
+
+                  Must stay empty: an ask rule is evaluated BEFORE the
+                  classifier and always forces a permission prompt, even in
+                  auto mode, so it is the one rule class that can stall a
+                  session waiting on a human. `./settings.nix` asserts this
+                  list is empty. Use `deny` for a hard boundary instead.
+                '';
               };
               defaultMode = lib.mkOption {
                 type = lib.types.nullOr (
@@ -163,12 +191,34 @@
         askUserQuestionTimeout = lib.mkOption {
           type = lib.types.str;
           default = "5m";
-          example = "10m";
+          example = "60s";
           description = ''
             Idle time before an unanswered `AskUserQuestion` dialog
-            auto-continues. Accepts "60s", "5m", "10m", or "never".
-            Despite upstream docs, the real runtime default is "never"
-            (blocks forever) — set explicitly to avoid stalled sessions.
+            auto-continues with whatever options are already selected.
+            Accepts "60s" or "5m" style values.
+
+            Upstream's default is "never" — an unanswered dialog blocks
+            forever. Five minutes is the deliberate cap for this module, and
+            `./settings.nix` asserts the value never exceeds it (and rejects
+            "never"), so no dialog can hold a session open indefinitely.
+          '';
+        };
+
+        dialogExpiry = lib.mkOption {
+          type = lib.types.nullOr lib.types.str;
+          default = null;
+          example = "60s";
+          description = ''
+            Deadline for dialogs Claude Code forwards to a remote client
+            (Remote Control, SDK hosts) — model-choice prompts after a
+            safety refusal, approval dialogs for held cross-session
+            messages. Accepts "60s" or "5m" style values.
+
+            `null` (the default) leaves Claude Code's own default of "5m",
+            which is already within this module's five-minute cap, so we do
+            not override it. Set it only to go LOWER: `./settings.nix`
+            asserts a non-null value never exceeds 5m. Requires Claude Code
+            v2.1.224 or later.
           '';
         };
 

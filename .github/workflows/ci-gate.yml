@@ -31,10 +31,24 @@ jobs:
       # validation (startup_failure).
       actions: write
     uses: dryvist/.github/.github/workflows/_ci-gate.yml@main
+    # The `nix` filter is load-bearing, not decorative. `Nix Validate` is
+    # gated on BOTH `nix_validate` and `needs.changes.outputs.nix == 'true'`,
+    # and `File Size` is gated on the `nix` OR `markdown` filter. Without a
+    # `nix:` key here, a PR touching only `.nix` files silently skips both —
+    # so Nix could reach `develop` never having been evaluated, formatted, or
+    # lib-tested. `ci.yml` does not cover the gap: it fires only on `main`.
     with:
       markdown_lint: true
       file_size: true
+      nix_validate: true
+      # treefmt/pre-commit checks are platform-specific; restrict to the
+      # runner's system (x86_64-linux), matching ci.yml. The org default is
+      # `true`, which would newly evaluate darwin systems on every PR.
+      all_systems: false
       filters: |
         markdown:
           - '**.md'
           - '.markdownlint*'
+        nix:
+          - '**.nix'
+          - 'flake.lock'

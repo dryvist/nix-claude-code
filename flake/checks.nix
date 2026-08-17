@@ -133,18 +133,36 @@
         # Eval-time regression guard for the `programs.claude` module schema.
         programs-claude-eval = programsClaudeEval;
 
-        # `advisorModel` is opt-in. Its null default must omit the key from
-        # the generated settings.json, which keeps the advisor disabled.
+        # The auto-mode-only permission posture, asserted against the file
+        # that actually gets deployed rather than against option defaults.
+        # A default `programs.claude.enable = true` must ship no allow, ask,
+        # or deny rules: the classifier is the only gate, and nothing may
+        # resolve before it. `askUserQuestionTimeout` is checked here too —
+        # upstream's default is "never", so a regression to it would let a
+        # dialog hold a session open indefinitely.
         claude-settings-render =
           pkgs.runCommand "claude-settings-render-test" { nativeBuildInputs = [ pkgs.jq ]; }
             ''
               set -euo pipefail
               settings_json=$(grep -o '/nix/store/[a-z0-9]*-claude-settings\.json' \
                 ${programsClaudeEval}/activate | head -1)
-              [[ $(jq -c 'has("advisorModel")' "$settings_json") == false ]] || {
-                echo "advisorModel must be absent by default" >&2
-                exit 1
+
+              expect() {
+                local filter="$1" want="$2" got
+                got=$(jq -c "$filter" "$settings_json")
+                [[ "$got" == "$want" ]] || {
+                  echo "$filter: expected $want, got $got" >&2
+                  exit 1
+                }
               }
+
+              expect '.permissions.allow' '[]'
+              expect '.permissions.ask' '[]'
+              expect '.permissions.deny' '[]'
+              expect '.permissions.defaultMode' '"auto"'
+              expect '.autoMode.classifyAllShell' 'true'
+              expect '.askUserQuestionTimeout' '"5m"'
+              expect '.useAutoModeDuringPlan' 'true'
               echo ok > $out
             '';
 
@@ -179,6 +197,48 @@
           test ! -e ${synthesizedSkills}/skills/not-a-command
           echo ok > $out
         '';
+
+        # Regression guard: claude-json-merge.sh's final chmod must not abort
+        # activation when it fails (e.g. ~/.claude.json owned by a different
+        # user). Runs the script exactly as home-manager sources it, under
+        # set -eu -o pipefail, with a stub `chmod` on PATH that always fails
+        # — standing in as a permission error, which a sandboxed build can't
+        # otherwise fabricate. Before the fix this aborted the whole build;
+        # after, it must exit 0 and log a warning naming the file.
+        claude-json-merge-chmod-soft-fail =
+          pkgs.runCommand "claude-json-merge-chmod-soft-fail-test" { nativeBuildInputs = [ pkgs.jq ]; }
+            ''
+              set -euo pipefail
+              export HOME=$(mktemp -d)
+              echo '{}' > "$HOME/.claude.json"
+
+              fakebin=$(mktemp -d)
+              printf '#!/bin/sh\nexit 1\n' > "$fakebin/chmod"
+              chmod +x "$fakebin/chmod"
+              export PATH="$fakebin:$PATH"
+
+              export OVERLAY_FILE=$(mktemp)
+              echo '{"mcpServers":{}}' > "$OVERLAY_FILE"
+              export TRUSTED_PROJECT_DIRS='[]'
+              export DRY_RUN_CMD=""
+
+              set +e
+              bash -euo pipefail -c ". ${../modules/scripts/claude-json-merge.sh}" 2>stderr.log
+              rc=$?
+              set -e
+
+              [ "$rc" -eq 0 ] || {
+                echo "activation aborted when chmod failed (rc=$rc):" >&2
+                cat stderr.log >&2
+                exit 1
+              }
+              grep -q "claude.json" stderr.log || {
+                echo "expected a warning naming the file on chmod failure, got:" >&2
+                cat stderr.log >&2
+                exit 1
+              }
+              echo ok > $out
+            '';
       };
     };
 }

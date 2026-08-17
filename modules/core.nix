@@ -6,17 +6,6 @@
 }:
 let
   cfg = config.programs.claude;
-
-  ncc = import ../lib { inherit lib; };
-
-  # `programs.claude.permissions` is the structured input that
-  # `lib.toSettingsJson` consumes. Default to `mkDefaultPermissions`
-  # (the full vendored Claude permission set from
-  # `data/permissions/*.nix`) so callers get a working, principle-of-
-  # least-surprise configuration out of the box. Set to `false` to opt
-  # out entirely.
-  defaultPermissions = ncc.mkDefaultPermissions { tool = "claude"; };
-
 in
 {
   options.programs.claude = {
@@ -33,18 +22,26 @@ in
     };
 
     permissions = lib.mkOption {
-      # Either an attrset (the structured input from `mkDefaultPermissions`
-      # — or a user-supplied override) or `false` to skip writing
-      # permissions to settings.json entirely.
+      # Either an attrset (the structured input `lib.toSettingsJson`
+      # consumes) or `false` to write no rule lists at all.
       type = lib.types.either lib.types.attrs (lib.types.enum [ false ]);
-      default = defaultPermissions;
-      defaultText = lib.literalExpression ''lib.mkDefaultPermissions { tool = "claude"; }'';
+      default = false;
       description = ''
-        Permission lists merged into `~/.claude/settings.json`. The default
-        is the full vendored Claude permission set
-        (`lib.mkDefaultPermissions { tool = "claude"; }`). Set to `false`
-        to omit the `permissions` block entirely; pass an attrset to
-        override.
+        Structured permission input for `lib.toSettingsJson`. Defaults to
+        `false`: this module deliberately ships NO hard-coded allow, ask,
+        or deny rules for Claude Code. The auto-mode classifier
+        (`defaultMode = "auto"`) is the only gate — it reads the
+        conversation, the working repo, and CLAUDE.md, so it can weigh a
+        command in context where a prefix list cannot.
+
+        The vendored rule data still exists and is still exported as
+        `lib.mkDefaultPermissions` for tools that have no classifier
+        (Codex, Gemini); it is simply not consumed on the Claude path.
+
+        Note: this option is not read by the `settings.json` renderer —
+        `programs.claude.settings.permissions.*` is. It remains declared
+        for API compatibility with adopters that pass it through to
+        `lib.toSettingsJson` themselves.
       '';
     };
 
@@ -59,16 +56,26 @@ in
       default = "auto";
       description = ''
         Default Claude Code permission mode. Lands at
-        `permissions.defaultMode` in settings.json.
+        `permissions.defaultMode` in settings.json. Equivalent to running
+        `claude --permission-mode auto`.
 
-        "auto" is the recommended default — Claude classifies actions
-        against the curated deny/ask lists and auto-approves anything not
-        in them. Equivalent to running `claude --permission-mode auto`.
+        "auto" is the default and the posture this module is built around:
+        every tool call that no explicit rule resolves is routed to the
+        auto-mode classifier, which evaluates it against its own built-in
+        rule set plus anything in `programs.claude.autoMode`. A denial is
+        returned to Claude as a blocked tool call, so the session keeps
+        working rather than waiting on a human.
+
+        Claude Code only honours `"auto"` from USER settings
+        (`~/.claude/settings.json`) or managed settings — it is ignored in
+        a repo's `.claude/settings.json` so a checked-in repo cannot grant
+        itself auto mode. This module writes user settings, so the value
+        takes effect.
 
         "bypassPermissions" (also reachable via the
-        `--dangerously-skip-permissions` CLI flag) skips ALL deny/ask
-        checks except credential-read protection. Reserve for trusted
-        automation where the deny list is known too aggressive.
+        `--dangerously-skip-permissions` CLI flag) skips every check
+        except `permissions.deny` and credential-read protection, and gets
+        no classifier review at all. Prefer "auto".
       '';
     };
 
@@ -113,6 +120,27 @@ in
               attempts, etc.).
             '';
           };
+          classifyAllShell = lib.mkOption {
+            type = lib.types.bool;
+            default = true;
+            description = ''
+              Suspend every Bash and PowerShell allow rule while auto mode
+              is active, so the classifier sees every shell command
+              regardless of what the allow list says.
+
+              Defaults to `true` here. This module emits no allow rules of
+              its own, so on a clean machine the setting is a no-op — but
+              `~/.claude/settings.json` is a writable runtime file, and a
+              narrow allow rule that reaches it from outside Nix would
+              otherwise resolve before the classifier ever runs. Setting
+              this keeps "the classifier decides" true regardless of what
+              lands in the file.
+
+              Trades latency for coverage: a command an allow rule would
+              have approved instantly now waits for a classifier verdict.
+              Requires Claude Code v2.1.193 or later.
+            '';
+          };
         };
       };
       default = { };
@@ -121,9 +149,14 @@ in
         `autoMode` in settings.json (NOT under `permissions`). See
         https://code.claude.com/docs/en/auto-mode-config.
 
-        Sub-fields exactly equal to `[ "$defaults" ]` are omitted from
+        List sub-fields exactly equal to `[ "$defaults" ]` are omitted from
         the generated settings.json (semantically a no-op) to keep the
         file minimal.
+
+        Claude Code reads `autoMode` from user settings
+        (`~/.claude/settings.json`), the `--settings` flag, and managed
+        settings only — never from a repo's `.claude/settings.json`. This
+        module writes user settings, so these values take effect.
       '';
     };
 

@@ -103,6 +103,14 @@ data/permissions/
 The data is structured Nix, not JSON. `lib.permissions.*` re-exports each
 file; `lib.mkDefaultPermissions` composes them for a given tool.
 
+**Claude Code does not consume this data.** The home-manager modules render
+`permissions.allow`, `.ask`, and `.deny` as empty lists and set
+`permissions.defaultMode = "auto"`, so the auto-mode classifier is the only
+gate — see [settings.md](settings.md#permissions-full-trust-auto-mode). The
+data remains the source of truth for agents that have no classifier of their
+own (Codex, Gemini), which consume it through `lib.mkDefaultPermissions` in
+nix-ai.
+
 ## Pre-v1 forever versioning
 
 `release-please-config.json` sets `bump-minor-pre-major: true` and
