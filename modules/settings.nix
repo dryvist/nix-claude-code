@@ -106,9 +106,10 @@ let
       API_KEY_HELPER = "${homeDir}/${cfg.apiKeyHelper.scriptPath}";
     };
 
-  # Validate POSIX environment variable names: ^[A-Z_][A-Z0-9_]*$
-  isValidEnvVarName = name: builtins.match "^[A-Z_][A-Z0-9_]*$" name != null;
-  invalidEnvVars = lib.filterAttrs (name: _: !isValidEnvVarName name) envAttrs;
+  # Build-time validation (env-var names, autoCompact range, the empty-`ask`
+  # rule, and the five-minute human-wait cap). Split into its own file to
+  # keep this one under the repo's per-file size limit.
+  settingsAssertions = import ./settings-assertions.nix { inherit lib cfg envAttrs; };
 
   # `defaultMode` precedence (conflict resolution #4):
   #   1. cfg.settings.permissions.defaultMode (if non-null)  → wins
@@ -251,25 +252,6 @@ in
     };
 
     # Validate configuration before generating settings.json
-    assertions = [
-      {
-        assertion = invalidEnvVars == { };
-        message = ''
-          Invalid environment variable names in programs.claude.settings.env:
-            ${lib.concatStringsSep ", " (builtins.attrNames invalidEnvVars)}
-
-          Environment variable names must match POSIX convention: ^[A-Z_][A-Z0-9_]*$
-          (uppercase letters, digits, and underscores only; must start with letter or underscore)
-        '';
-      }
-      {
-        assertion =
-          cfg.settings.autoCompactThresholdPercent == null
-          || (
-            cfg.settings.autoCompactThresholdPercent >= 1 && cfg.settings.autoCompactThresholdPercent <= 100
-          );
-        message = "programs.claude.settings.autoCompactThresholdPercent must be between 1 and 100 (percent of context window).";
-      }
-    ];
+    assertions = settingsAssertions;
   };
 }

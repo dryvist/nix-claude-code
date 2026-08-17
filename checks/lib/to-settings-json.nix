@@ -43,6 +43,24 @@ let
       hard_deny = [ "$defaults" ];
     };
   };
+
+  # The shape the home-manager modules actually deploy: no hard-coded rules,
+  # auto mode as the only gate, every shell command routed to the classifier.
+  autoModeOnly = toSettingsJson {
+    permissions = {
+      allow = [ ];
+      ask = [ ];
+      deny = [ ];
+    };
+    defaultMode = "auto";
+    autoMode = {
+      environment = [ "$defaults" ];
+      allow = [ "$defaults" ];
+      soft_deny = [ "$defaults" ];
+      hard_deny = [ "$defaults" ];
+      classifyAllShell = true;
+    };
+  };
 in
 {
   # Empty call: only the $schema URL is emitted.
@@ -205,5 +223,30 @@ in
   "test (settings): autoMode lives at top-level, NOT under permissions" = {
     expr = builtins.hasAttr "autoMode" withAutoModeEnvSet.permissions or { };
     expected = false;
+  };
+
+  # Auto-mode-only posture: the rule lists render as present-but-empty (so
+  # the deployed file is authoritative rather than silently absent), and the
+  # non-list `classifyAllShell` survives the `[ "$defaults" ]` filter.
+
+  "test (settings): empty rule lists still render all three permission keys" = {
+    expr = {
+      inherit (autoModeOnly.permissions) allow ask deny;
+    };
+    expected = {
+      allow = [ ];
+      ask = [ ];
+      deny = [ ];
+    };
+  };
+
+  "test (settings): auto-mode-only render keeps defaultMode auto" = {
+    expr = autoModeOnly.permissions.defaultMode;
+    expected = "auto";
+  };
+
+  "test (settings): classifyAllShell survives the \\$defaults filter" = {
+    expr = builtins.attrNames autoModeOnly.autoMode;
+    expected = [ "classifyAllShell" ];
   };
 }
