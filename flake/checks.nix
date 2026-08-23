@@ -38,6 +38,43 @@
         name = "synthesized-skills-fixture";
       };
 
+      # merge-json-settings.sh regression fixtures. Each subdirectory under
+      # ./checks/tests/merge-json-settings is one scenario: an
+      # existing-settings.json (runtime state before merge), a
+      # nix-settings.json (this activation's rendered settings), and the
+      # expected-settings.json the merge must produce. Adding a scenario is
+      # adding a directory — no Nix changes needed. Each scenario runs the
+      # actual script under test and compares its (jq -S canonicalized)
+      # output against the fixture via nixpkgs' native testEqualContents
+      # (diffoscope), not custom comparison logic.
+      mergeJsonSettingsTestsDir = ./checks/tests/merge-json-settings;
+      mergeJsonSettingsScenarios = builtins.attrNames (builtins.readDir mergeJsonSettingsTestsDir);
+      mergeJsonSettingsChecks = lib.listToAttrs (
+        map (scenarioName: {
+          name = "merge-json-settings-${scenarioName}";
+          value =
+            let
+              fixture = mergeJsonSettingsTestsDir + "/${scenarioName}";
+              actual =
+                pkgs.runCommand "merge-json-settings-${scenarioName}-actual" { nativeBuildInputs = [ pkgs.jq ]; }
+                  ''
+                    cp ${fixture}/existing-settings.json target.json
+                    bash ${../modules/scripts/merge-json-settings.sh} ${fixture}/nix-settings.json target.json
+                    jq -S . target.json > $out
+                  '';
+              expected =
+                pkgs.runCommand "merge-json-settings-${scenarioName}-expected" { nativeBuildInputs = [ pkgs.jq ]; }
+                  ''
+                    jq -S . ${fixture}/expected-settings.json > $out
+                  '';
+            in
+            pkgs.testers.testEqualContents {
+              assertion = "merge-json-settings (${scenarioName}): actual merged settings match the expected fixture";
+              inherit actual expected;
+            };
+        }) mergeJsonSettingsScenarios
+      );
+
       # Build a minimal home-manager activation derivation with the given
       # extra module slotted in. Lets us assert that each statusline theme
       # evaluates cleanly and produces a buildable activation package.
@@ -243,21 +280,7 @@
               echo ok > $out
             '';
 
-        # A previous activation can leave `advisorModel` sitting in the
-        # runtime settings.json; if a consumer then disables it, the merge
-        # must still clear the stale value. Every line here is a direct
-        # invocation of an existing native tool (echo, jq, and the script
-        # under test itself) -- no custom control flow.
-        merge-json-settings-advisor-strip =
-          pkgs.runCommand "merge-json-settings-advisor-strip-test" { nativeBuildInputs = [ pkgs.jq ]; }
-            ''
-              set -euo pipefail
-              echo '{"advisorModel":"fable","someRuntimeKey":"keepme"}' > target.json
-              echo '{"cleanupPeriodDays":180}' > nix.json
-              bash ${../modules/scripts/merge-json-settings.sh} nix.json target.json
-              jq -e '(has("advisorModel") | not) and .someRuntimeKey == "keepme"' target.json
-              touch $out
-            '';
-      };
+      }
+      // mergeJsonSettingsChecks;
     };
 }
