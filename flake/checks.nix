@@ -139,7 +139,9 @@
         # or deny rules: the classifier is the only gate, and nothing may
         # resolve before it. `askUserQuestionTimeout` is checked here too —
         # upstream's default is "never", so a regression to it would let a
-        # dialog hold a session open indefinitely.
+        # dialog hold a session open indefinitely. `advisorModel` must stay
+        # absent by default too — it's opt-in because the advisor tool
+        # forwards the whole conversation transcript to a reviewer model.
         claude-settings-render =
           pkgs.runCommand "claude-settings-render-test" { nativeBuildInputs = [ pkgs.jq ]; }
             ''
@@ -163,6 +165,7 @@
               expect '.autoMode.classifyAllShell' 'true'
               expect '.askUserQuestionTimeout' '"5m"'
               expect '.useAutoModeDuringPlan' 'true'
+              expect 'has("advisorModel")' 'false'
               echo ok > $out
             '';
 
