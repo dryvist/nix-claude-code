@@ -242,6 +242,12 @@
               }
               echo ok > $out
             '';
+
+        merge-json-settings-advisor-strip =
+          pkgs.runCommand "merge-json-settings-advisor-strip-test" { nativeBuildInputs = [ pkgs.jq ]; }
+            ''
+              bash ${./checks/scripts/merge-json-settings-advisor-strip-test.sh} ${../modules/scripts/merge-json-settings.sh} > $out
+            '';
       };
     };
 }
