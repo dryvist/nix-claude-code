@@ -243,10 +243,20 @@
               echo ok > $out
             '';
 
+        # A previous activation can leave `advisorModel` sitting in the
+        # runtime settings.json; if a consumer then disables it, the merge
+        # must still clear the stale value. Every line here is a direct
+        # invocation of an existing native tool (echo, jq, and the script
+        # under test itself) -- no custom control flow.
         merge-json-settings-advisor-strip =
           pkgs.runCommand "merge-json-settings-advisor-strip-test" { nativeBuildInputs = [ pkgs.jq ]; }
             ''
-              bash ${./checks/scripts/merge-json-settings-advisor-strip-test.sh} ${../modules/scripts/merge-json-settings.sh} > $out
+              set -euo pipefail
+              echo '{"advisorModel":"fable","someRuntimeKey":"keepme"}' > target.json
+              echo '{"cleanupPeriodDays":180}' > nix.json
+              bash ${../modules/scripts/merge-json-settings.sh} nix.json target.json
+              jq -e '(has("advisorModel") | not) and .someRuntimeKey == "keepme"' target.json
+              touch $out
             '';
       };
     };
