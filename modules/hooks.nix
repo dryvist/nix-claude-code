@@ -6,6 +6,8 @@
 # Two high-level convenience toggles auto-wire common patterns:
 #   - hooks.captureSessionOutput → postToolUse runs `last-output.sh`
 #   - hooks.refreshMarketplaces  → sessionStart runs `marketplace-refresh.sh`
+#   - hooks.blockExternalSubagentsInPrivateWorkspace
+#                                → preToolUse runs `private-workspace-agent-guard.sh`
 { config, lib, ... }:
 let
   cfg = config.programs.claude;
@@ -59,6 +61,9 @@ in
     })
     (lib.mkIf (cfg.enable && cfg.hooks.refreshMarketplaces) {
       programs.claude.hooks.sessionStart = lib.mkDefault ./hooks/marketplace-refresh.sh;
+    })
+    (lib.mkIf (cfg.enable && cfg.hooks.blockExternalSubagentsInPrivateWorkspace) {
+      programs.claude.hooks.preToolUse = lib.mkDefault ./hooks/private-workspace-agent-guard.sh;
     })
 
     # Materialize all configured hooks as executable files.
