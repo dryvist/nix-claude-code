@@ -49,6 +49,16 @@ in
         consumption.
       '';
 
+      # High-level toggle: wires preToolUse to a vendored Agent-tool guard.
+      blockExternalSubagentsInPrivateWorkspace = lib.mkEnableOption ''
+        private-workspace subagent guard. When enabled, sets `preToolUse` to
+        a vendored script that blocks Agent-tool spawns whose session cwd is
+        under `$GIT_HOME_PRIVATE` while the router role `subagent` resolves
+        to an external provider. Fail-open: an unset `GIT_HOME_PRIVATE` or
+        `ANTHROPIC_BASE_URL`, or an unreachable router, allows the spawn and
+        logs one line to stderr.
+      '';
+
       # High-level toggle: wires sessionStart to a marketplace-refresh helper.
       refreshMarketplaces = lib.mkEnableOption ''
         marketplace-refresh hook. When enabled, sets `sessionStart` to a
