@@ -42,9 +42,16 @@ if [[ -f $TARGET ]] && [[ ! -L $TARGET ]]; then
   # Only the three rule lists go; `.permissions.additionalDirectories` and
   # any other runtime sub-key under `.permissions` are preserved.
   #
+  # advisorModel strips for the same reason but by a different mechanism:
+  # it's Nix-authoritative but OMITTED (not emptied) when disabled, so a
+  # `del()` gap here doesn't just fossilize a stale value — a consumer
+  # turning it off (settings.advisorModel = null) leaves the runtime file
+  # holding whatever the *previous* Nix generation wrote, forever, since
+  # the key is invisible to jq's `*` merge once Nix stops declaring it.
+  #
   # The del() is a no-op on files without those keys (safe for Claude
   # settings.json).
-  if ! STRIPPED=$(jq 'del(.mcpServers, .extraKnownMarketplaces, .enabledPlugins, .permissions.allow, .permissions.ask, .permissions.deny)' "$TARGET" 2>/dev/null); then
+  if ! STRIPPED=$(jq 'del(.mcpServers, .extraKnownMarketplaces, .enabledPlugins, .permissions.allow, .permissions.ask, .permissions.deny, .advisorModel)' "$TARGET" 2>/dev/null); then
     echo "$(date '+%Y-%m-%d %H:%M:%S') [WARN] Failed to strip Nix-managed keys from existing ${TARGET_NAME}, using existing file contents as-is" >&2
     if ! STRIPPED=$(cat "$TARGET"); then
       echo "$(date '+%Y-%m-%d %H:%M:%S') [WARN] Failed to read existing ${TARGET_NAME}, using Nix config" >&2

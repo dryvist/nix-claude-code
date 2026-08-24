@@ -87,6 +87,15 @@ flows and how"). Tiered rule delivery — top-level `agentsmd/rules/*.md` delive
 using this repo's `rules` option verbatim. Mirror in
 [nix-ai `CLAUDE.md`](https://github.com/JacobPEvans/nix-ai/blob/main/CLAUDE.md).
 
+### Test ownership follows the same boundary
+
+A regression test that proves one of this repo's own declared defaults
+holds — "X stays null/absent unless a consumer overrides it," "the runtime
+merge doesn't resurrect a stale value" — belongs here, in this repo's own
+test suite (`flake/checks.nix`), never duplicated in a consumer. A
+consumer's own checks (e.g. nix-ai's `lib/checks/claude.nix`) should only
+assert values that consumer itself deliberately sets.
+
 ### Package placement
 
 The `nix-package-placement` rule lives in
