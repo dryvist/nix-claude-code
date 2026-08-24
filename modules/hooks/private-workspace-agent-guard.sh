@@ -90,16 +90,43 @@ params=$(jq -c 'first(.data[]? | select(.model_name == "subagent") | .litellm_pa
   allow "/model/info returned no parsable body"
 [ -n "$params" ] && [ "$params" != "null" ] || allow "no deployment named 'subagent'"
 
-# Local means an openai/ or anthropic/ deployment pointed at a loopback base.
-# Everything else — an openrouter/ model, any other provider prefix, or a
-# non-loopback base — counts as external.
-is_local=$(jq -r '
-  (.model // "") as $m
-  | (.api_base // "") as $b
-  | (($m | test("^(openai|anthropic)/")) and ($b | test("^https?://(127\\.0\\.0\\.1|localhost|\\[::1\\])(:|/|$)")))
-' <<<"$params")
+# Local means an openai/ or anthropic/ deployment whose base URL stays inside
+# the operator's own estate: loopback, or a host under the same registrable
+# domain as the router itself. Deriving that domain from LLM_ROUTER_URL keeps
+# the private name out of this file and out of any config — a self-hosted
+# backend is reached by a name in the same domain the router answers on.
+# Everything else — an openrouter/ model, any other provider prefix, a base
+# URL on someone else's domain, or no base URL at all — counts as external.
+model=$(jq -r '.model // ""' <<<"$params")
+api_base=$(jq -r '.api_base // ""' <<<"$params")
 
-[ "$is_local" = "true" ] && exit 0
+api_host=${api_base#*://}
+api_host=${api_host%%/*}
+api_host=${api_host%%:*}
+
+# Registrable domain of the probed endpoint, i.e. its last two labels. Hosts
+# under a multi-label public suffix are not distinguished; the estate this
+# guards reaches its own machines by a plain two-label domain.
+estate_domain=$(printf '%s' "${base_url#*://}" | sed 's|[/:].*||' |
+  awk -F. 'NF >= 2 { print $(NF - 1) "." $NF }')
+
+is_local=false
+case "$model" in
+openai/* | anthropic/*)
+  case "$api_host" in
+  127.0.0.1 | localhost | "[::1]") is_local=true ;;
+  ?*)
+    if [ -n "$estate_domain" ]; then
+      case "$api_host" in
+      "$estate_domain" | *".$estate_domain") is_local=true ;;
+      esac
+    fi
+    ;;
+  esac
+  ;;
+esac
+
+[ "$is_local" = true ] && exit 0
 
 jq -nc '{
   hookSpecificOutput: {
