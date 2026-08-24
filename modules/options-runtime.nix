@@ -17,6 +17,27 @@
         default = ".local/bin/claude-api-key-helper";
         description = "Path (relative to home) where the API key helper script is installed";
       };
+
+      bwsPackage = lib.mkOption {
+        type = lib.types.nullOr lib.types.package;
+        default = null;
+        defaultText = lib.literalExpression "null";
+        example = lib.literalExpression "pkgs.bws";
+        description = ''
+          Package providing the `bws` executable the helper shells out to,
+          added to the wrapper's runtime path.
+
+          Null by default, which resolves `bws` from the caller's own path
+          instead: nixpkgs builds it from a Rust source tree that takes
+          several minutes on every cold build, and a consumer that installs
+          the vendored official binary system-wide should not pay for that
+          twice. The helper reports a clear "bws command not found" error
+          when nothing provides it, so an absent executable fails loudly
+          rather than silently.
+
+          Set it to a package to make the wrapper self-contained.
+        '';
+      };
     };
 
     # Agent teams: coordinate multiple Claude Code instances

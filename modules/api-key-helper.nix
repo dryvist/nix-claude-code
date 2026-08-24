@@ -31,15 +31,20 @@ let
   ];
 
   # Wrap get-api-key.py as a self-contained shell app.
-  # runtimeInputs injects python+keyring+bws into PATH only when the wrapper
+  # runtimeInputs injects python+keyring into PATH only when the wrapper
   # runs — this avoids adding a python3.withPackages env to home.packages,
   # which conflicts with consumers that already build their own python env.
+  #
+  # `bws` joins them only when apiKeyHelper.bwsPackage names a package. It is
+  # unset by default because nixpkgs builds that CLI from a Rust source tree
+  # that costs several minutes on every cold build, while a consumer that
+  # already installs the vendored official binary reaches it on its own path.
   apiKeyHelperBin = pkgs.writeShellApplication {
     name = "claude-api-key-helper";
     runtimeInputs = [
       (pkgs.python3.withPackages (ps: [ ps.keyring ]))
-      pkgs.bws
-    ];
+    ]
+    ++ lib.optional (cfg.apiKeyHelper.bwsPackage != null) cfg.apiKeyHelper.bwsPackage;
     text = ''
       exec python3 ${apiKeyHelperSrc}/get-api-key.py "$@"
     '';
