@@ -40,6 +40,9 @@ run() {
 
 external='{"data":[{"model_name":"subagent","litellm_params":{"model":"openrouter/stealth/ox-alpha"}}]}'
 loopback='{"data":[{"model_name":"subagent","litellm_params":{"model":"openai/local","api_base":"http://127.0.0.1:4100/v1"}}]}'
+in_estate='{"data":[{"model_name":"subagent","litellm_params":{"model":"openai/local","api_base":"https://box.router.invalid:11434/v1"}}]}'
+foreign_host='{"data":[{"model_name":"subagent","litellm_params":{"model":"openai/hosted","api_base":"https://api.someone-else.invalid/v1"}}]}'
+vendor_api='{"data":[{"model_name":"subagent","litellm_params":{"model":"openai/gpt-4o"}}]}'
 
 # External deployment + private cwd -> deny.
 stub_body "$external"
@@ -76,6 +79,34 @@ stub_body "$loopback"
 got=$(run /tmp/workspace/private/owner/repo)
 [ -z "$got" ] || {
   echo "expected allow for a loopback-local subagent role, got: $got" >&2
+  exit 1
+}
+
+# A self-hosted backend reached by name in the router's own domain is internal
+# too — the estate serves its own models from other machines, not from
+# loopback, so a loopback-only rule would leave the allow path unreachable.
+stub_body "$in_estate"
+got=$(run /tmp/workspace/private/owner/repo)
+[ -z "$got" ] || {
+  echo "expected allow for a backend in the router's own domain, got: $got" >&2
+  exit 1
+}
+
+# Same provider prefix, someone else's domain -> deny.
+stub_body "$foreign_host"
+decision=$(run /tmp/workspace/private/owner/repo |
+  jq -r '.hookSpecificOutput.permissionDecision')
+[ "$decision" = "deny" ] || {
+  echo "expected deny for an openai-compatible backend off-estate, got: $decision" >&2
+  exit 1
+}
+
+# An openai/ deployment with no base URL is the vendor's own API -> deny.
+stub_body "$vendor_api"
+decision=$(run /tmp/workspace/private/owner/repo |
+  jq -r '.hookSpecificOutput.permissionDecision')
+[ "$decision" = "deny" ] || {
+  echo "expected deny for a deployment with no api_base, got: $decision" >&2
   exit 1
 }
 
