@@ -19,7 +19,8 @@
 # Environment:
 #   GIT_HOME_PRIVATE   root of the private workspace (unset ⇒ allow)
 #   LLM_ROUTER_URL     upstream router base URL — probed first
-#   OPENAI_API_KEY     upstream router bearer
+#   LLM_ROUTER_TOKEN_FILE  path to the upstream router bearer
+#   OPENAI_API_KEY     bearer fallback when that path is unset or unreadable
 #   ANTHROPIC_BASE_URL local proxy base URL — probed only as a fallback
 #   LITELLM_LOCAL_KEY  local proxy key, sent as `x-litellm-api-key`
 #   XDG_CACHE_HOME     cache root for the 60s /model/info cache
@@ -49,9 +50,16 @@ esac
 # Probe the upstream router, where role aliases actually resolve to models.
 # The local proxy forwards roles through a wildcard deployment, so asking it
 # would only ever report the wildcard — never the provider behind the role.
+#
+# The bearer comes from LLM_ROUTER_TOKEN_FILE, never from OPENAI_API_KEY:
+# on a workstation that variable is overridden to the local proxy's key.
 if [ -n "${LLM_ROUTER_URL:-}" ]; then
   base_url="$LLM_ROUTER_URL"
-  auth_header="Authorization: Bearer ${OPENAI_API_KEY:-}"
+  if [ -r "${LLM_ROUTER_TOKEN_FILE:-}" ]; then
+    auth_header="Authorization: Bearer $(cat "$LLM_ROUTER_TOKEN_FILE")"
+  else
+    auth_header="Authorization: Bearer ${OPENAI_API_KEY:-}"
+  fi
 else
   base_url="${ANTHROPIC_BASE_URL:-}"
   auth_header="x-litellm-api-key: ${LITELLM_LOCAL_KEY:-}"

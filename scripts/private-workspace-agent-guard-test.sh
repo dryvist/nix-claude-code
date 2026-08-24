@@ -18,11 +18,18 @@ export ANTHROPIC_BASE_URL=http://127.0.0.1:4100
 fakebin="$(mktemp -d)"
 export PATH="$fakebin:$PATH"
 
+# The upstream bearer must come from the token file, not from OPENAI_API_KEY —
+# on a workstation that variable holds the local proxy's key instead.
+export LLM_ROUTER_TOKEN_FILE="$fakebin/router-token"
+printf 'upstream-token' >"$LLM_ROUTER_TOKEN_FILE"
+export OPENAI_API_KEY=local-proxy-key
+
 # Swap the stub curl's canned body and drop the 60s cache, so every case
 # really re-reads /model/info.
 stub_body() {
   printf '%s' "$1" >"$fakebin/model-info.json"
-  printf '#!/bin/sh\ncat %s/model-info.json\n' "$fakebin" >"$fakebin/curl"
+  printf '#!/bin/sh\nprintf "%%s\\n" "$@" > %s/curl-args\ncat %s/model-info.json\n' \
+    "$fakebin" "$fakebin" >"$fakebin/curl"
   chmod +x "$fakebin/curl"
   rm -f "$XDG_CACHE_HOME/claude-subagent-role.json"
 }
@@ -40,6 +47,20 @@ decision=$(run /tmp/workspace/private/owner/repo |
   jq -r '.hookSpecificOutput.permissionDecision')
 [ "$decision" = "deny" ] || {
   echo "expected deny for an external subagent role, got: $decision" >&2
+  exit 1
+}
+
+# ...and it asked the upstream router with the token file's bearer.
+grep -qx "Authorization: Bearer upstream-token" "$fakebin/curl-args" || {
+  echo "expected the upstream bearer to come from LLM_ROUTER_TOKEN_FILE" >&2
+  exit 1
+}
+if grep -q "local-proxy-key" "$fakebin/curl-args"; then
+  echo "OPENAI_API_KEY must not be sent to the upstream router" >&2
+  exit 1
+fi
+grep -qx "http://router.invalid/v1/model/info" "$fakebin/curl-args" || {
+  echo "expected the probe to hit LLM_ROUTER_URL" >&2
   exit 1
 }
 
