@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 with a permanent pre-1.0 cadence — see `release-please-config.json`.
 
+## [1.4.1](https://github.com/dryvist/nix-claude-code/compare/v1.4.0...v1.4.1) (2026-08-24)
+
+
+### Bug Fixes
+
+* **hooks:** treat a backend in the router's own domain as internal ([ebccb33](https://github.com/dryvist/nix-claude-code/commit/ebccb334c6eec26ba524d6ad802339e58936874e))
+* **hooks:** treat a backend in the router's own domain as internal ([3d0f96b](https://github.com/dryvist/nix-claude-code/commit/3d0f96b7b41ad66d543513d0f7c5b71868a6cce2))
+
 ## [1.4.0](https://github.com/dryvist/nix-claude-code/compare/v1.3.1...v1.4.0) (2026-08-24)
 
 
