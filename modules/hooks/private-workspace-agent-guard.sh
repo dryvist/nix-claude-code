@@ -18,8 +18,10 @@
 #
 # Environment:
 #   GIT_HOME_PRIVATE   root of the private workspace (unset ⇒ allow)
-#   ANTHROPIC_BASE_URL router base URL (unset ⇒ allow)
-#   LITELLM_LOCAL_KEY  router key, sent as `x-litellm-api-key`
+#   LLM_ROUTER_URL     upstream router base URL — probed first
+#   OPENAI_API_KEY     upstream router bearer
+#   ANTHROPIC_BASE_URL local proxy base URL — probed only as a fallback
+#   LITELLM_LOCAL_KEY  local proxy key, sent as `x-litellm-api-key`
 #   XDG_CACHE_HOME     cache root for the 60s /model/info cache
 
 set -euo pipefail
@@ -44,8 +46,17 @@ case "$cwd" in
 *) exit 0 ;;
 esac
 
-base_url="${ANTHROPIC_BASE_URL:-}"
-[ -n "$base_url" ] || allow "ANTHROPIC_BASE_URL unset"
+# Probe the upstream router, where role aliases actually resolve to models.
+# The local proxy forwards roles through a wildcard deployment, so asking it
+# would only ever report the wildcard — never the provider behind the role.
+if [ -n "${LLM_ROUTER_URL:-}" ]; then
+  base_url="$LLM_ROUTER_URL"
+  auth_header="Authorization: Bearer ${OPENAI_API_KEY:-}"
+else
+  base_url="${ANTHROPIC_BASE_URL:-}"
+  auth_header="x-litellm-api-key: ${LITELLM_LOCAL_KEY:-}"
+fi
+[ -n "$base_url" ] || allow "LLM_ROUTER_URL and ANTHROPIC_BASE_URL both unset"
 
 # Cache line 1 is the fetch timestamp; the rest is the /model/info body.
 # Only successful fetches are cached, and the write is atomic so a
@@ -61,7 +72,7 @@ fi
 
 if [ -z "$info" ]; then
   info=$(curl -sf --connect-timeout 3 "${base_url%/}/model/info" \
-    -H "x-litellm-api-key: ${LITELLM_LOCAL_KEY:-}") || allow "/model/info unreachable"
+    -H "$auth_header") || allow "/model/info unreachable"
   tmp=$(mktemp "${CACHE_FILE}.XXXXXX")
   printf '%s\n%s\n' "$now" "$info" >"$tmp" && mv -f "$tmp" "$CACHE_FILE"
 fi

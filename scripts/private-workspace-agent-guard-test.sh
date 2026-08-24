@@ -12,6 +12,7 @@ set -euo pipefail
 
 export XDG_CACHE_HOME="$(mktemp -d)"
 export GIT_HOME_PRIVATE=/tmp/workspace/private
+export LLM_ROUTER_URL=http://router.invalid/v1
 export ANTHROPIC_BASE_URL=http://127.0.0.1:4100
 
 fakebin="$(mktemp -d)"
@@ -30,7 +31,7 @@ run() {
   printf '{"tool_name":"Agent","cwd":"%s"}' "$1" | bash "$GUARD"
 }
 
-external='{"data":[{"model_name":"subagent","litellm_params":{"model":"openrouter/vendor/model"}}]}'
+external='{"data":[{"model_name":"subagent","litellm_params":{"model":"openrouter/stealth/ox-alpha"}}]}'
 loopback='{"data":[{"model_name":"subagent","litellm_params":{"model":"openai/local","api_base":"http://127.0.0.1:4100/v1"}}]}'
 
 # External deployment + private cwd -> deny.
@@ -56,6 +57,17 @@ got=$(run /tmp/workspace/private/owner/repo)
   echo "expected allow for a loopback-local subagent role, got: $got" >&2
   exit 1
 }
+
+# With LLM_ROUTER_URL unset, the local proxy is the fallback probe.
+stub_body "$external"
+unset LLM_ROUTER_URL
+decision=$(run /tmp/workspace/private/owner/repo |
+  jq -r '.hookSpecificOutput.permissionDecision')
+[ "$decision" = "deny" ] || {
+  echo "expected deny via the ANTHROPIC_BASE_URL fallback, got: $decision" >&2
+  exit 1
+}
+export LLM_ROUTER_URL=http://router.invalid/v1
 
 # Unreachable endpoint -> fail open, with one stderr line.
 printf '#!/bin/sh\nexit 22\n' >"$fakebin/curl"
