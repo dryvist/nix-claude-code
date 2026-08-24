@@ -40,7 +40,8 @@ run() {
 
 external='{"data":[{"model_name":"subagent","litellm_params":{"model":"openrouter/stealth/ox-alpha"}}]}'
 loopback='{"data":[{"model_name":"subagent","litellm_params":{"model":"openai/local","api_base":"http://127.0.0.1:4100/v1"}}]}'
-in_estate='{"data":[{"model_name":"subagent","litellm_params":{"model":"openai/local","api_base":"https://box.router.invalid:11434/v1"}}]}'
+in_estate='{"data":[{"model_name":"subagent","litellm_params":{"model":"openai/local","api_base":"https://box.estate.invalid:11434/v1"}}]}'
+lookalike='{"data":[{"model_name":"subagent","litellm_params":{"model":"openai/local","api_base":"https://notestate.invalid/v1"}}]}'
 foreign_host='{"data":[{"model_name":"subagent","litellm_params":{"model":"openai/hosted","api_base":"https://api.someone-else.invalid/v1"}}]}'
 vendor_api='{"data":[{"model_name":"subagent","litellm_params":{"model":"openai/gpt-4o"}}]}'
 
@@ -82,13 +83,31 @@ got=$(run /tmp/workspace/private/owner/repo)
   exit 1
 }
 
-# A self-hosted backend reached by name in the router's own domain is internal
-# too — the estate serves its own models from other machines, not from
-# loopback, so a loopback-only rule would leave the allow path unreachable.
+# A backend outside loopback stays external until a domain is declared: an
+# undeclared allowlist must never be inferred from the endpoint being probed.
 stub_body "$in_estate"
+decision=$(run /tmp/workspace/private/owner/repo |
+  jq -r '.hookSpecificOutput.permissionDecision')
+[ "$decision" = "deny" ] || {
+  echo "expected deny for a non-loopback backend with no declared domain, got: $decision" >&2
+  exit 1
+}
+
+# Declared as self-hosted -> allow. The estate serves its own models from other
+# machines, so a loopback-only rule leaves the allow path unreachable.
+export CLAUDE_SUBAGENT_INTERNAL_DOMAINS="estate.invalid other.invalid"
 got=$(run /tmp/workspace/private/owner/repo)
 [ -z "$got" ] || {
-  echo "expected allow for a backend in the router's own domain, got: $got" >&2
+  echo "expected allow for a backend in a declared domain, got: $got" >&2
+  exit 1
+}
+
+# The match is on a label boundary, not a substring of the host.
+stub_body "$lookalike"
+decision=$(run /tmp/workspace/private/owner/repo |
+  jq -r '.hookSpecificOutput.permissionDecision')
+[ "$decision" = "deny" ] || {
+  echo "expected deny for a host merely ending in the declared domain, got: $decision" >&2
   exit 1
 }
 
