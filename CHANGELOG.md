@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 with a permanent pre-1.0 cadence — see `release-please-config.json`.
 
+## [1.4.2](https://github.com/dryvist/nix-claude-code/compare/v1.4.1...v1.4.2) (2026-08-24)
+
+
+### Bug Fixes
+
+* **hooks:** declare the self-hosted domains instead of inferring them ([5e7b273](https://github.com/dryvist/nix-claude-code/commit/5e7b2733fabe51c6f3786c8c036594a92d4c369d))
+* **hooks:** declare the self-hosted domains instead of inferring them ([47e535f](https://github.com/dryvist/nix-claude-code/commit/47e535fdc8d28a267d62b8d1a46c8e49db70d2f3))
+
 ## [1.4.1](https://github.com/dryvist/nix-claude-code/compare/v1.4.0...v1.4.1) (2026-08-24)
 
 
