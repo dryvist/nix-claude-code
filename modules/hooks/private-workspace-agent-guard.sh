@@ -24,6 +24,12 @@
 #   ANTHROPIC_BASE_URL local proxy base URL — probed only as a fallback
 #   LITELLM_LOCAL_KEY  local proxy key, sent as `x-litellm-api-key`
 #   XDG_CACHE_HOME     cache root for the 60s /model/info cache
+#   CLAUDE_SUBAGENT_INTERNAL_DOMAINS
+#                      space-separated domains whose hosts are self-hosted, so
+#                      a role target based there counts as internal. Declared,
+#                      never inferred: a domain guessed from another URL can
+#                      land on a public suffix and allowlist every host under
+#                      it. Unset ⇒ only loopback counts as internal.
 
 set -euo pipefail
 
@@ -91,12 +97,14 @@ params=$(jq -c 'first(.data[]? | select(.model_name == "subagent") | .litellm_pa
 [ -n "$params" ] && [ "$params" != "null" ] || allow "no deployment named 'subagent'"
 
 # Local means an openai/ or anthropic/ deployment whose base URL stays inside
-# the operator's own estate: loopback, or a host under the same registrable
-# domain as the router itself. Deriving that domain from LLM_ROUTER_URL keeps
-# the private name out of this file and out of any config — a self-hosted
-# backend is reached by a name in the same domain the router answers on.
-# Everything else — an openrouter/ model, any other provider prefix, a base
-# URL on someone else's domain, or no base URL at all — counts as external.
+# the operator's own estate: loopback, or a host in one of the domains they
+# declared as self-hosted. Self-hosted models are served from other machines,
+# not from the machine running this hook, so loopback alone would leave the
+# allow path unreachable — but the domain is declared rather than derived from
+# another URL, because a derived one can land on a public suffix and allowlist
+# every host beneath it. Everything else — an openrouter/ model, any other
+# provider prefix, a base URL on an undeclared domain, or no base URL at all —
+# counts as external.
 model=$(jq -r '.model // ""' <<<"$params")
 api_base=$(jq -r '.api_base // ""' <<<"$params")
 
@@ -104,23 +112,20 @@ api_host=${api_base#*://}
 api_host=${api_host%%/*}
 api_host=${api_host%%:*}
 
-# Registrable domain of the probed endpoint, i.e. its last two labels. Hosts
-# under a multi-label public suffix are not distinguished; the estate this
-# guards reaches its own machines by a plain two-label domain.
-estate_domain=$(printf '%s' "${base_url#*://}" | sed 's|[/:].*||' |
-  awk -F. 'NF >= 2 { print $(NF - 1) "." $NF }')
-
 is_local=false
 case "$model" in
 openai/* | anthropic/*)
   case "$api_host" in
   127.0.0.1 | localhost | "[::1]") is_local=true ;;
   ?*)
-    if [ -n "$estate_domain" ]; then
+    for internal_domain in ${CLAUDE_SUBAGENT_INTERNAL_DOMAINS:-}; do
       case "$api_host" in
-      "$estate_domain" | *".$estate_domain") is_local=true ;;
+      "$internal_domain" | *".$internal_domain")
+        is_local=true
+        break
+        ;;
       esac
-    fi
+    done
     ;;
   esac
   ;;
