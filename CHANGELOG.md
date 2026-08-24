@@ -6,6 +6,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 with a permanent pre-1.0 cadence — see `release-please-config.json`.
 
+## [1.4.0](https://github.com/dryvist/nix-claude-code/compare/v1.3.1...v1.4.0) (2026-08-24)
+
+
+### Features
+
+* **hooks:** add private-workspace subagent guard ([0e2cc5e](https://github.com/dryvist/nix-claude-code/commit/0e2cc5e6aef34571b14698b0bbeb347a224882df))
+* **hooks:** add private-workspace subagent guard ([9a8147c](https://github.com/dryvist/nix-claude-code/commit/9a8147ce8fcd998bcd7c370e6503c9dd022e0781))
+
+
+### Bug Fixes
+
+* **hooks:** probe the upstream router for the subagent role ([b1f493b](https://github.com/dryvist/nix-claude-code/commit/b1f493bcd4dac33b0683a4345dc5843c122931cb))
+* **hooks:** read the upstream bearer from LLM_ROUTER_TOKEN_FILE ([cc101d2](https://github.com/dryvist/nix-claude-code/commit/cc101d22e84a2bf1e8fa6223383587604a318d49))
+
 ## [1.3.1](https://github.com/dryvist/nix-claude-code/compare/v1.3.0...v1.3.1) (2026-08-17)
 
 

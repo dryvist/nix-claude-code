@@ -190,6 +190,18 @@
               echo ok > $out
             '';
 
+        # The private-workspace Agent guard, end to end against a stubbed
+        # /model/info: an external `subagent` deployment denies, a
+        # loopback-local one stays silent, a spawn outside the private
+        # workspace passes, and an unreachable endpoint fails open.
+        private-workspace-agent-guard = pkgs.runCommand "private-workspace-agent-guard-test" {
+          nativeBuildInputs = [
+            pkgs.jq
+            pkgs.bash
+          ];
+          GUARD = ../modules/hooks/private-workspace-agent-guard.sh;
+        } "bash ${../scripts/private-workspace-agent-guard-test.sh}";
+
         wrap-commands-as-skills = pkgs.runCommand "wrap-commands-as-skills-test" { } ''
           set -euo pipefail
           # Verify the synthesized tree exists and the two expected skills
