@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 with a permanent pre-1.0 cadence — see `release-please-config.json`.
 
+## [1.4.3](https://github.com/dryvist/nix-claude-code/compare/v1.4.2...v1.4.3) (2026-08-24)
+
+
+### Bug Fixes
+
+* **api-key-helper:** stop pulling the secrets CLI from a source build ([bd66034](https://github.com/dryvist/nix-claude-code/commit/bd66034269e6966c83c8c4df41891ad96c73f20c))
+* **api-key-helper:** stop pulling the secrets CLI from a source build ([3c1af36](https://github.com/dryvist/nix-claude-code/commit/3c1af3634f50893e54940f657ec8e077e48bece8))
+
 ## [1.4.2](https://github.com/dryvist/nix-claude-code/compare/v1.4.1...v1.4.2) (2026-08-24)
 
 
