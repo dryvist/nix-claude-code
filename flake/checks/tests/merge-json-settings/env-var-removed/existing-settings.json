@@ -1,0 +1,7 @@
+{
+  "env": {
+    "MCP_TIMEOUT": "300000",
+    "ANTHROPIC_DEFAULT_HAIKU_MODEL": "stale-role"
+  },
+  "someRuntimeKey": "keepme"
+}

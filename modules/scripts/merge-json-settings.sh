@@ -42,9 +42,26 @@ if [[ -f $TARGET ]] && [[ ! -L $TARGET ]]; then
   # Only the three rule lists go; `.permissions.additionalDirectories` and
   # any other runtime sub-key under `.permissions` are preserved.
   #
+  # advisorModel strips for the same reason but by a different mechanism:
+  # it's Nix-authoritative but OMITTED (not emptied) when disabled, so a
+  # `del()` gap here doesn't just fossilize a stale value — a consumer
+  # turning it off (settings.advisorModel = null) leaves the runtime file
+  # holding whatever the *previous* Nix generation wrote, forever, since
+  # the key is invisible to jq's `*` merge once Nix stops declaring it.
+  #
+  # `.env` strips by the same omission mechanism, one level down: Nix
+  # rebuilds the whole env map every activation, so a variable DROPPED from
+  # the Nix config simply stops appearing in the generated file. jq's `*`
+  # then has nothing to overwrite it with, and the runtime file keeps
+  # serving the removed variable to every session forever. Observed with a
+  # model-tier override that stayed live for months after its declaration
+  # was deleted, pointing sessions at a tier that no longer suited them.
+  # Stripping is safe because Nix always emits `env` — the module merges
+  # its own upstream defaults underneath, so the key is never absent.
+  #
   # The del() is a no-op on files without those keys (safe for Claude
   # settings.json).
-  if ! STRIPPED=$(jq 'del(.mcpServers, .extraKnownMarketplaces, .enabledPlugins, .permissions.allow, .permissions.ask, .permissions.deny)' "$TARGET" 2>/dev/null); then
+  if ! STRIPPED=$(jq 'del(.mcpServers, .extraKnownMarketplaces, .enabledPlugins, .permissions.allow, .permissions.ask, .permissions.deny, .advisorModel, .env)' "$TARGET" 2>/dev/null); then
     echo "$(date '+%Y-%m-%d %H:%M:%S') [WARN] Failed to strip Nix-managed keys from existing ${TARGET_NAME}, using existing file contents as-is" >&2
     if ! STRIPPED=$(cat "$TARGET"); then
       echo "$(date '+%Y-%m-%d %H:%M:%S') [WARN] Failed to read existing ${TARGET_NAME}, using Nix config" >&2
