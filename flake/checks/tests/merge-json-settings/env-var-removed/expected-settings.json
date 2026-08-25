@@ -1,0 +1,6 @@
+{
+  "env": {
+    "MCP_TIMEOUT": "300000"
+  },
+  "someRuntimeKey": "keepme"
+}
