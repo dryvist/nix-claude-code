@@ -239,6 +239,17 @@
               }
               echo ok > $out
             '';
+
+        # Regression guard for stripping Nix-managed env keys from the
+        # writable settings file before the deep merge (enabling transition,
+        # disabling transition, and two-argument backward compatibility).
+        # The test body lives in checks/managed-env-strip.sh (never inline in
+        # a .nix file, per repo convention).
+        managed-env-strip = pkgs.runCommand "managed-env-strip" { nativeBuildInputs = [ pkgs.jq ]; } ''
+          set -euo pipefail
+          bash ${../checks/managed-env-strip.sh} ${../modules/scripts/merge-json-settings.sh} >&2
+          echo ok > $out
+        '';
       };
     };
 }

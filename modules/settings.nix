@@ -231,6 +231,24 @@ let
       ''
         jq '.' "$jsonPath" > $out
       '';
+
+  # JSON array of environment variable names this module owns, passed to the
+  # activation merger so it can scrub stale `.env` entries from the writable
+  # file. Only the joint namespace `cfg.managedEnvKeys` (de-duplicated) is
+  # emitted; the third argument is omitted entirely when the list is empty so
+  # the default activation call keeps the original two-argument shape.
+  managedEnvKeysJson =
+    pkgs.runCommand "claude-managed-env-keys.json"
+      {
+        nativeBuildInputs = [ pkgs.jq ];
+        passAsFile = [ "json" ];
+        json = builtins.toJSON (lib.unique cfg.managedEnvKeys);
+      }
+      ''
+        jq '.' "$jsonPath" > $out
+      '';
+
+  managedEnvKeysArg = if cfg.managedEnvKeys == [ ] then "" else " ${managedEnvKeysJson}";
 in
 {
   config = lib.mkIf cfg.enable {
@@ -238,7 +256,7 @@ in
       claudeSettingsMerge = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
         $DRY_RUN_CMD ${mergeJsonSettings}/bin/merge-json-settings \
           "${settingsJson}" \
-          "${homeDir}/.claude/settings.json"
+          "${homeDir}/.claude/settings.json"${managedEnvKeysArg}
       '';
     }
     // lib.optionalAttrs cfg.validateSettings.enable {

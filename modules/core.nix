@@ -160,6 +160,33 @@ in
       '';
     };
 
+    # Names of environment variables this module owns and removes from the
+    # writable settings file at activation when it no longer emits them.
+    # Managed independently of `settings.env`: an adopter declares a name
+    # here even while Nix is not producing a value for it (e.g. a variable
+    # whose value is exported at shell init), so a stale copy left in
+    # `~/.claude/settings.json` is scrubbed instead of fossilized forever.
+    # The activation script clears `.env.<name>` before the deep merge.
+    managedEnvKeys = lib.mkOption {
+      type = lib.types.listOf lib.types.str;
+      default = [ ];
+      description = ''
+        Environment variable names this module manages and removes from the
+        writable settings file on activation when it no longer emits them.
+
+        These names are cleared from `.env` in the pre-existing
+        `settings.json` before the Nix overlay is merged, so a key that
+        stops being generated is removed rather than persisting as stale
+        state. Any value is only ever written by Nix when a matching entry
+        is present in `settings.env`; declaring a name here without an env
+        entry only ever results in scrubbing, never in writing a value.
+      '';
+      example = [
+        "ANTHROPIC_BASE_URL"
+        "ANTHROPIC_SMALL_FAST_MODEL"
+      ];
+    };
+
     # `settings` is declared in `./options-settings.nix` with structured
     # sub-options (alwaysThinkingEnabled, cleanupPeriodDays, permissions,
     # env, sandbox, …) AND a freeform attrs type so callers can pass arbitrary
