@@ -38,76 +38,16 @@
         name = "synthesized-skills-fixture";
       };
 
-      # See ./checks/merge-json-settings.nix — kept out of this file to
-      # stay under the file-size gate's per-file limit.
+      # See ./checks/merge-json-settings.nix and ./checks/activation.nix —
+      # kept out of this file to stay under the 12KB file-size gate.
       mergeJsonSettingsChecks = import ./checks/merge-json-settings.nix { inherit pkgs lib; };
-
-      # Build a minimal home-manager activation derivation with the given
-      # extra module slotted in. Lets us assert that each statusline theme
-      # evaluates cleanly and produces a buildable activation package.
-      mkActivation =
-        extraModule:
-        (inputs.home-manager.lib.homeManagerConfiguration {
-          inherit pkgs;
-          modules = [
-            self.homeModules.default
-            {
-              home = {
-                username = "ci-tester";
-                homeDirectory = "/tmp/ci-tester-home";
-                stateVersion = "25.11";
-              };
-            }
-            extraModule
-          ];
-        }).activationPackage;
-
-      mkStatuslineCheck =
-        theme:
-        mkActivation {
-          programs.claude = {
-            enable = true;
-            # `claude-code` is unfree; the activation check exercises
-            # module wiring only, so skip the binary install.
-            package = null;
-            statusline = {
-              enable = true;
-              inherit theme;
-            };
-          };
-        };
-
-      # Bare-minimum activation: verifies the full `programs.claude` option
-      # set evaluates cleanly with only `enable = true;`. Catches schema
-      # regressions (e.g. typed options that demand non-default input,
-      # cross-option assertions firing for empty configs).
-      programsClaudeEval = mkActivation {
-        programs.claude = {
-          enable = true;
-          package = null; # claude-code is unfree; skip the binary install.
-        };
-      };
-
-      # Regression guard for the typed-hooks → settings.json registration
-      # bug: writing ~/.claude/hooks/session-start.sh alone does nothing,
-      # since Claude Code only invokes hooks registered under settings.json's
-      # `hooks` key. Asserts refreshMarketplaces actually produces that
-      # registration, not just the script file.
-      hooksRegistrationActivation = mkActivation {
-        programs.claude = {
-          enable = true;
-          package = null;
-          hooks.refreshMarketplaces = true;
-        };
-      };
-
-      # Regression guard for outputStyle rendering into settings.json
-      outputStyleActivation = mkActivation {
-        programs.claude = {
-          enable = true;
-          package = null;
-          outputStyle = "concise";
-        };
+      activationChecks = import ./checks/activation.nix {
+        inherit
+          inputs
+          self
+          pkgs
+          lib
+          ;
       };
     in
     {
@@ -138,82 +78,6 @@
           inherit pkgs;
           homeManagerModules = ../modules;
         };
-
-        statusline-powerline = mkStatuslineCheck "powerline";
-        statusline-ccstatusline = mkStatuslineCheck "ccstatusline";
-        statusline-daniel3303 = mkStatuslineCheck "daniel3303";
-
-        # Eval-time regression guard for the `programs.claude` module schema.
-        programs-claude-eval = programsClaudeEval;
-
-        # The auto-mode-only permission posture, asserted against the file
-        # that actually gets deployed rather than against option defaults.
-        # A default `programs.claude.enable = true` must ship no allow, ask,
-        # or deny rules: the classifier is the only gate, and nothing may
-        # resolve before it. `askUserQuestionTimeout` is checked here too —
-        # upstream's default is "never", so a regression to it would let a
-        # dialog hold a session open indefinitely. `advisorModel` must stay
-        # absent by default too — it's opt-in because the advisor tool
-        # forwards the whole conversation transcript to a reviewer model.
-        claude-settings-render =
-          pkgs.runCommand "claude-settings-render-test" { nativeBuildInputs = [ pkgs.jq ]; }
-            ''
-              set -euo pipefail
-              settings_json=$(grep -o '/nix/store/[a-z0-9]*-claude-settings\.json' \
-                ${programsClaudeEval}/activate | head -1)
-
-              expect() {
-                local filter="$1" want="$2" got
-                got=$(jq -c "$filter" "$settings_json")
-                [[ "$got" == "$want" ]] || {
-                  echo "$filter: expected $want, got $got" >&2
-                  exit 1
-                }
-              }
-
-              expect '.permissions.allow' '[]'
-              expect '.permissions.ask' '[]'
-              expect '.permissions.deny' '[]'
-              expect '.permissions.defaultMode' '"auto"'
-              expect '.autoMode.classifyAllShell' 'true'
-              expect '.askUserQuestionTimeout' '"5m"'
-              expect '.useAutoModeDuringPlan' 'true'
-              expect 'has("advisorModel")' 'false'
-              expect 'has("outputStyle")' 'false'
-              echo ok > $out
-            '';
-
-        # Asserts `outputStyle` option renders into settings.json
-        output-style-render =
-          pkgs.runCommand "output-style-render-test" { nativeBuildInputs = [ pkgs.jq ]; }
-            ''
-              set -euo pipefail
-              settings_json=$(grep -o '/nix/store/[a-z0-9]*-claude-settings\.json' \
-                ${outputStyleActivation}/activate | head -1)
-              got=$(jq -r '.outputStyle // empty' "$settings_json")
-              [[ "$got" == "concise" ]] || {
-                echo "expected outputStyle to be concise, got: $got" >&2
-                exit 1
-              }
-              echo ok > $out
-            '';
-
-        # Asserts `hooks.refreshMarketplaces` actually registers
-        # ~/.claude/hooks/session-start.sh under settings.json's `hooks` key
-        # — the whole point of the typed hook, not just the file existing.
-        hooks-registration =
-          pkgs.runCommand "hooks-registration-test" { nativeBuildInputs = [ pkgs.jq ]; }
-            ''
-              set -euo pipefail
-              settings_json=$(grep -o '/nix/store/[a-z0-9]*-claude-settings\.json' \
-                ${hooksRegistrationActivation}/activate | head -1)
-              command=$(jq -r '.hooks.SessionStart[0].hooks[0].command' "$settings_json")
-              [[ "$command" == *".claude/hooks/session-start.sh" ]] || {
-                echo "expected hooks.SessionStart to register session-start.sh, got: $command" >&2
-                exit 1
-              }
-              echo ok > $out
-            '';
 
         # The private-workspace Agent guard, end to end against a stubbed
         # /model/info: an external `subagent` deployment denies, a
@@ -285,6 +149,7 @@
             '';
 
       }
-      // mergeJsonSettingsChecks;
+      // mergeJsonSettingsChecks
+      // activationChecks;
     };
 }
