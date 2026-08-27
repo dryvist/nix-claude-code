@@ -6,6 +6,7 @@ let
   emptyResult = toSettingsJson { };
   withPerms = toSettingsJson { permissions = mkDefaultPermissions { tool = "claude"; }; };
   withMode = toSettingsJson { defaultMode = "auto"; };
+  withOutputStyle = toSettingsJson { outputStyle = "concise"; };
   withPermsAndMode = toSettingsJson {
     permissions = mkDefaultPermissions { tool = "claude"; };
     defaultMode = "auto";
@@ -86,6 +87,16 @@ in
   "test (settings): null statusLine omitted from output" = {
     expr = builtins.hasAttr "statusLine" emptyResult;
     expected = false;
+  };
+
+  "test (settings): null outputStyle omitted from output" = {
+    expr = builtins.hasAttr "outputStyle" emptyResult;
+    expected = false;
+  };
+
+  "test (settings): outputStyle lands at top-level outputStyle" = {
+    expr = withOutputStyle.outputStyle;
+    expected = "concise";
   };
 
   # Permissions: structured input → Claude DSL strings.
