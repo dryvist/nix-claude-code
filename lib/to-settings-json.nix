@@ -3,6 +3,7 @@
   permissions ? null,
   defaultMode ? null,
   autoMode ? null,
+  outputStyle ? null,
   hooks ? null,
   statusLine ? null,
   enabledPlugins ? null,
@@ -83,7 +84,12 @@ let
   defined = lib.filterAttrs (_: v: v != null) {
     permissions = settingsPermissions;
     autoMode = autoModeFiltered;
-    inherit hooks statusLine enabledPlugins;
+    inherit
+      outputStyle
+      hooks
+      statusLine
+      enabledPlugins
+      ;
   };
 in
 defined

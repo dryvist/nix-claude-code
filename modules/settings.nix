@@ -120,6 +120,12 @@ let
     else
       cfg.defaultMode;
 
+  # `outputStyle` precedence:
+  #   1. cfg.settings.outputStyle (if non-null)  → wins
+  #   2. cfg.outputStyle                         → fallback
+  resolvedOutputStyle =
+    if cfg.settings.outputStyle != null then cfg.settings.outputStyle else cfg.outputStyle;
+
   # Auto-mode classifier configuration. Sub-fields exactly equal to the
   # literal default `[ "$defaults" ]` are filtered (they're semantically
   # a no-op — the classifier already uses defaults when unset). Only
@@ -134,7 +140,7 @@ let
 
   # Freeform passthrough: keys set on cfg.settings that the builder does not
   # model explicitly (e.g. statusLine from the statusline submodules, or the
-  # curated catalog in options-settings.nix like `outputStyle`) flow through
+  # curated catalog in options-settings.nix like `editorMode`) flow through
   # verbatim. Restores the contract documented in options-settings.nix after
   # the #39 settings.json rewrite dropped it.
   #
@@ -161,6 +167,7 @@ let
     "sandbox"
     "autoCompactThresholdPercent"
     "hooks"
+    "outputStyle"
   ];
   # Null-valued keys are dropped so a curated option left at its `null`
   # ("use Claude's upstream default") default is omitted from the generated
@@ -208,6 +215,7 @@ let
     inherit (cfg.settings) skillOverrides;
   }
   // lib.optionalAttrs (cfg.model != null) { inherit (cfg) model; }
+  // lib.optionalAttrs (resolvedOutputStyle != null) { outputStyle = resolvedOutputStyle; }
   // lib.optionalAttrs (cfg.remoteControlAtStartup != null) { inherit (cfg) remoteControlAtStartup; }
   // lib.optionalAttrs (envAttrs != { }) { env = envAttrs; }
   # Sandbox configuration (Dec 2025 feature)
