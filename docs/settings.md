@@ -133,6 +133,8 @@ Declared in `modules/options-settings.nix`, all default to `null` — meaning
 this module's five-minute human-wait cap, so it is left unset deliberately —
 set it only to go lower. See "Permissions: full-trust auto mode" above.
 
+`outputStyle` can also be set via top-level `programs.claude.outputStyle` (e.g. `"concise"`), matching `programs.claude.model`.
+
 ## Builder-merged defaults (always present, per-key overridable)
 
 Two values are merged by `modules/settings.nix` rather than exposed as plain

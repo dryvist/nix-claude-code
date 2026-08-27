@@ -100,6 +100,15 @@
           hooks.refreshMarketplaces = true;
         };
       };
+
+      # Regression guard for outputStyle rendering into settings.json
+      outputStyleActivation = mkActivation {
+        programs.claude = {
+          enable = true;
+          package = null;
+          outputStyle = "concise";
+        };
+      };
     in
     {
       checks = {
@@ -170,6 +179,22 @@
               expect '.askUserQuestionTimeout' '"5m"'
               expect '.useAutoModeDuringPlan' 'true'
               expect 'has("advisorModel")' 'false'
+              expect 'has("outputStyle")' 'false'
+              echo ok > $out
+            '';
+
+        # Asserts `outputStyle` option renders into settings.json
+        output-style-render =
+          pkgs.runCommand "output-style-render-test" { nativeBuildInputs = [ pkgs.jq ]; }
+            ''
+              set -euo pipefail
+              settings_json=$(grep -o '/nix/store/[a-z0-9]*-claude-settings\.json' \
+                ${outputStyleActivation}/activate | head -1)
+              got=$(jq -r '.outputStyle // empty' "$settings_json")
+              [[ "$got" == "concise" ]] || {
+                echo "expected outputStyle to be concise, got: $got" >&2
+                exit 1
+              }
               echo ok > $out
             '';
 

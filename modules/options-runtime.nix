@@ -149,6 +149,18 @@
       '';
     };
 
+    outputStyle = lib.mkOption {
+      type = lib.types.nullOr lib.types.str;
+      default = null;
+      description = ''
+        Output style adjusting Claude's system prompt (e.g.
+        "concise", "explanatory", "learning", "proactive", "default",
+        or a custom output style name). null = upstream default (unset).
+        See: https://code.claude.com/docs/en/output-styles
+      '';
+      example = "concise";
+    };
+
     attribution = lib.mkOption {
       type = lib.types.attrsOf lib.types.str;
       default = { };
