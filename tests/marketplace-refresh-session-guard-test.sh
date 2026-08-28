@@ -18,26 +18,34 @@
 set -euo pipefail
 
 fakebin="$(mktemp -d)"
+
+# Resolve bash by path before shadowing PATH. The Nix Linux sandbox has no
+# /usr/bin/env, so a `#!/usr/bin/env bash` stub is not executable there —
+# darwin's looser sandbox hides that.
+bash_bin="$(command -v bash)"
 export PATH="$fakebin:$PATH"
 
 # Stub claude: records that it was called at all. Any invocation while peers are
 # live is the bug this test exists to catch.
-cat >"$fakebin/claude" <<'EOF'
-#!/usr/bin/env bash
-echo "called $*" >>"${CLAUDE_CALL_LOG}"
+cat >"$fakebin/claude" <<EOF
+#!$bash_bin
+echo "called \$*" >>"\${CLAUDE_CALL_LOG}"
 exit 0
 EOF
 chmod +x "$fakebin/claude"
 
 # Stub pgrep: prints one fake pid per session named by SESSION_COUNT, so the
-# hook's `pgrep -x claude | wc -l` sees exactly that many.
-cat >"$fakebin/pgrep" <<'EOF'
-#!/usr/bin/env bash
+# hook's `pgrep -x claude | wc -l` sees exactly that many. Exits 1 when it finds
+# nothing, exactly as the real pgrep does — that non-zero is what the hook's
+# `|| true` has to absorb.
+cat >"$fakebin/pgrep" <<EOF
+#!$bash_bin
 i=0
-while [ "$i" -lt "${SESSION_COUNT:-0}" ]; do
-  echo $((1000 + i))
-  i=$((i + 1))
+while [ "\$i" -lt "\${SESSION_COUNT:-0}" ]; do
+  echo \$((1000 + i))
+  i=\$((i + 1))
 done
+[ "\${SESSION_COUNT:-0}" -gt 0 ]
 EOF
 chmod +x "$fakebin/pgrep"
 
@@ -79,7 +87,17 @@ grep -q "marketplace update testmp" "$CLAUDE_CALL_LOG" ||
 [[ -f "$(marker_path)" ]] &&
   fail "hook left the marker behind after a successful refresh"
 
-# --- Case 3: no marker -> no-op regardless of session count ------------------
+# --- Case 3: pgrep matches nothing -> still refresh, never abort -------------
+# The real pgrep exits 1 when it finds no match. Under `set -o pipefail` that
+# non-zero must not propagate: the hook has to read it as "no peers" and go
+# ahead, not die silently leaving the marker unconsumed forever.
+setup_case
+SESSION_COUNT=0 bash "$HOOK" || fail "hook aborted when pgrep matched nothing"
+
+grep -q "marketplace update testmp" "$CLAUDE_CALL_LOG" ||
+  fail "hook skipped the refresh when pgrep reported no sessions"
+
+# --- Case 4: no marker -> no-op regardless of session count ------------------
 setup_case
 rm -f "$(marker_path)"
 SESSION_COUNT=1 bash "$HOOK" || fail "hook exited non-zero with no marker"
