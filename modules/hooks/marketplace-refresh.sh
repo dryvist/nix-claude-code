@@ -11,6 +11,24 @@ MARKER="${HOME}/.claude/plugins/cache/.nix-refresh-needed"
 
 log_info() { echo "[marketplace-refresh] $1" >&2; }
 
+# Reinstalling replaces version-pinned cache directories and rewrites the shared
+# installed_plugins.json. Sessions resolve plugin and hook paths once at startup,
+# so doing this while other sessions are live breaks every hook in all of them at
+# once — including Stop, which makes the failure unrecoverable without a restart.
+# Only this session's own process is expected; anything more means defer. The
+# marker is left in place, so the next session with no peers retries.
+# macOS pgrep has no -c, so count lines. The `|| true` is load-bearing: pgrep
+# exits 1 when nothing matches, and under `set -o pipefail` that would fail the
+# assignment and abort the hook under `set -e` — turning "no peers, go ahead"
+# into "do nothing, silently".
+if command -v pgrep >/dev/null 2>&1; then
+  sessions=$( (pgrep -x claude || true) 2>/dev/null | wc -l | tr -d ' ')
+  if [[ ${sessions:-0} -gt 1 ]]; then
+    log_info "Other Claude Code sessions active ($sessions) — deferring refresh"
+    exit 0
+  fi
+fi
+
 failures_tmp="$(mktemp "${MARKER}.failures.XXXXXX")"
 trap 'rm -f "$failures_tmp"' EXIT
 echo "timestamp=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >"$failures_tmp"

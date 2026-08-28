@@ -89,7 +89,16 @@
             pkgs.bash
           ];
           GUARD = ../modules/hooks/private-workspace-agent-guard.sh;
-        } "bash ${../scripts/private-workspace-agent-guard-test.sh}";
+        } "bash ${../tests/private-workspace-agent-guard-test.sh}";
+
+        # The marketplace-refresh hook must defer while other Claude Code
+        # sessions are live: reinstalling replaces version-pinned cache dirs and
+        # rewrites the shared installed_plugins.json, which breaks every hook in
+        # every peer session at once. Also covers the solo path and the no-op.
+        marketplace-refresh-session-guard = pkgs.runCommand "marketplace-refresh-session-guard-test" {
+          nativeBuildInputs = [ pkgs.bash ];
+          HOOK = ../modules/hooks/marketplace-refresh.sh;
+        } "bash ${../tests/marketplace-refresh-session-guard-test.sh}";
 
         wrap-commands-as-skills = pkgs.runCommand "wrap-commands-as-skills-test" { } ''
           set -euo pipefail
