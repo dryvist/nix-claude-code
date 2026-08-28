@@ -49,7 +49,7 @@ let
 
   marketplaceSymlinks = lib.mapAttrs' (
     name: marketplace:
-    lib.nameValuePair ".claude/plugins/marketplaces/${getMarketplaceName name}" {
+    lib.nameValuePair "${cfg.configDir}/plugins/marketplaces/${getMarketplaceName name}" {
       source = effectiveSource name marketplace;
     }
   ) nixManagedMarketplaces;

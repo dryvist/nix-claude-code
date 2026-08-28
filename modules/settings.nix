@@ -1,7 +1,8 @@
 # Claude Code Settings (activation-time merge)
 #
-# Manages ~/.claude/settings.json via activation-time merge (not home.file
-# symlinks). Merges plugin marketplaces, permissions, hooks, etc.
+# Manages settings.json (under `programs.claude.configDir`, `~/.claude` by
+# default) via activation-time merge (not home.file symlinks). Merges plugin
+# marketplaces, permissions, hooks, etc.
 # The ~/.claude.json and known_marketplaces.json overlays live in
 # `claude-json.nix`.
 #
@@ -23,7 +24,10 @@ let
   cfg = config.programs.claude;
   homeDir = config.home.homeDirectory;
 
-  claudeRegistry = import ../lib/claude-registry.nix { inherit lib homeDir; };
+  claudeRegistry = import ../lib/claude-registry.nix {
+    inherit lib homeDir;
+    inherit (cfg) configDir;
+  };
   inherit (claudeRegistry) toClaudeMarketplaceFormat;
   hookEventMapping = import ../lib/hook-event-mapping.nix;
 
@@ -39,7 +43,7 @@ let
         hooks = [
           {
             type = "command";
-            command = "${homeDir}/.claude/hooks/${mapping.fileName}";
+            command = "${cfg.configDirAbs}/hooks/${mapping.fileName}";
           }
         ];
       }
@@ -52,11 +56,11 @@ let
   hooksAttrs = typedHooksAttrs // (cfg.settings.hooks or { });
 
   # Directories every adopter needs Claude Code to reach without prompting.
-  # `~/.claude/` is Claude's own config/plugin tree; `/tmp/` covers scratch
-  # files agents commonly write. See `additionalDirectories` in the
+  # `~/${cfg.configDir}/` is Claude's own config/plugin tree; `/tmp/` covers
+  # scratch files agents commonly write. See `additionalDirectories` in the
   # `permissions` block below for how these merge with caller entries.
   universalAdditionalDirectories = [
-    "~/.claude/"
+    "~/${cfg.configDir}/"
     "/tmp/"
   ];
 
@@ -246,7 +250,7 @@ in
       claudeSettingsMerge = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
         $DRY_RUN_CMD ${mergeJsonSettings}/bin/merge-json-settings \
           "${settingsJson}" \
-          "${homeDir}/.claude/settings.json"
+          "${cfg.configDirAbs}/settings.json"
       '';
     }
     // lib.optionalAttrs cfg.validateSettings.enable {
@@ -254,7 +258,7 @@ in
       # the actual deployed file, not just the Nix-generated overlay.
       validateClaudeSettings = lib.hm.dag.entryAfter [ "claudeSettingsMerge" ] ''
         $DRY_RUN_CMD ${validateSettings}/bin/validate-claude-settings \
-          "${homeDir}/.claude/settings.json" \
+          "${cfg.configDirAbs}/settings.json" \
           "${cfg.settings.schemaUrl}"
       '';
     };

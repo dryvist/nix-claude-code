@@ -22,10 +22,14 @@
 #   homeDir: absolute home path used to build `directory`-source paths for
 #     local (synthetic) marketplaces. Default is a placeholder; the deployed
 #     module (modules/settings.nix) imports with the real home directory.
+#   configDir: home-relative path to Claude's config tree (mirrors
+#     `programs.claude.configDir`). Default matches upstream's own default,
+#     so a caller that doesn't pass this keeps today's paths unchanged.
 {
   lib,
   lastUpdated ? "1970-01-01T00:00:00.000Z",
   homeDir ? "/home/user",
+  configDir ? ".claude",
 }:
 
 let
@@ -82,7 +86,7 @@ let
         source = "directory";
         path = lib.concatStringsSep "/" [
           homeDir
-          ".claude/plugins/marketplaces"
+          "${configDir}/plugins/marketplaces"
           (getMarketplaceName name)
         ];
       };
@@ -111,6 +115,7 @@ in
     {
       marketplaces,
       homeDir ? "/home/user",
+      configDir ? ".claude",
     }:
     let
       # Extract marketplace name from the identifier
@@ -125,7 +130,7 @@ in
         let
           marketplaceName = getMarketplaceName name;
           # Native format uses local paths, not Nix store
-          localPath = "${homeDir}/.claude/plugins/marketplaces/${marketplaceName}";
+          localPath = "${homeDir}/${configDir}/plugins/marketplaces/${marketplaceName}";
           # Reuse single source of truth for marketplace format
           formatted = toClaudeMarketplaceFormat name m;
         in

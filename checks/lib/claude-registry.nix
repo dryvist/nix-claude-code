@@ -5,6 +5,14 @@ let
     homeDir = "/home/tester";
   };
 
+  # Same registry, but with a non-default configDir — proves the directory
+  # source path follows configDir rather than a hardcoded ".claude".
+  regCustomDir = import ../../lib/claude-registry.nix {
+    inherit lib;
+    homeDir = "/home/tester";
+    configDir = ".config/claude";
+  };
+
   github = reg.toClaudeMarketplaceFormat "ponytail" {
     source = {
       type = "github";
@@ -15,6 +23,13 @@ let
   # Synthetic marketplace: upstream repo has no marketplace.json, so it must
   # become a local "directory" source instead of a git-cloned "github" one.
   local = reg.toClaudeMarketplaceFormat "fabric-patterns" {
+    source = {
+      type = "local";
+      url = "danielmiessler/fabric";
+    };
+  };
+
+  localCustomDir = regCustomDir.toClaudeMarketplaceFormat "fabric-patterns" {
     source = {
       type = "local";
       url = "danielmiessler/fabric";
@@ -43,5 +58,10 @@ in
   "test (registry): directory source omits the github repo field" = {
     expr = builtins.hasAttr "repo" local.source;
     expected = false;
+  };
+
+  "test (registry): directory path follows a non-default configDir" = {
+    expr = localCustomDir.source.path;
+    expected = "/home/tester/.config/claude/plugins/marketplaces/fabric-patterns";
   };
 }

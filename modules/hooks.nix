@@ -20,14 +20,14 @@ let
       { }
     else if builtins.isPath hookValue then
       {
-        ".claude/hooks/${fileName}" = {
+        "${cfg.configDir}/hooks/${fileName}" = {
           source = hookValue;
           executable = true;
         };
       }
     else
       {
-        ".claude/hooks/${fileName}" = {
+        "${cfg.configDir}/hooks/${fileName}" = {
           text = hookValue;
           executable = true;
         };
