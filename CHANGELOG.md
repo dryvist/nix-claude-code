@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 with a permanent pre-1.0 cadence — see `release-please-config.json`.
 
+## [1.5.1](https://github.com/dryvist/nix-claude-code/compare/v1.5.0...v1.5.1) (2026-08-28)
+
+
+### Bug Fixes
+
+* **hooks:** defer marketplace refresh while peer sessions are live ([#173](https://github.com/dryvist/nix-claude-code/issues/173)) ([e51da55](https://github.com/dryvist/nix-claude-code/commit/e51da55015aca5525f8c6c814882842c7e60afbf))
+
 ## [1.5.0](https://github.com/dryvist/nix-claude-code/compare/v1.4.4...v1.5.0) (2026-08-27)
 
 
