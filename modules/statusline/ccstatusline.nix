@@ -8,7 +8,19 @@ let
   cfg = config.programs.claude.statusline;
   active = config.programs.claude.enable && cfg.enable && cfg.theme == "ccstatusline";
 
-  configFile = ./ccstatusline.json;
+  # Prompt-cache widget: renders the statusline payload's `prompt_cache`
+  # object (warm/cold, TTL countdown to `expires_at`, hit ratio, re-cache
+  # cost). ccstatusline pipes the full Claude payload JSON to custom-command
+  # widgets on stdin. Emits nothing until caching is observed.
+  cacheStatus = pkgs.writeShellScript "claude-cache-status" ''
+    exec ${pkgs.jq}/bin/jq -rj -f ${./cache-status.jq}
+  '';
+
+  # The committed config carries an @cacheStatus@ placeholder for the
+  # custom-command path; inject the store path at build time.
+  configFile = pkgs.runCommand "ccstatusline.json" { } ''
+    ${pkgs.gnused}/bin/sed 's|@cacheStatus@|${cacheStatus}|' ${./ccstatusline.json} > $out
+  '';
 
   script = pkgs.writeShellScript "claude-ccstatusline" ''
     # sirmalloc/ccstatusline (semver-pinned for stability)
