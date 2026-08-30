@@ -6,6 +6,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 with a permanent pre-1.0 cadence — see `release-please-config.json`.
 
+## [1.6.0](https://github.com/dryvist/nix-claude-code/compare/v1.5.1...v1.6.0) (2026-08-30)
+
+
+### Features
+
+* **statusline:** render prompt-cache warmth, TTL countdown and hit ratio ([#178](https://github.com/dryvist/nix-claude-code/issues/178)) ([0556013](https://github.com/dryvist/nix-claude-code/commit/05560135faf934e529daabef55bcc8f375c17769))
+
+
+### Bug Fixes
+
+* **cleanup:** keep still-resolving component links the new generation does not carry ([#179](https://github.com/dryvist/nix-claude-code/issues/179)) ([19711f6](https://github.com/dryvist/nix-claude-code/commit/19711f6fb0ce4b1b4009aa57cca721c8ff66f8af))
+
 ## [1.5.1](https://github.com/dryvist/nix-claude-code/compare/v1.5.0...v1.5.1) (2026-08-28)
 
 
