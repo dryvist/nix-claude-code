@@ -1,0 +1,11 @@
+{
+  "hooks": {
+    "SessionEnd": [
+      {
+        "matcher": ".*",
+        "hooks": [{ "type": "command", "command": "user-added-via-slash-hooks.sh" }]
+      }
+    ]
+  },
+  "someRuntimeKey": "keepme"
+}

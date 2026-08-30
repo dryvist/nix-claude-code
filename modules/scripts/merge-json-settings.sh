@@ -59,9 +59,28 @@ if [[ -f $TARGET ]] && [[ ! -L $TARGET ]]; then
   # Stripping is safe because Nix always emits `env` — the module merges
   # its own upstream defaults underneath, so the key is never absent.
   #
+  # `.hooks` strips too, but conditionally: unlike `.env`, Nix only emits
+  # `.hooks` when at least one typed hook or `settings.hooks` override is
+  # configured (`hooksAttrs != {}` in modules/settings.nix) - so stripping
+  # it unconditionally could wipe a hook a user added at runtime via
+  # `/hooks` on a generation where Nix declares none. Stripping only when
+  # this activation's Nix output actually has the key keeps the invariant
+  # that a key Nix stops declaring vanishes, without touching the case Nix
+  # never owned. Precedent: ClaudeBar (a since-removed macOS menu-bar app,
+  # nix-darwin#1617) self-registered 6 hook events directly into this file;
+  # removing the app never unregistered them, and they fired a doomed curl
+  # at a dead port on every SessionEnd/Stop/Subagent*/TaskCompleted/
+  # UserPromptSubmit for 7+ weeks with no visible error (backgrounded,
+  # output discarded, wrapper always exits 0).
+  #
   # The del() is a no-op on files without those keys (safe for Claude
   # settings.json).
-  if ! STRIPPED=$(jq 'del(.mcpServers, .extraKnownMarketplaces, .enabledPlugins, .permissions.allow, .permissions.ask, .permissions.deny, .advisorModel, .env)' "$TARGET" 2>/dev/null); then
+  STRIP_FILTER='del(.mcpServers, .extraKnownMarketplaces, .enabledPlugins, .permissions.allow, .permissions.ask, .permissions.deny, .advisorModel, .env'
+  if jq -e 'has("hooks")' "$NIX_SETTINGS" >/dev/null 2>&1; then
+    STRIP_FILTER="${STRIP_FILTER}, .hooks"
+  fi
+  STRIP_FILTER="${STRIP_FILTER})"
+  if ! STRIPPED=$(jq "$STRIP_FILTER" "$TARGET" 2>/dev/null); then
     echo "$(date '+%Y-%m-%d %H:%M:%S') [WARN] Failed to strip Nix-managed keys from existing ${TARGET_NAME}, using existing file contents as-is" >&2
     if ! STRIPPED=$(cat "$TARGET"); then
       echo "$(date '+%Y-%m-%d %H:%M:%S') [WARN] Failed to read existing ${TARGET_NAME}, using Nix config" >&2
