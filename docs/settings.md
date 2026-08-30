@@ -189,6 +189,16 @@ the `claude` binary reads from the same place Nix writes to — set
 through some other mechanism. At the default `.claude`, nothing is exported
 and every path is unchanged from before this option existed.
 
+The vendored runtime scripts that can't be Nix-rewritten — the
+marketplace-refresh `sessionStart` hook and the `daniel3303` statusline —
+read `${CLAUDE_CONFIG_DIR:-$HOME/.claude}` themselves, so they follow a
+relocated tree too (via the exported env var, or their upstream-default
+fallback when it's unset).
+
+`configDir` must be a non-empty path relative to `$HOME` with no `.` or
+`..` components; an absolute or empty value fails evaluation rather than
+silently misdirecting the activation writes.
+
 Two things this does **not** cover, because upstream's own
 `CLAUDE_CONFIG_DIR` doesn't either:
 

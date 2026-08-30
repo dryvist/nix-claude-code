@@ -239,4 +239,33 @@ in
       `programs.claude.settings.schemaUrl` after each activation
     '';
   };
+
+  # `configDir` is documented as a $HOME-relative path and is interpolated
+  # raw into `home.file` keys, activation-time absolute paths, and the
+  # symlink-cleanup globs. Reject values that break that contract — an
+  # empty string, an absolute path, or a `.`/`..` component — at evaluation
+  # time, rather than letting them silently redirect writes or cleanup.
+  config.assertions =
+    let
+      parts = lib.splitString "/" cfg.configDir;
+    in
+    [
+      {
+        assertion = cfg.configDir != "" && !(lib.hasPrefix "/" cfg.configDir);
+        message = ''
+          programs.claude.configDir must be a non-empty path relative to $HOME,
+          not an absolute path. Got: "${cfg.configDir}". `home.file` keys are
+          home-relative, so an absolute value would silently fail to relocate
+          the symlinked components (hooks, commands, agents, skills, rules,
+          plugin marketplaces, the statusline script).
+        '';
+      }
+      {
+        assertion = !(lib.any (p: p == "" || p == "." || p == "..") parts);
+        message = ''
+          programs.claude.configDir must not contain empty, "." or ".." path
+          components. Got: "${cfg.configDir}".
+        '';
+      }
+    ];
 }

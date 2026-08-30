@@ -49,19 +49,24 @@ done
 EOF
 chmod +x "$fakebin/pgrep"
 
-# Fresh HOME with a refresh marker queued, per case.
+# Fresh HOME with a refresh marker queued, per case. When CLAUDE_CONFIG_DIR is
+# exported (custom `programs.claude.configDir`), the marker lives under it
+# instead of $HOME/.claude — the hook has to follow the same env var the
+# module exports, or a relocated cache never gets refreshed.
 setup_case() {
   HOME="$(mktemp -d)"
   export HOME
-  mkdir -p "$HOME/.claude/plugins/cache"
+  mkdir -p "$(dirname "$(marker_path)")"
   printf 'timestamp=2026-01-01T00:00:00Z\nmarketplace=testmp\n' \
-    >"$HOME/.claude/plugins/cache/.nix-refresh-needed"
+    >"$(marker_path)"
   CLAUDE_CALL_LOG="$HOME/claude-calls.log"
   export CLAUDE_CALL_LOG
   : >"$CLAUDE_CALL_LOG"
 }
 
-marker_path() { echo "$HOME/.claude/plugins/cache/.nix-refresh-needed"; }
+marker_path() {
+  echo "${CLAUDE_CONFIG_DIR:-$HOME/.claude}/plugins/cache/.nix-refresh-needed"
+}
 
 fail() {
   echo "FAIL: $1" >&2
@@ -102,5 +107,21 @@ setup_case
 rm -f "$(marker_path)"
 SESSION_COUNT=1 bash "$HOOK" || fail "hook exited non-zero with no marker"
 [[ -s $CLAUDE_CALL_LOG ]] && fail "hook invoked claude with no marker present"
+
+# --- Case 5: custom CLAUDE_CONFIG_DIR -> marker read from the relocated tree -
+# The module exports CLAUDE_CONFIG_DIR whenever configDir is customized; the
+# hook must consume the marker from there, not from a hard-coded $HOME/.claude.
+setup_case
+rm -f "$HOME/.claude/plugins/cache/.nix-refresh-needed"
+export CLAUDE_CONFIG_DIR="$HOME/xdg/claude"
+# Only the relocated tree holds a marker — $HOME/.claude/... does not exist.
+mkdir -p "$(dirname "$(marker_path)")"
+printf 'timestamp=2026-01-01T00:00:00Z\nmarketplace=testmp\n' >"$(marker_path)"
+SESSION_COUNT=1 bash "$HOOK" || fail "hook exited non-zero with a custom CLAUDE_CONFIG_DIR"
+grep -q "marketplace update testmp" "$CLAUDE_CALL_LOG" ||
+  fail "hook ignored the marker under a custom CLAUDE_CONFIG_DIR"
+[[ -f "$(marker_path)" ]] &&
+  fail "hook left the relocated marker behind after a successful refresh"
+unset CLAUDE_CONFIG_DIR
 
 echo "marketplace-refresh session guard: all cases passed" >"${out:-/dev/stdout}"
