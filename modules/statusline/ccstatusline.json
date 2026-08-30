@@ -30,7 +30,16 @@
       { "id": "20", "type": "separator" },
       { "id": "21", "type": "weekly-usage" },
       { "id": "22", "type": "custom-text", "customText": " " },
-      { "id": "23", "type": "weekly-reset-timer", "color": "yellow" }
+      { "id": "23", "type": "weekly-reset-timer", "color": "yellow" },
+      { "id": "24", "type": "separator" },
+      {
+        "id": "25",
+        "type": "custom-command",
+        "commandPath": "@cacheStatus@",
+        "timeout": 900,
+        "maxWidth": 24,
+        "color": "brightMagenta"
+      }
     ]
   ]
 }
