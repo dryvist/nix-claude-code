@@ -100,6 +100,18 @@
           HOOK = ../modules/hooks/marketplace-refresh.sh;
         } "bash ${../tests/marketplace-refresh-session-guard-test.sh}";
 
+        # Stale-generation cleanup must be replace-only: a rebuild that
+        # activates a generation NOT carrying the components (another
+        # branch/worktree/pin) must keep still-resolving links instead of
+        # wiping every deployed skill and command out from under live
+        # sessions. Covers: replaced -> removed, foreign-only -> kept,
+        # current-gen and unmanaged links untouched, idempotence.
+        stale-generation-replace-only = pkgs.runCommand "stale-generation-replace-only-test" {
+          nativeBuildInputs = [ pkgs.bash ];
+          SCRIPT = ../modules/scripts/cleanup-stale-generation-symlinks.sh;
+          COMMON = ../modules/scripts/cleanup-common.sh;
+        } "bash ${../tests/stale-generation-replace-only-test.sh}";
+
         wrap-commands-as-skills = pkgs.runCommand "wrap-commands-as-skills-test" { } ''
           set -euo pipefail
           # Verify the synthesized tree exists and the two expected skills
