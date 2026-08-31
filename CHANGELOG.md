@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 with a permanent pre-1.0 cadence — see `release-please-config.json`.
 
+## [1.6.1](https://github.com/dryvist/nix-claude-code/compare/v1.6.0...v1.6.1) (2026-08-31)
+
+
+### Bug Fixes
+
+* **marketplaces:** copy the jacobpevans marketplace instead of symlinking it ([#183](https://github.com/dryvist/nix-claude-code/issues/183)) ([a73dbee](https://github.com/dryvist/nix-claude-code/commit/a73dbee1288fd7c11f1cf644b67747c54a9ad945))
+* **settings:** strip stale hook events on activation ([#184](https://github.com/dryvist/nix-claude-code/issues/184)) ([944c1aa](https://github.com/dryvist/nix-claude-code/commit/944c1aae81071c47b9b70a7ca487b910812bb1fa))
+
 ## [1.6.0](https://github.com/dryvist/nix-claude-code/compare/v1.5.1...v1.6.0) (2026-08-30)
 
 
