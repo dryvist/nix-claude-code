@@ -23,6 +23,7 @@
         parsePlugin = import ../checks/lib/parse-plugin.nix { inherit lib; };
         toSettingsJson = import ../checks/lib/to-settings-json.nix { inherit lib; };
         renderAutonomous = import ../checks/lib/render-autonomous.nix { inherit lib; };
+        marketplaceEntryLocality = import ../checks/lib/marketplace-entry-locality.nix { inherit lib; };
       };
 
       allTests = lib.foldl' (acc: suite: acc // suite) { } (builtins.attrValues suites);
