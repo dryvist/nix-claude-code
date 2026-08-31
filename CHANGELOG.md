@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 with a permanent pre-1.0 cadence — see `release-please-config.json`.
 
+## [1.7.2](https://github.com/dryvist/nix-claude-code/compare/v1.7.1...v1.7.2) (2026-08-31)
+
+
+### Reverts
+
+* **statusline:** restore the built-in plan-usage widgets ([#197](https://github.com/dryvist/nix-claude-code/issues/197)) ([7d31b54](https://github.com/dryvist/nix-claude-code/commit/7d31b549ea08a6e31f750d47084c2e4fcc231fd4))
+
 ## [1.7.1](https://github.com/dryvist/nix-claude-code/compare/v1.7.0...v1.7.1) (2026-08-31)
 
 
