@@ -16,13 +16,20 @@ let
     exec ${pkgs.jq}/bin/jq -rj -f ${./cache-status.jq}
   '';
 
-  # Plan-usage widget: renders the 5h and 7d rate-limit windows from the same
-  # stdin payload. ccstatusline's built-in session-usage/weekly-usage widgets
-  # instead poll api.anthropic.com/api/oauth/usage, which rate-limits hard
-  # enough that they render "[Rate limited]" indefinitely. Emits nothing when
-  # the payload carries no rate_limits object.
-  usageStatus = pkgs.writeShellScript "claude-usage-status" ''
-    exec ${pkgs.jq}/bin/jq -rj -f ${./usage-status.jq}
+  # Hourly refresher for the plan-usage snapshot, detached from the render so
+  # the widget never waits on the network. The request cadence it enforces is
+  # load-bearing — see the script.
+  usageRefresh = pkgs.writeShellScript "claude-usage-refresh" ''
+    exec ${pkgs.python3}/bin/python3 ${./usage-refresh.py} "$1"
+  '';
+
+  # Plan-usage widget: reads the 5h and 7d windows off the stdin payload, and
+  # falls back to the cached snapshot when the payload carries none.
+  usageStatus = pkgs.runCommand "claude-usage-status" { } ''
+    ${pkgs.gnused}/bin/sed -e 's|@jq@|${pkgs.jq}/bin/jq|g' \
+      -e 's|@refresh@|${usageRefresh}|' \
+      -e 's|@filter@|${./usage-status.jq}|' ${./usage-status.sh} > $out
+    chmod +x $out
   '';
 
   # The committed config carries @cacheStatus@ and @usageStatus@ placeholders

@@ -28,7 +28,9 @@ def window(tag):
     | if $p == null then "" else "\(tag) \($p | round)%" + (.resets_at | countdown) end
   end;
 
-(.rate_limits // {}) as $r |
+# The live payload wins; the cached snapshot only fills in when the payload
+# carries no rate_limits, which is the case for API-key sessions.
+((.rate_limits // .cached_rate_limits) // {}) as $r |
 (($r.utilization // $r)) as $b |
 [($b.five_hour | window("5h")), ($b.seven_day | window("7d"))]
 | map(select(. != ""))
