@@ -1,0 +1,14 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      { "matcher": ".*", "hooks": [{ "type": "command", "command": "old-post-tool-use.sh" }] }
+    ],
+    "SessionEnd": [
+      {
+        "matcher": ".*",
+        "hooks": [{ "type": "command", "command": "__claudebar_hook() { :; }; __claudebar_hook" }]
+      }
+    ]
+  },
+  "someRuntimeKey": "keepme"
+}

@@ -52,3 +52,14 @@ jobs:
         nix:
           - '**.nix'
           - 'flake.lock'
+          # Not just `.nix`: the Nix checks evaluate and run non-Nix files
+          # too. `flake/checks/` builds fixture-driven regression tests from
+          # the data under `flake/checks/tests/`, and several of them execute
+          # scripts from `modules/scripts/`. Those checks are the only
+          # coverage those files have, so leaving them out of this filter
+          # skips the entire Nix gate on exactly the PRs that change the
+          # behaviour under test — a shell-script fix ships with its own new
+          # regression tests never having run. Same failure shape as the
+          # missing `nix:` key described above, one layer further out.
+          - 'modules/scripts/**'
+          - 'flake/checks/tests/**'

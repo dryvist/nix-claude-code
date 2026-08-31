@@ -254,25 +254,18 @@
       manifestJson = builtins.toFile "marketplace.json" (builtins.toJSON manifest);
     in
     pkgs.runCommand "jacobpevans-cc-plugins-patched" { } ''
-      mkdir -p $out/.claude-plugin
+      # Copy, never symlink. Claude Code >= 2.1.251 refuses any plugin whose
+      # source path resolves outside its marketplace directory, and a per-entry
+      # symlink farm puts every plugin dir in the *input's* store path instead
+      # of this one - which refused all 20 plugins with
+      # "does not stay inside its marketplace directory".
+      # -L dereferences, so no escaping link survives into the output.
+      mkdir -p $out
+      cp -RL ${src}/. $out/
+      chmod -R u+w $out
 
-      # Symlink all entries except .claude-plugin (guard against empty glob)
-      for f in ${src}/* ${src}/.[!.]*; do
-        [ -e "$f" ] || continue
-        name=$(basename "$f")
-        [ "$name" = ".claude-plugin" ] && continue
-        ln -s "$f" "$out/$name"
-      done
-
-      # Preserve upstream .claude-plugin contents, only replace marketplace.json
-      for f in ${src}/.claude-plugin/*; do
-        [ -e "$f" ] || continue
-        name=$(basename "$f")
-        [ "$name" = "marketplace.json" ] && continue
-        ln -s "$f" "$out/.claude-plugin/$name"
-      done
-
-      # Generated marketplace.json replaces the manual one
+      # Generated marketplace.json replaces the upstream one; everything else
+      # under .claude-plugin is preserved by the copy above.
       cp ${manifestJson} $out/.claude-plugin/marketplace.json
     '';
 }

@@ -1,0 +1,7 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      { "matcher": ".*", "hooks": [{ "type": "command", "command": "new-post-tool-use.sh" }] }
+    ]
+  }
+}
