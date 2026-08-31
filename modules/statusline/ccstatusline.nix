@@ -16,10 +16,20 @@ let
     exec ${pkgs.jq}/bin/jq -rj -f ${./cache-status.jq}
   '';
 
-  # The committed config carries an @cacheStatus@ placeholder for the
-  # custom-command path; inject the store path at build time.
+  # Plan-usage widget: renders the 5h and 7d rate-limit windows from the same
+  # stdin payload. ccstatusline's built-in session-usage/weekly-usage widgets
+  # instead poll api.anthropic.com/api/oauth/usage, which rate-limits hard
+  # enough that they render "[Rate limited]" indefinitely. Emits nothing when
+  # the payload carries no rate_limits object.
+  usageStatus = pkgs.writeShellScript "claude-usage-status" ''
+    exec ${pkgs.jq}/bin/jq -rj -f ${./usage-status.jq}
+  '';
+
+  # The committed config carries @cacheStatus@ and @usageStatus@ placeholders
+  # for the custom-command paths; inject the store paths at build time.
   configFile = pkgs.runCommand "ccstatusline.json" { } ''
-    ${pkgs.gnused}/bin/sed 's|@cacheStatus@|${cacheStatus}|' ${./ccstatusline.json} > $out
+    ${pkgs.gnused}/bin/sed -e 's|@cacheStatus@|${cacheStatus}|' \
+      -e 's|@usageStatus@|${usageStatus}|' ${./ccstatusline.json} > $out
   '';
 
   script = pkgs.writeShellScript "claude-ccstatusline" ''
