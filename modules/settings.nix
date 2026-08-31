@@ -218,14 +218,22 @@ let
   // lib.optionalAttrs (resolvedOutputStyle != null) { outputStyle = resolvedOutputStyle; }
   // lib.optionalAttrs (cfg.remoteControlAtStartup != null) { inherit (cfg) remoteControlAtStartup; }
   // lib.optionalAttrs (envAttrs != { }) { env = envAttrs; }
-  # Sandbox configuration (Dec 2025 feature)
+  # Sandbox configuration (Dec 2025 feature).
+  #
+  # Emit every sub-key the caller actually set, rather than three by name.
+  # `sandbox` is in `knownSettingsKeys`, so the whole attrset is removed from
+  # `freeformSettings` — naming keys individually here meant anything else a
+  # caller configured, including the `network` and `filesystem` policies that
+  # decide what the sandbox contains, was silently dropped instead of reaching
+  # settings.json.
+  #
+  # Nulls and empty lists are filtered for the same reason they are in
+  # `freeformSettings`: an option left at its `null` default means "use
+  # Claude's upstream default", which is expressed by omitting the key. This
+  # preserves the previous behaviour for `excludedCommands`, whose empty
+  # default was likewise omitted.
   // lib.optionalAttrs cfg.settings.sandbox.enabled {
-    sandbox = {
-      inherit (cfg.settings.sandbox) enabled autoAllowBashIfSandboxed;
-    }
-    // lib.optionalAttrs (cfg.settings.sandbox.excludedCommands != [ ]) {
-      inherit (cfg.settings.sandbox) excludedCommands;
-    };
+    sandbox = lib.filterAttrs (_: v: v != null && v != [ ]) cfg.settings.sandbox;
   }
   // freeformSettings;
 

@@ -23,7 +23,10 @@
       # Curated catalog of documented-but-untyped-elsewhere settings.json
       # keys (all nullOr, opt-in) — split out to keep this file under the
       # 12KB file-size limit.
-      imports = [ ./options-settings-catalog.nix ];
+      imports = [
+        ./options-settings-catalog.nix
+        ./options-settings-policy.nix
+      ];
       freeformType = lib.types.attrs;
       options = {
         # Extended thinking mode
@@ -245,34 +248,12 @@
           '';
         };
 
-        # Sandbox configuration (Dec 2025 feature)
+        # Sandbox configuration (Dec 2025 feature). Body in
+        # ./options-sandbox.nix — see that file for why the policy sub-keys
+        # had to be typed rather than left to freeform.
         sandbox = lib.mkOption {
           default = { };
-          type = lib.types.submodule {
-            freeformType = lib.types.attrs;
-            options = {
-              enabled = lib.mkOption {
-                type = lib.types.bool;
-                default = false;
-                description = "Enable sandbox mode for filesystem/network isolation.";
-              };
-              autoAllowBashIfSandboxed = lib.mkOption {
-                type = lib.types.bool;
-                default = true;
-                description = "Automatically allow bash commands when sandboxed.";
-              };
-              excludedCommands = lib.mkOption {
-                type = lib.types.listOf lib.types.str;
-                default = [ ];
-                description = "Commands to exclude from sandbox restrictions";
-                example = [
-                  "git"
-                  "nix"
-                  "darwin-rebuild"
-                ];
-              };
-            };
-          };
+          type = lib.types.submodule (import ./options-sandbox.nix { inherit lib; });
         };
       };
     };
