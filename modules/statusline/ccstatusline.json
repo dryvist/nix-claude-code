@@ -9,8 +9,9 @@
       { "id": "5", "type": "worktree-name", "color": "blue" },
       { "id": "6", "type": "custom-text", "customText": "@", "color": "blue" },
       { "id": "7", "type": "git-branch", "rawValue": true, "color": "brightBlue" },
-      { "id": "8", "type": "git-changes", "color": "yellow" },
-      { "id": "9", "type": "separator" },
+      { "id": "8", "type": "git-changes", "color": "yellow" }
+    ],
+    [
       { "id": "10", "type": "context-length", "color": "white" },
       {
         "id": "11",
