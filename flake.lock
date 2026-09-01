@@ -224,6 +224,23 @@
         "type": "github"
       }
     },
+    "claude-swap": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1786474943,
+        "narHash": "sha256-BDfwyH7h7Ii7QYaunHDnf0Epk5nUEd8OdOH3QCf1CJU=",
+        "owner": "realiti4",
+        "repo": "claude-swap",
+        "rev": "9f625064763d3fb04cbe31e90a7f3f9ef123df99",
+        "type": "github"
+      },
+      "original": {
+        "owner": "realiti4",
+        "ref": "v0.25.0",
+        "repo": "claude-swap",
+        "type": "github"
+      }
+    },
     "dryvist-github": {
       "inputs": {
         "git-hooks": "git-hooks",
@@ -492,6 +509,7 @@
         "claude-cookbooks": "claude-cookbooks",
         "claude-plugins-official": "claude-plugins-official",
         "claude-skills": "claude-skills",
+        "claude-swap": "claude-swap",
         "dryvist-github": "dryvist-github",
         "fabric-src": "fabric-src",
         "flake-parts": "flake-parts",
