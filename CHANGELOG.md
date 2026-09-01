@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 with a permanent pre-1.0 cadence — see `release-please-config.json`.
 
+## [1.8.1](https://github.com/dryvist/nix-claude-code/compare/v1.8.0...v1.8.1) (2026-09-01)
+
+
+### Bug Fixes
+
+* **statusline:** wrap ccstatusline onto two lines, pin ccstatusline version ([#209](https://github.com/dryvist/nix-claude-code/issues/209)) ([ca665aa](https://github.com/dryvist/nix-claude-code/commit/ca665aaf7f4fc2efe33df33437f78e63a965cdc7))
+
 ## [1.8.0](https://github.com/dryvist/nix-claude-code/compare/v1.7.3...v1.8.0) (2026-09-01)
 
 
