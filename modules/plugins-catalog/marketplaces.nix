@@ -30,10 +30,10 @@
 #   repo: <value from source.url>  # The actual GitHub path for fetching
 #
 # MARKETPLACE DISPLAY NAMES:
-# - Standard: Key = "owner/repo", display name = repo (extracted by getMarketplaceName)
+# - The key is the display name; source.url carries the owner/repo path.
+# - getMarketplaceName takes the last "/"-separated segment, so a key that
+#   contains a slash displays as its final segment only.
 # - Plugin references: "plugin-name@display-name"
-#
-# SPECIAL CASES (key differs from owner/repo pattern):
 # ========================================================================
 
 {
