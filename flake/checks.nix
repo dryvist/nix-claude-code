@@ -101,6 +101,16 @@
           GUARD = ../modules/hooks/private-workspace-agent-guard.sh;
         } "bash ${../tests/private-workspace-agent-guard-test.sh}";
 
+        # The keychain secret-read guard: a `-w`/`-g` read of a keychain
+        # secret denies, a metadata-only read and unrelated commands pass.
+        keychain-secret-read-guard = pkgs.runCommand "keychain-secret-read-guard-test" {
+          nativeBuildInputs = [
+            pkgs.jq
+            pkgs.bash
+          ];
+          GUARD = ../modules/hooks/keychain-secret-read-guard.sh;
+        } "bash ${../tests/keychain-secret-read-guard-test.sh}";
+
         # The marketplace-refresh hook must defer while other Claude Code
         # sessions are live: reinstalling replaces version-pinned cache dirs and
         # rewrites the shared installed_plugins.json, which breaks every hook in

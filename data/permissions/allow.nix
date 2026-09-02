@@ -279,7 +279,6 @@ _:
     "ncdu"
     "plutil"
     "readlink"
-    "security find-generic-password"
     "security list-keychains"
     "security show-keychain-info"
     "sqlite3 -readonly"
