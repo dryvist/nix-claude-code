@@ -6,7 +6,7 @@ _: marketplacePath:
 #   $schema, name, owner{name,email}, plugins[], metadata{description,version,...}
 #
 # Top-level `description` is permitted by older manifests; newer ones nest it
-# under `metadata.description` (wakatime/anthropic publish in this shape).
+# under `metadata.description` (anthropic publishes in this shape).
 # The fallback chain surfaces whichever is present.
 #
 # Returns an attrset with normalized fields plus `raw` for callers that need
