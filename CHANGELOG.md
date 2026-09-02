@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 with a permanent pre-1.0 cadence — see `release-please-config.json`.
 
+## [1.9.1](https://github.com/dryvist/nix-claude-code/compare/v1.9.0...v1.9.1) (2026-09-02)
+
+
+### Bug Fixes
+
+* **permissions:** never auto-approve keychain secret reads ([8e8d219](https://github.com/dryvist/nix-claude-code/commit/8e8d21994932fa8b36b19ab1d712f5217c0a09dd))
+* **permissions:** never auto-approve keychain secret reads ([e6bc98e](https://github.com/dryvist/nix-claude-code/commit/e6bc98ecd96c1c93f5bf1ae74bba2d8e553391fb))
+
 ## [1.9.0](https://github.com/dryvist/nix-claude-code/compare/v1.8.1...v1.9.0) (2026-09-02)
 
 
