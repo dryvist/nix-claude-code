@@ -69,6 +69,20 @@ in
         vendored script that asks Claude Code to re-read marketplace
         manifests at session start (useful after a Nix rebuild).
       '';
+
+      # High-level toggle: wires preToolUse to a vendored keychain-read guard.
+      # Shares the `preToolUse` slot with `blockExternalSubagentsInPrivateWorkspace`
+      # — enabling both fails the Nix build (two `mkDefault` writers to one
+      # option) rather than silently dropping one guard. Set `preToolUse`
+      # to a script of your own that runs both checks if you need them
+      # together.
+      blockKeychainSecretReads = lib.mkEnableOption ''
+        keychain secret-read guard. When enabled, sets `preToolUse` to a
+        vendored script that denies a Bash `security find-generic-password`
+        / `find-internet-password` call carrying `-w` or `-g` — either flag
+        prints the secret value into the transcript. A lookup without those
+        flags (existence/metadata only) still passes through.
+      '';
     };
 
     mcpServers = lib.mkOption {
