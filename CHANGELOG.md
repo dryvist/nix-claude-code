@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 with a permanent pre-1.0 cadence — see `release-please-config.json`.
 
+## [1.9.0](https://github.com/dryvist/nix-claude-code/compare/v1.8.1...v1.9.0) (2026-09-02)
+
+
+### Features
+
+* **plugins:** link marketplaces at their own store paths ([#216](https://github.com/dryvist/nix-claude-code/issues/216)) ([3052e92](https://github.com/dryvist/nix-claude-code/commit/3052e92178761fc774ed7ef11a6aff482bd70c9c))
+
 ## [1.8.1](https://github.com/dryvist/nix-claude-code/compare/v1.8.0...v1.8.1) (2026-09-01)
 
 
