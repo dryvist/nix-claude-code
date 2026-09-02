@@ -136,7 +136,6 @@ let
       };
     };
 
-
     # --- Claude Skills Marketplace ---
     "claude-skills" = {
       source = {
