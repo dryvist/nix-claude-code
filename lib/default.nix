@@ -29,6 +29,11 @@ in
 
   wrapCommandsAsSkills = { pkgs }: import ./wrap-commands-as-skills.nix { inherit lib pkgs; };
 
+  # Deferred, and deliberately does NOT inherit the flake-level `lib` above:
+  # the activation entry needs `lib.hm.dag`, which exists only on the extended
+  # lib a home-manager module receives. Callers pass their own module args.
+  stableLinks = args: import ./stable-links.nix args;
+
   # Autonomous container-image render. Deferred like wrapCommandsAsSkills
   # because the caller supplies `residualDeny` (and optionally `homeDir`).
   # lib-only on purpose — see lib/render-autonomous.nix.
