@@ -110,10 +110,6 @@
       url = "github:nicobailon/visual-explainer";
       flake = false;
     };
-    wakatime = {
-      url = "github:wakatime/claude-code-wakatime";
-      flake = false;
-    };
     huggingface-skills = {
       url = "github:huggingface/skills";
       flake = false;

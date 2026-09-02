@@ -22,7 +22,6 @@ let
       axton-obsidian-visual-skills
       superpowers-marketplace
       visual-explainer-marketplace
-      wakatime
       huggingface-skills
       browser-use-skills
       vct-cribl-pack-validator-skills

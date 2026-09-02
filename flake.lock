@@ -523,8 +523,7 @@
         "openai-codex": "openai-codex",
         "superpowers-marketplace": "superpowers-marketplace",
         "vct-cribl-pack-validator-skills": "vct-cribl-pack-validator-skills",
-        "visual-explainer-marketplace": "visual-explainer-marketplace",
-        "wakatime": "wakatime"
+        "visual-explainer-marketplace": "visual-explainer-marketplace"
       }
     },
     "superpowers-marketplace": {
@@ -593,22 +592,6 @@
       "original": {
         "owner": "nicobailon",
         "repo": "visual-explainer",
-        "type": "github"
-      }
-    },
-    "wakatime": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1778860224,
-        "narHash": "sha256-zZGx6rYgVXtyhoLy7w4tDFVGioEUqpWcXVIzFN4NfAE=",
-        "owner": "wakatime",
-        "repo": "claude-code-wakatime",
-        "rev": "3915f4ec19d4fedf2a1a2a644f1138cd72e956da",
-        "type": "github"
-      },
-      "original": {
-        "owner": "wakatime",
-        "repo": "claude-code-wakatime",
         "type": "github"
       }
     }
