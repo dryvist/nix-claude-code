@@ -84,8 +84,10 @@ in
   ];
 
   config = lib.mkIf cfg.enable {
-    # Runs at writeBoundary, so the links exist before linkGeneration and before
-    # orphan-cleanup's verifyCacheIntegrity reads them.
+    # Ordered explicitly ahead of linkGeneration (see lib/stable-links.nix), so
+    # the links are in place before anything sequenced after it reads the
+    # directory — orphan-cleanup's verifyCacheIntegrity above all, which would
+    # otherwise hash an empty marketplaces dir.
     home.activation.claudeMarketplaceStableLinks = mkStableLinks "claude-marketplaces" marketplaceLinks;
   };
 }
