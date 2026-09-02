@@ -42,6 +42,15 @@
       # See ./checks/merge-json-settings.nix and ./checks/activation.nix —
       # kept out of this file to stay under the 12KB file-size gate.
       mergeJsonSettingsChecks = import ./checks/merge-json-settings.nix { inherit pkgs lib; };
+      marketplaceDeliveryChecks = import ./checks/marketplace-delivery.nix {
+        inherit
+          inputs
+          self
+          pkgs
+          lib
+          ;
+      };
+
       activationChecks = import ./checks/activation.nix {
         inherit
           inputs
@@ -113,6 +122,16 @@
           COMMON = ../modules/scripts/cleanup-common.sh;
         } "bash ${../tests/stale-generation-replace-only-test.sh}";
 
+        # The linker owns exactly its manifest: it must leave an already-correct
+        # link untouched (no churn for running sessions), replace a real
+        # directory left in the way, prune only links it used to own, and never
+        # touch home-manager's own aggregate siblings (INDEX.md, GROUPS.json)
+        # or a symlink pointing outside the store. Every removal is logged.
+        stable-links = pkgs.runCommand "stable-links-test" {
+          nativeBuildInputs = [ pkgs.bash ];
+          SCRIPT = ../modules/scripts/stable-links.sh;
+        } "bash ${../tests/stable-links-test.sh}";
+
         wrap-commands-as-skills = pkgs.runCommand "wrap-commands-as-skills-test" { } ''
           set -euo pipefail
           # Verify the synthesized tree exists and the two expected skills
@@ -172,6 +191,7 @@
 
       }
       // mergeJsonSettingsChecks
-      // activationChecks;
+      // activationChecks
+      // marketplaceDeliveryChecks;
     };
 }

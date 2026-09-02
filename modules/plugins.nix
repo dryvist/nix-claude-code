@@ -1,15 +1,25 @@
 # Claude Code Plugin Management
 #
 # Symlinks Nix-managed plugin directories from flake inputs as single directory
-# symlinks (home-manager's default: recursive = false). Claude Code only READS
-# from ~/.claude/plugins/marketplaces/ — it writes exclusively to
-# ~/.claude/plugins/cache/. Since marketplaces are read-only, immutable nix
-# store symlinks are the correct approach.
+# symlinks. Claude Code only READS from ~/.claude/plugins/marketplaces/ — it
+# writes exclusively to ~/.claude/plugins/cache/. Since marketplaces are
+# read-only, immutable nix store symlinks are the correct approach.
 #
-# IMPORTANT: Do NOT add `recursive = true` or `force = true`:
-# - recursive = true creates per-file symlinks, allowing .backup pollution
-# - force = true causes home-manager to rename existing files to .backup,
-#   which pollute Claude Code's plugin cache when it re-indexes
+# Delivered by activation script, NOT by `home.file`. `home.file` routes every
+# path through the aggregate `home-manager-files` derivation, whose hash covers
+# the entire home configuration — so each marketplace symlink acquired a new
+# target on every rebuild even when the marketplace itself had not changed.
+# Sessions resolve plugin and hook paths once at startup and installed_plugins.json
+# pins an installPath, so that churn broke every running session until the user
+# reloaded plugins by hand. Linking each marketplace at its own store path means
+# the target moves only when that marketplace's content moves.
+#
+# This also makes verify-cache-integrity.sh accurate rather than merely busy: it
+# hashes `readlink` of each marketplace, so it now purges caches only when a
+# marketplace genuinely changed.
+#
+# IMPORTANT: Do NOT move these back to `home.file`, and do not add
+# `recursive = true`: per-file symlinks allow .backup pollution of the cache.
 # Phase 1 of orphan-cleanup.nix handles the one-time migration from
 # recursive (real dirs) to directory symlinks.
 {
@@ -47,12 +57,15 @@ let
         ) marketplace.overlayFiles;
       };
 
-  marketplaceSymlinks = lib.mapAttrs' (
+  # `home-relative path -> store path`, consumed by the activation linker.
+  marketplaceLinks = lib.mapAttrs' (
     name: marketplace:
-    lib.nameValuePair ".claude/plugins/marketplaces/${getMarketplaceName name}" {
-      source = effectiveSource name marketplace;
-    }
+    lib.nameValuePair ".claude/plugins/marketplaces/${getMarketplaceName name}" (
+      effectiveSource name marketplace
+    )
   ) nixManagedMarketplaces;
+
+  inherit (import ../lib/stable-links.nix { inherit lib pkgs; }) mkStableLinks;
 
 in
 {
@@ -71,6 +84,8 @@ in
   ];
 
   config = lib.mkIf cfg.enable {
-    home.file = marketplaceSymlinks;
+    # Runs at writeBoundary, so the links exist before linkGeneration and before
+    # orphan-cleanup's verifyCacheIntegrity reads them.
+    home.activation.claudeMarketplaceStableLinks = mkStableLinks "claude-marketplaces" marketplaceLinks;
   };
 }
