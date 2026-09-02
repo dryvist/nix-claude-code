@@ -31,12 +31,9 @@
 #
 # MARKETPLACE DISPLAY NAMES:
 # - Standard: Key = "owner/repo", display name = repo (extracted by getMarketplaceName)
-# - Special: Some marketplaces use org-name as display (e.g., WakaTime uses "wakatime")
-# - Plugin references: "plugin-name@display-name" (e.g., "claude-code-wakatime@wakatime")
+# - Plugin references: "plugin-name@display-name"
 #
 # SPECIAL CASES (key differs from owner/repo pattern):
-# - WakaTime: Key = "wakatime", URL = "wakatime/claude-code-wakatime"
-#   Official: claude plugin i claude-code-wakatime@wakatime
 # ========================================================================
 
 {
@@ -139,13 +136,6 @@ let
       };
     };
 
-    # --- Time Tracking ---
-    "wakatime" = {
-      source = {
-        type = "github";
-        url = "wakatime/claude-code-wakatime";
-      };
-    };
 
     # --- Claude Skills Marketplace ---
     "claude-skills" = {
