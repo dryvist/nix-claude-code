@@ -49,7 +49,11 @@ let
       ];
     }).config;
 
-  marketplacePrefix = ".claude/plugins/marketplaces/";
+  # Derived from the evaluated config, not a literal: this is a NEGATIVE check
+  # (it asserts nothing matching the prefix is in home.file), so a stale
+  # hard-coded ".claude" would make it vacuously true the moment a fixture
+  # sets programs.claude.configDir, and it would stop testing anything.
+  marketplacePrefix = "${evaluated.programs.claude.configDir}/plugins/marketplaces/";
   viaHomeFile = lib.filter (lib.hasPrefix marketplacePrefix) (lib.attrNames evaluated.home.file);
   hasActivationEntry = evaluated.home.activation ? claudeMarketplaceStableLinks;
 

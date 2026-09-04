@@ -5,6 +5,7 @@
   inputs,
   self,
   pkgs,
+  lib,
   ...
 }:
 let
@@ -32,6 +33,38 @@ let
       package = null;
     };
   };
+
+  # True when a configDir evaluates cleanly, false when it trips an
+  # assertion. `configDir` is interpolated into home.file keys, activation
+  # paths, and the `case` pattern that selects directories for `rm -rf`, so
+  # the option's assertions are the only thing standing between a bad value
+  # and a deletion decision — they need coverage of their own. tryEval rather
+  # than reading `config.assertions`: home-manager enforces them during
+  # evaluation, so a bad value throws before any list can be inspected.
+  configDirEvaluates =
+    configDir:
+    (builtins.tryEval (
+      builtins.seq
+        (mkActivation {
+          programs.claude = {
+            enable = true;
+            package = null;
+            inherit configDir;
+          };
+        }).drvPath
+        true
+    )).success;
+
+  rejectedConfigDirs = [
+    "" # empty
+    "/etc/claude" # absolute
+    "../claude" # parent traversal
+    "a/./b" # "." component
+    ".config//claude" # empty component
+    ".config/cl*ude" # glob metacharacter
+    ".config/claude?" # glob metacharacter
+    ".config/cl[au]de" # glob metacharacter
+  ];
 
   configDirActivation = mkActivation {
     programs.claude = {
@@ -157,4 +190,21 @@ in
 
         echo ok > $out
       '';
+
+  # Every value in `rejectedConfigDirs` must trip at least one assertion, and
+  # the default must trip none. Without this, an assertion could be weakened
+  # or dropped and nothing would notice.
+  config-dir-rejects-invalid =
+    let
+      accepted = lib.filter configDirEvaluates rejectedConfigDirs;
+      defaultOk = configDirEvaluates ".claude";
+    in
+    assert lib.assertMsg (accepted == [ ])
+      "programs.claude.configDir accepted values it must reject: ${
+        lib.concatStringsSep ", " (map (d: ''"${d}"'') accepted)
+      }";
+    assert lib.assertMsg defaultOk ''the default configDir ".claude" tripped an assertion'';
+    pkgs.runCommand "config-dir-rejects-invalid-test" { } ''
+      echo ok > $out
+    '';
 }

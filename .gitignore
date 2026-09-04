@@ -10,3 +10,6 @@ result-*
 
 .DS_Store
 Thumbs.db
+
+# Local worktrees (see AGENTS.md — a worktree per change)
+.worktrees/
