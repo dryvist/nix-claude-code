@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
-# Deep-merge a Nix-generated JSON overlay into ~/.claude.json.
-# Sourced from settings.nix activation with OVERLAY_FILE and TRUSTED_PROJECT_DIRS set.
+# Deep-merge a Nix-generated JSON overlay into .claude.json.
+# Sourced from claude-json.nix activation with OVERLAY_FILE, TRUSTED_PROJECT_DIRS,
+# and CLAUDE_JSON set.
 # Requires: OVERLAY_FILE, TRUSTED_PROJECT_DIRS (JSON array of dirs), DRY_RUN_CMD, jq on PATH.
+# CLAUDE_JSON: target file path. Falls back to the upstream default location
+# ($HOME/.claude.json) if the caller doesn't set it.
 #
 # Merge strategy:
 # - Top-level keys from overlay replace existing values (mcpServers, remoteControlAtStartup)
@@ -10,7 +13,7 @@
 # - Trust entries are generated at activation time by scanning TRUSTED_PROJECT_DIRS,
 #   since filesystem discovery cannot happen at Nix evaluation time in pure flake mode.
 
-CLAUDE_JSON="$HOME/.claude.json"
+CLAUDE_JSON="${CLAUDE_JSON:-$HOME/.claude.json}"
 
 # Build project trust entries by scanning each trusted base dir for repo subdirs.
 # Each "$baseDir/$repo/main" path gets hasClaudeMdExternalIncludesApproved = true.

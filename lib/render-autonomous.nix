@@ -16,6 +16,13 @@
 {
   lib,
   homeDir ? "/home/agent",
+  # Home-relative config dir, mirroring `programs.claude.configDir` for API
+  # consistency with `claude-registry.nix`. Default matches upstream's own
+  # default, so a caller that doesn't pass this keeps today's paths
+  # unchanged. This profile is image-only (see module header) and has no
+  # env-var story of its own — an image builder that customizes this is
+  # responsible for also baking CLAUDE_CONFIG_DIR into the image itself.
+  configDir ? ".claude",
   residualDeny,
 }:
 
@@ -41,10 +48,17 @@ let
   claudeJson = builtins.toJSON {
     remoteControlAtStartup = true;
   };
+  # .claude.json mirrors the same special case documented in
+  # modules/claude-json.nix: a sibling of the config dir at the default, but
+  # nested inside it once configDir is customized (observed upstream
+  # behavior, undocumented — see
+  # https://github.com/anthropics/claude-code/issues/3833).
+  claudeJsonPath = if configDir == ".claude" then ".claude.json" else "${configDir}/.claude.json";
 in
 {
   inherit
     homeDir
+    configDir
     residualDeny
     settingsJson
     claudeJson
@@ -53,7 +67,7 @@ in
   # Home-relative path -> contents, ready for an image builder to bake under
   # ${homeDir}. One attrset so image builds cannot forget a file.
   files = {
-    ".claude/settings.json" = settingsJson;
-    ".claude.json" = claudeJson;
+    "${configDir}/settings.json" = settingsJson;
+    "${claudeJsonPath}" = claudeJson;
   };
 }

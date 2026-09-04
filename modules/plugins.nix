@@ -60,7 +60,7 @@ let
   # `home-relative path -> store path`, consumed by the activation linker.
   marketplaceLinks = lib.mapAttrs' (
     name: marketplace:
-    lib.nameValuePair ".claude/plugins/marketplaces/${getMarketplaceName name}" (
+    lib.nameValuePair "${cfg.configDir}/plugins/marketplaces/${getMarketplaceName name}" (
       effectiveSource name marketplace
     )
   ) nixManagedMarketplaces;

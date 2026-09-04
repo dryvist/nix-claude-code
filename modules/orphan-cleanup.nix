@@ -34,10 +34,10 @@ let
   expandHome = p: if lib.hasPrefix "~/" p then "${homeDir}/${lib.removePrefix "~/" p}" else p;
 
   baseComponentDirs = [
-    "${homeDir}/.claude/commands"
-    "${homeDir}/.claude/agents"
-    "${homeDir}/.claude/skills"
-    "${homeDir}/.claude/rules"
+    "${cfg.configDirAbs}/commands"
+    "${cfg.configDirAbs}/agents"
+    "${cfg.configDirAbs}/skills"
+    "${cfg.configDirAbs}/rules"
   ];
 
   componentDirs = baseComponentDirs ++ map expandHome cfg.orphanCleanup.extraComponentDirs;
@@ -45,7 +45,7 @@ let
   getMarketplaceName = name: lib.last (lib.splitString "/" name);
   nixManagedMarketplaces = lib.filterAttrs (_: m: m.flakeInput != null) cfg.plugins.marketplaces;
   marketplaceDirs = lib.mapAttrsToList (
-    name: _: "${homeDir}/.claude/plugins/marketplaces/${getMarketplaceName name}"
+    name: _: "${cfg.configDirAbs}/plugins/marketplaces/${getMarketplaceName name}"
   ) nixManagedMarketplaces;
 
   # Extra-dir label pairs for the cleanup-broken-symlinks pass.
@@ -76,6 +76,7 @@ in
       # Phase 1: Remove conflicting entries BEFORE checkLinkTargets.
       cleanupConflictingDirectorySymlinks = lib.hm.dag.entryBefore [ "checkLinkTargets" ] ''
         . ${./scripts/cleanup-common.sh}
+        MARKETPLACES_GLOB="*/${cfg.configDir}/plugins/marketplaces/*"
         . ${./scripts/cleanup-conflicting-symlinks.sh} \
           ${lib.escapeShellArgs (componentDirs ++ marketplaceDirs)}
         . ${./scripts/cleanup-stale-symlinks.sh} \
@@ -91,13 +92,13 @@ in
           componentArgs = lib.escapeShellArgs (
             [
               "command"
-              "${homeDir}/.claude/commands"
+              "${cfg.configDirAbs}/commands"
               "agent"
-              "${homeDir}/.claude/agents"
+              "${cfg.configDirAbs}/agents"
               "skill"
-              "${homeDir}/.claude/skills"
+              "${cfg.configDirAbs}/skills"
               "rule"
-              "${homeDir}/.claude/rules"
+              "${cfg.configDirAbs}/rules"
             ]
             ++ extraBrokenSymlinkArgs
             ++ (lib.concatMap (dir: [
@@ -121,7 +122,7 @@ in
       # run directly (Permission denied) nor sourced (its exits would abort
       # activation).
       verifyCacheIntegrity = lib.hm.dag.entryAfter [ "linkGeneration" ] ''
-        $DRY_RUN_CMD ${pkgs.bash}/bin/bash ${./scripts/verify-cache-integrity.sh} "${homeDir}"
+        $DRY_RUN_CMD ${pkgs.bash}/bin/bash ${./scripts/verify-cache-integrity.sh} "${cfg.configDirAbs}"
       '';
     };
   };

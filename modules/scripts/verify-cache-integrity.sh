@@ -13,9 +13,9 @@ log_info() {
   echo "$(date '+%Y-%m-%d %H:%M:%S') [INFO] $1" >&2
 }
 
-HOME_DIR="${1:?Usage: verify-cache-integrity.sh <home-dir>}"
-MARKETPLACES_DIR="$HOME_DIR/.claude/plugins/marketplaces"
-CACHE_DIR="$HOME_DIR/.claude/plugins/cache"
+CONFIG_DIR="${1:?Usage: verify-cache-integrity.sh <claude-config-dir>}"
+MARKETPLACES_DIR="$CONFIG_DIR/plugins/marketplaces"
+CACHE_DIR="$CONFIG_DIR/plugins/cache"
 HASH_FILE="$CACHE_DIR/.nix-store-hashes"
 
 # Resolve the SHA-256 hasher once at startup into _SHA_CMD.
