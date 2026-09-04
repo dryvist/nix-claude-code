@@ -23,6 +23,7 @@
         parsePlugin = import ../checks/lib/parse-plugin.nix { inherit lib; };
         toSettingsJson = import ../checks/lib/to-settings-json.nix { inherit lib; };
         renderAutonomous = import ../checks/lib/render-autonomous.nix { inherit lib; };
+        marketplaceEntryLocality = import ../checks/lib/marketplace-entry-locality.nix { inherit lib; };
       };
 
       allTests = lib.foldl' (acc: suite: acc // suite) { } (builtins.attrValues suites);
@@ -41,6 +42,15 @@
       # See ./checks/merge-json-settings.nix and ./checks/activation.nix —
       # kept out of this file to stay under the 12KB file-size gate.
       mergeJsonSettingsChecks = import ./checks/merge-json-settings.nix { inherit pkgs lib; };
+      marketplaceDeliveryChecks = import ./checks/marketplace-delivery.nix {
+        inherit
+          inputs
+          self
+          pkgs
+          lib
+          ;
+      };
+
       activationChecks = import ./checks/activation.nix {
         inherit
           inputs
@@ -91,6 +101,16 @@
           GUARD = ../modules/hooks/private-workspace-agent-guard.sh;
         } "bash ${../tests/private-workspace-agent-guard-test.sh}";
 
+        # The keychain secret-read guard: a `-w`/`-g` read of a keychain
+        # secret denies, a metadata-only read and unrelated commands pass.
+        keychain-secret-read-guard = pkgs.runCommand "keychain-secret-read-guard-test" {
+          nativeBuildInputs = [
+            pkgs.jq
+            pkgs.bash
+          ];
+          GUARD = ../modules/hooks/keychain-secret-read-guard.sh;
+        } "bash ${../tests/keychain-secret-read-guard-test.sh}";
+
         # The marketplace-refresh hook must defer while other Claude Code
         # sessions are live: reinstalling replaces version-pinned cache dirs and
         # rewrites the shared installed_plugins.json, which breaks every hook in
@@ -111,6 +131,16 @@
           SCRIPT = ../modules/scripts/cleanup-stale-generation-symlinks.sh;
           COMMON = ../modules/scripts/cleanup-common.sh;
         } "bash ${../tests/stale-generation-replace-only-test.sh}";
+
+        # The linker owns exactly its manifest: it must leave an already-correct
+        # link untouched (no churn for running sessions), replace a real
+        # directory left in the way, prune only links it used to own, and never
+        # touch home-manager's own aggregate siblings (INDEX.md, GROUPS.json)
+        # or a symlink pointing outside the store. Every removal is logged.
+        stable-links = pkgs.runCommand "stable-links-test" {
+          nativeBuildInputs = [ pkgs.bash ];
+          SCRIPT = ../modules/scripts/stable-links.sh;
+        } "bash ${../tests/stable-links-test.sh}";
 
         wrap-commands-as-skills = pkgs.runCommand "wrap-commands-as-skills-test" { } ''
           set -euo pipefail
@@ -171,6 +201,7 @@
 
       }
       // mergeJsonSettingsChecks
-      // activationChecks;
+      // activationChecks
+      // marketplaceDeliveryChecks;
     };
 }

@@ -27,6 +27,7 @@ declared in Nix, reproducible across machines, rolled back with one command.
   permission data is still here and still exported for Codex, Gemini, and any other agent that
   has no classifier of its own.
 - **Statusline themes.** Pick `powerline`, `ccstatusline`, or `daniel3303`'s theme with one option.
+- **Optional account switching.** Enable `claude-swap` only where needed for manual Claude subscription switching and parallel terminal sessions.
 - **MCP plumbing.** Surface `programs.claude.mcpServers` from your favorite MCP runtime; we wire
   them into Claude's `settings.json` exactly the way Anthropic specifies.
 - **Built on Anthropic's official spec.** Reads `.claude-plugin/marketplace.json` and
@@ -89,6 +90,20 @@ Then activate:
 nix run home-manager#switch -- --flake .#you
 claude   # ready to go
 ```
+
+### Switch Claude subscriptions
+
+`claude-swap` is disabled by default. Enable it to install the manual account-switching CLI:
+
+```nix
+programs.claude.swap.disabled = false;
+```
+
+After activation, log in to each Claude subscription interactively and run
+`cswap add` for each account. Use `cswap switch <alias>` to change the active
+account, or `cswap run <alias> -- …` to start a parallel terminal-local Claude
+session. The module does not configure automatic switching or store account
+credentials in Nix.
 
 ### Pick and choose
 

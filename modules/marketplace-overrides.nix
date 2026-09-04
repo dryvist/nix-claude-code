@@ -68,7 +68,11 @@
       mkdir -p $out/.claude-plugin $out/browser-use/.claude-plugin
       cp ${manifestJson} $out/.claude-plugin/marketplace.json
       cp ${pluginJson} $out/browser-use/.claude-plugin/plugin.json
-      ln -s ${marketplaceInputs.browser-use-skills}/skills $out/browser-use/skills
+      # Copy, never symlink — same rule as the jacobpevans wrapper below:
+      # a skills dir living in the input's store path resolves outside this
+      # marketplace, and Claude Code >= 2.1.251 refuses it.
+      cp -RL ${marketplaceInputs.browser-use-skills}/skills $out/browser-use/skills
+      chmod -R u+w $out
     '';
 
   # Synthetic marketplace wrapper for Daniel Miessler's Fabric patterns.
@@ -204,7 +208,9 @@
     pkgs.runCommand "vct-cribl-pack-validator-marketplace" { } ''
       install -D -m 644 ${manifestJson} $out/.claude-plugin/marketplace.json
       install -D -m 644 ${pluginJson} $out/cribl-pack-validator/.claude-plugin/plugin.json
-      ln -s ${src}/.claude/skills $out/cribl-pack-validator/skills
+      # Copy, never symlink (see the jacobpevans wrapper below).
+      cp -RL ${src}/.claude/skills $out/cribl-pack-validator/skills
+      chmod -R u+w $out
     '';
 
   # Auto-generated marketplace manifest for the jacobpevans-cc-plugins input.
@@ -254,25 +260,18 @@
       manifestJson = builtins.toFile "marketplace.json" (builtins.toJSON manifest);
     in
     pkgs.runCommand "jacobpevans-cc-plugins-patched" { } ''
-      mkdir -p $out/.claude-plugin
+      # Copy, never symlink. Claude Code >= 2.1.251 refuses any plugin whose
+      # source path resolves outside its marketplace directory, and a per-entry
+      # symlink farm puts every plugin dir in the *input's* store path instead
+      # of this one - which refused all 20 plugins with
+      # "does not stay inside its marketplace directory".
+      # -L dereferences, so no escaping link survives into the output.
+      mkdir -p $out
+      cp -RL ${src}/. $out/
+      chmod -R u+w $out
 
-      # Symlink all entries except .claude-plugin (guard against empty glob)
-      for f in ${src}/* ${src}/.[!.]*; do
-        [ -e "$f" ] || continue
-        name=$(basename "$f")
-        [ "$name" = ".claude-plugin" ] && continue
-        ln -s "$f" "$out/$name"
-      done
-
-      # Preserve upstream .claude-plugin contents, only replace marketplace.json
-      for f in ${src}/.claude-plugin/*; do
-        [ -e "$f" ] || continue
-        name=$(basename "$f")
-        [ "$name" = "marketplace.json" ] && continue
-        ln -s "$f" "$out/.claude-plugin/$name"
-      done
-
-      # Generated marketplace.json replaces the manual one
+      # Generated marketplace.json replaces the upstream one; everything else
+      # under .claude-plugin is preserved by the copy above.
       cp ${manifestJson} $out/.claude-plugin/marketplace.json
     '';
 }

@@ -23,9 +23,11 @@ let
   '';
 
   script = pkgs.writeShellScript "claude-ccstatusline" ''
-    # sirmalloc/ccstatusline (semver-pinned for stability)
+    # sirmalloc/ccstatusline, pinned to an exact version for reproducible
+    # rendering (a floating range lets bunx silently resolve a newer
+    # version between sessions). Bump deliberately, not automatically.
     export PATH="${pkgs.git}/bin:$PATH"
-    exec ${pkgs.bun}/bin/bunx ccstatusline@'^2' --config ${configFile} "$@"
+    exec ${pkgs.bun}/bin/bunx ccstatusline@'2.2.27' --config ${configFile} "$@"
   '';
 in
 {

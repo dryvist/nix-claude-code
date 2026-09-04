@@ -6,6 +6,72 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 with a permanent pre-1.0 cadence — see `release-please-config.json`.
 
+## [1.9.1](https://github.com/dryvist/nix-claude-code/compare/v1.9.0...v1.9.1) (2026-09-02)
+
+
+### Bug Fixes
+
+* **permissions:** never auto-approve keychain secret reads ([8e8d219](https://github.com/dryvist/nix-claude-code/commit/8e8d21994932fa8b36b19ab1d712f5217c0a09dd))
+* **permissions:** never auto-approve keychain secret reads ([e6bc98e](https://github.com/dryvist/nix-claude-code/commit/e6bc98ecd96c1c93f5bf1ae74bba2d8e553391fb))
+
+## [1.9.0](https://github.com/dryvist/nix-claude-code/compare/v1.8.1...v1.9.0) (2026-09-02)
+
+
+### Features
+
+* **plugins:** link marketplaces at their own store paths ([#216](https://github.com/dryvist/nix-claude-code/issues/216)) ([3052e92](https://github.com/dryvist/nix-claude-code/commit/3052e92178761fc774ed7ef11a6aff482bd70c9c))
+
+## [1.8.1](https://github.com/dryvist/nix-claude-code/compare/v1.8.0...v1.8.1) (2026-09-01)
+
+
+### Bug Fixes
+
+* **statusline:** wrap ccstatusline onto two lines, pin ccstatusline version ([#209](https://github.com/dryvist/nix-claude-code/issues/209)) ([ca665aa](https://github.com/dryvist/nix-claude-code/commit/ca665aaf7f4fc2efe33df33437f78e63a965cdc7))
+
+## [1.8.0](https://github.com/dryvist/nix-claude-code/compare/v1.7.3...v1.8.0) (2026-09-01)
+
+
+### Features
+
+* **claude:** add optional Claude Swap integration ([bfccf70](https://github.com/dryvist/nix-claude-code/commit/bfccf70469bf293852104f33cf3e31fd2fa21875))
+* **claude:** add optional Claude Swap integration ([9e6b5b9](https://github.com/dryvist/nix-claude-code/commit/9e6b5b90387967f4ffb60f42f1b9d6e9579a7cd2))
+
+## [1.7.3](https://github.com/dryvist/nix-claude-code/compare/v1.7.2...v1.7.3) (2026-08-31)
+
+
+### Bug Fixes
+
+* **marketplace:** copy browser-use and cribl entries instead of symlinking ([#201](https://github.com/dryvist/nix-claude-code/issues/201)) ([29a04c9](https://github.com/dryvist/nix-claude-code/commit/29a04c90ddc39b1f0f7539ae298ba7c2d8992b3d))
+
+## [1.7.2](https://github.com/dryvist/nix-claude-code/compare/v1.7.1...v1.7.2) (2026-08-31)
+
+
+### Reverts
+
+* **statusline:** restore the built-in plan-usage widgets ([#197](https://github.com/dryvist/nix-claude-code/issues/197)) ([7d31b54](https://github.com/dryvist/nix-claude-code/commit/7d31b549ea08a6e31f750d47084c2e4fcc231fd4))
+
+## [1.7.1](https://github.com/dryvist/nix-claude-code/compare/v1.7.0...v1.7.1) (2026-08-31)
+
+
+### Bug Fixes
+
+* **settings:** emit every sandbox sub-key, and type the policy surface ([#192](https://github.com/dryvist/nix-claude-code/issues/192)) ([512e5a2](https://github.com/dryvist/nix-claude-code/commit/512e5a2352e0467ccfe41506757f883383abddd1))
+
+## [1.7.0](https://github.com/dryvist/nix-claude-code/compare/v1.6.1...v1.7.0) (2026-08-31)
+
+
+### Features
+
+* **statusline:** read plan usage from the payload instead of the usage API ([#188](https://github.com/dryvist/nix-claude-code/issues/188)) ([3865f21](https://github.com/dryvist/nix-claude-code/commit/3865f2171eedf83ae824096d208bbc9070860594))
+
+## [1.6.1](https://github.com/dryvist/nix-claude-code/compare/v1.6.0...v1.6.1) (2026-08-31)
+
+
+### Bug Fixes
+
+* **marketplaces:** copy the jacobpevans marketplace instead of symlinking it ([#183](https://github.com/dryvist/nix-claude-code/issues/183)) ([a73dbee](https://github.com/dryvist/nix-claude-code/commit/a73dbee1288fd7c11f1cf644b67747c54a9ad945))
+* **settings:** strip stale hook events on activation ([#184](https://github.com/dryvist/nix-claude-code/issues/184)) ([944c1aa](https://github.com/dryvist/nix-claude-code/commit/944c1aae81071c47b9b70a7ca487b910812bb1fa))
+
 ## [1.6.0](https://github.com/dryvist/nix-claude-code/compare/v1.5.1...v1.6.0) (2026-08-30)
 
 

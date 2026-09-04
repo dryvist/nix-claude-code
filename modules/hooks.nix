@@ -8,6 +8,8 @@
 #   - hooks.refreshMarketplaces  → sessionStart runs `marketplace-refresh.sh`
 #   - hooks.blockExternalSubagentsInPrivateWorkspace
 #                                → preToolUse runs `private-workspace-agent-guard.sh`
+#   - hooks.blockKeychainSecretReads
+#                                → preToolUse runs `keychain-secret-read-guard.sh`
 { config, lib, ... }:
 let
   cfg = config.programs.claude;
@@ -64,6 +66,9 @@ in
     })
     (lib.mkIf (cfg.enable && cfg.hooks.blockExternalSubagentsInPrivateWorkspace) {
       programs.claude.hooks.preToolUse = lib.mkDefault ./hooks/private-workspace-agent-guard.sh;
+    })
+    (lib.mkIf (cfg.enable && cfg.hooks.blockKeychainSecretReads) {
+      programs.claude.hooks.preToolUse = lib.mkDefault ./hooks/keychain-secret-read-guard.sh;
     })
 
     # Materialize all configured hooks as executable files.

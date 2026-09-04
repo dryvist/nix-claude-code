@@ -110,10 +110,6 @@
       url = "github:nicobailon/visual-explainer";
       flake = false;
     };
-    wakatime = {
-      url = "github:wakatime/claude-code-wakatime";
-      flake = false;
-    };
     huggingface-skills = {
       url = "github:huggingface/skills";
       flake = false;
@@ -130,6 +126,13 @@
 
     fabric-src = {
       url = "github:danielmiessler/fabric";
+      flake = false;
+    };
+
+    # Multi-account Claude Code session manager. Kept as a source input so the
+    # packaged version is locked with the rest of this flake.
+    claude-swap = {
+      url = "github:realiti4/claude-swap/v0.25.0";
       flake = false;
     };
   };

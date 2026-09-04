@@ -77,6 +77,50 @@ let
   };
 
   sessionVarsRelPath = "home-path/etc/profile.d/hm-session-vars.sh";
+  # Exercises the sandbox sub-keys and one policy key. Before the renderer
+  # emitted the whole attrset, everything except enabled /
+  # autoAllowBashIfSandboxed / excludedCommands was dropped, so this fixture
+  # fails against the old behaviour.
+  sandboxPolicyActivation = mkActivation {
+    programs.claude = {
+      enable = true;
+      package = null;
+      settings = {
+        sandbox = {
+          enabled = true;
+          network = {
+            allowUnixSockets = [ "/tmp/example.sock" ];
+          };
+          filesystem = {
+            allowWritePaths = [ "/tmp/example" ];
+          };
+          failIfUnavailable = true;
+        };
+        disableSkillShellExecution = true;
+        minimumVersion = "2.1.251";
+      };
+    };
+  };
+
+  claudeSwapDefaultDisabled =
+    (inputs.home-manager.lib.homeManagerConfiguration {
+      inherit pkgs;
+      modules = [
+        self.homeModules.default
+        {
+          home = {
+            username = "ci-tester";
+            homeDirectory = "/tmp/ci-tester-home";
+            stateVersion = "25.11";
+          };
+        }
+      ];
+    }).config.programs.claude.swap.disabled;
+
+  claudeSwapPackage = import ../../packages/claude-swap.nix {
+    inherit pkgs;
+    src = inputs.claude-swap;
+  };
 in
 {
   programs-claude-eval = programsClaudeEval;
@@ -110,6 +154,72 @@ in
         expect '.useAutoModeDuringPlan' 'true'
         expect 'has("advisorModel")' 'false'
         expect 'has("outputStyle")' 'false'
+        echo ok > $out
+      '';
+
+  # Regression: every sandbox sub-key a caller sets must reach settings.json.
+  # `sandbox` is in settings.nix's `knownSettingsKeys`, so it is excluded from
+  # the freeform passthrough — when the renderer named sub-keys individually,
+  # anything else was silently discarded.
+  sandbox-policy-render =
+    pkgs.runCommand "sandbox-policy-render-test" { nativeBuildInputs = [ pkgs.jq ]; }
+      ''
+        set -euo pipefail
+        settings_json=$(grep -o '/nix/store/[a-z0-9]*-claude-settings\.json' \
+          ${sandboxPolicyActivation}/activate | head -1)
+
+        expect() {
+          local filter="$1" want="$2" got
+          got=$(jq -c "$filter" "$settings_json")
+          [[ "$got" == "$want" ]] || {
+            echo "$filter: expected $want, got $got" >&2
+            exit 1
+          }
+        }
+
+        # The three that always worked.
+        expect '.sandbox.enabled' 'true'
+        expect '.sandbox.autoAllowBashIfSandboxed' 'true'
+        # The ones that used to be dropped.
+        expect '.sandbox.failIfUnavailable' 'true'
+        expect '.sandbox.network.allowUnixSockets' '["/tmp/example.sock"]'
+        expect '.sandbox.filesystem.allowWritePaths' '["/tmp/example"]'
+        # Unset sub-keys stay absent rather than emitting an explicit null.
+        expect '.sandbox | has("ignoreViolations")' 'false'
+        expect '.sandbox | has("excludedCommands")' 'false'
+        # Policy keys render at the top level.
+        expect '.disableSkillShellExecution' 'true'
+        expect '.minimumVersion' '"2.1.251"'
+        echo ok > $out
+      '';
+
+  # Every new policy/sandbox option defaults to null, so a consumer that sets
+  # none of them gets a settings.json with none of them present. This is the
+  # "stays absent unless a consumer sets it" class this repo owns.
+  policy-options-default-absent =
+    pkgs.runCommand "policy-options-default-absent-test" { nativeBuildInputs = [ pkgs.jq ]; }
+      ''
+        set -euo pipefail
+        settings_json=$(grep -o '/nix/store/[a-z0-9]*-claude-settings\.json' \
+          ${programsClaudeEval}/activate | head -1)
+
+        for key in disableAllHooks allowedHttpHookUrls httpHookAllowedEnvVars \
+                   disableSkillShellExecution disableBundledSkills claudeMdExcludes \
+                   enabledMcpjsonServers disabledMcpjsonServers allowedMcpServers \
+                   deniedMcpServers disableRemoteControl minimumVersion; do
+          got=$(jq -c --arg k "$key" 'has($k)' "$settings_json")
+          [[ "$got" == "false" ]] || {
+            echo "$key: expected absent by default, got present" >&2
+            exit 1
+          }
+        done
+
+        # sandbox is gated on enabled=false by default, so the whole key is absent.
+        got=$(jq -c 'has("sandbox")' "$settings_json")
+        [[ "$got" == "false" ]] || {
+          echo "sandbox: expected absent when disabled, got present" >&2
+          exit 1
+        }
         echo ok > $out
       '';
 
@@ -245,4 +355,17 @@ in
 
         echo ok > $out
       '';
+
+  claude-swap-default-disabled =
+    assert claudeSwapDefaultDisabled;
+    pkgs.runCommand "claude-swap-default-disabled-test" { } ''
+      echo ok > $out
+    '';
+
+  claude-swap-package = pkgs.runCommand "claude-swap-package-test" { } ''
+    test -x ${claudeSwapPackage}/bin/cswap
+    test -x ${claudeSwapPackage}/bin/claude-swap
+    ${claudeSwapPackage}/bin/cswap --help > /dev/null
+    echo ok > $out
+  '';
 }

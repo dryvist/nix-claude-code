@@ -58,7 +58,7 @@ let
   # TRANSFORMATION LOGIC:
   #   - Both type="github" and type="git" become source="github" in output
   #   - The URL field becomes the repo value (the actual GitHub path for fetching)
-  #   - The KEY can differ from URL for display purposes (e.g., "wakatime" vs "wakatime/claude-code-wakatime")
+  #   - The KEY can differ from URL for display purposes (e.g., an org-name key vs its "org/repo" URL)
   #   - type "local"/"directory" become a "directory" source pointing at the
   #     local Nix-managed marketplace dir (synthetic marketplaces — see
   #     modules/plugins-catalog/marketplaces.nix). This keeps Claude Code from

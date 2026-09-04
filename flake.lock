@@ -224,6 +224,23 @@
         "type": "github"
       }
     },
+    "claude-swap": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1786474943,
+        "narHash": "sha256-BDfwyH7h7Ii7QYaunHDnf0Epk5nUEd8OdOH3QCf1CJU=",
+        "owner": "realiti4",
+        "repo": "claude-swap",
+        "rev": "9f625064763d3fb04cbe31e90a7f3f9ef123df99",
+        "type": "github"
+      },
+      "original": {
+        "owner": "realiti4",
+        "ref": "v0.25.0",
+        "repo": "claude-swap",
+        "type": "github"
+      }
+    },
     "dryvist-github": {
       "inputs": {
         "git-hooks": "git-hooks",
@@ -492,6 +509,7 @@
         "claude-cookbooks": "claude-cookbooks",
         "claude-plugins-official": "claude-plugins-official",
         "claude-skills": "claude-skills",
+        "claude-swap": "claude-swap",
         "dryvist-github": "dryvist-github",
         "fabric-src": "fabric-src",
         "flake-parts": "flake-parts",
@@ -505,8 +523,7 @@
         "openai-codex": "openai-codex",
         "superpowers-marketplace": "superpowers-marketplace",
         "vct-cribl-pack-validator-skills": "vct-cribl-pack-validator-skills",
-        "visual-explainer-marketplace": "visual-explainer-marketplace",
-        "wakatime": "wakatime"
+        "visual-explainer-marketplace": "visual-explainer-marketplace"
       }
     },
     "superpowers-marketplace": {
@@ -575,22 +592,6 @@
       "original": {
         "owner": "nicobailon",
         "repo": "visual-explainer",
-        "type": "github"
-      }
-    },
-    "wakatime": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1778860224,
-        "narHash": "sha256-zZGx6rYgVXtyhoLy7w4tDFVGioEUqpWcXVIzFN4NfAE=",
-        "owner": "wakatime",
-        "repo": "claude-code-wakatime",
-        "rev": "3915f4ec19d4fedf2a1a2a644f1138cd72e956da",
-        "type": "github"
-      },
-      "original": {
-        "owner": "wakatime",
-        "repo": "claude-code-wakatime",
         "type": "github"
       }
     }
