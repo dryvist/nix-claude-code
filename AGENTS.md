@@ -26,9 +26,28 @@ nix fmt            # Fix formatting
 **Runtime** (changes to plugins, hooks, settings, activations, MCP servers):
 
 ```bash
-sudo darwin-rebuild switch --flake "$HOME/git/nix-darwin/main" \
-  --override-input nix-claude-code "$HOME/git/nix-claude-code/<worktree>"
+darwin-rebuild build --flake "<nix-darwin-checkout>#<host>" \
+  --override-input nix-ai/nix-claude-code "<this-worktree>" \
+  --override-input nix-ai/nix-claude-code/fabric-src "github:danielmiessler/fabric/<tag>"
 ```
+
+Swap `build` for `sudo darwin-rebuild switch` to actually apply it. Two things
+about that command are load-bearing; both were wrong here until 2026-09-04 and
+each fails in its own direction.
+
+- **`nix-ai/nix-claude-code`, not `nix-claude-code`.** A consuming nix-darwin
+  config does not take this repo as a direct input — it arrives transitively
+  through `nix-ai`. Naming the wrong level makes Nix print
+  `does not match any input` and then **exit 0 having built the pinned
+  revision**, so the command reports success without ever evaluating your
+  worktree. Grep the output for that string; do not trust the exit code alone.
+- **`fabric-src` has to be re-pinned alongside it.** `nix-ai` wires
+  `nix-claude-code.inputs.fabric-src.follows = "fabric-src"` so the fabric
+  source matches the `vendorHash` in its `lib/versions.nix`. Overriding the
+  `nix-claude-code` node discards that `follows`, this repo's own (unpinned)
+  `fabric-src` takes over, and the build dies in `fabric-ai` on a missing Go
+  module — a failure that has nothing to do with your change. Pass the tag
+  `nix-ai` currently pins.
 
 Then verify in a live Claude Code session — static checks validate Nix
 evaluation, not runtime behavior. Start a fresh session and confirm the feature
