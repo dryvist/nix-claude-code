@@ -6,6 +6,28 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 with a permanent pre-1.0 cadence — see `release-please-config.json`.
 
+## [1.10.0](https://github.com/dryvist/nix-claude-code/compare/v1.9.1...v1.10.0) (2026-09-04)
+
+
+### Features
+
+* **config:** support CLAUDE_CONFIG_DIR via programs.claude.configDir ([#177](https://github.com/dryvist/nix-claude-code/issues/177)) ([509fb43](https://github.com/dryvist/nix-claude-code/commit/509fb43b77ee2d0996a48563fe8b166c63bb87a5)) — thanks [@obvionaoe](https://github.com/obvionaoe)! 🎉
+
+
+### Bug Fixes
+
+* **config:** close the remaining configDir gaps and cover the assertions ([#223](https://github.com/dryvist/nix-claude-code/issues/223)) ([9abe612](https://github.com/dryvist/nix-claude-code/commit/9abe6123b6fb62f3f634f708ad5c4cd999e5195c))
+
+
+### Contributors
+
+A big thank you to [@obvionaoe](https://github.com/obvionaoe) for
+`programs.claude.configDir`, which lets the Claude Code config tree live
+outside `~/.claude` for XDG compliance. At the default location the output is
+byte-for-byte unchanged — guaranteed by a permanent regression check rather
+than a one-time diff.
+
+
 ## [1.9.1](https://github.com/dryvist/nix-claude-code/compare/v1.9.0...v1.9.1) (2026-09-02)
 
 
