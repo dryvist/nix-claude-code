@@ -169,6 +169,14 @@ in
   config = lib.mkIf cfg.enable {
     home.packages = lib.optionals (cfg.package != null) [ cfg.package ];
 
+    # Export CLAUDE_CONFIG_DIR only when configDir departs from upstream's own
+    # default — at the default this must set nothing, so a caller who never
+    # touches configDir sees byte-identical activation output to before this
+    # option existed. See options-runtime.nix for the full rationale.
+    home.sessionVariables = lib.mkIf (cfg.configDir != ".claude" && cfg.exportConfigDirEnv) {
+      CLAUDE_CONFIG_DIR = cfg.configDirAbs;
+    };
+
     # `~/.claude/settings.json` is written by the activation merge in
     # `./settings.nix` (`claudeSettingsMerge`), not by `home.file`. The
     # activation path produces the full settings shape (including

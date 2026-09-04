@@ -18,7 +18,6 @@
 
 let
   cfg = config.programs.claude;
-  homeDir = config.home.homeDirectory;
 in
 {
   config = lib.mkIf cfg.enable {
@@ -38,7 +37,7 @@ in
     # the old symlink to /nix/store/... must be removed so Claude Code can create
     # a writable file in its place.
     home.activation.cleanupMarketplacesSymlink = lib.hm.dag.entryBefore [ "linkGeneration" ] ''
-      MARKETPLACES="${homeDir}/.claude/plugins/known_marketplaces.json"
+      MARKETPLACES="${cfg.configDirAbs}/plugins/known_marketplaces.json"
       . ${./scripts/cleanup-marketplaces-symlink.sh}
     '';
   };

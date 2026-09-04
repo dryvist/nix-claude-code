@@ -6,7 +6,13 @@
 
 set -euo pipefail
 
-MARKER="${HOME}/.claude/plugins/cache/.nix-refresh-needed"
+# Anchored at the same config tree Nix writes to. `verify-cache-integrity.sh`
+# writes this marker under `programs.claude.configDir`; with a custom
+# configDir the module exports CLAUDE_CONFIG_DIR to match (see
+# options-runtime.nix), so honoring it here keeps producer and consumer in
+# sync. Falls back to upstream's default when the env var is unset.
+CLAUDE_DIR="${CLAUDE_CONFIG_DIR:-$HOME/.claude}"
+MARKER="${CLAUDE_DIR}/plugins/cache/.nix-refresh-needed"
 [[ -f $MARKER ]] || exit 0
 
 log_info() { echo "[marketplace-refresh] $1" >&2; }

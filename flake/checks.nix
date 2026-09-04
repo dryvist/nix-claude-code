@@ -59,6 +59,15 @@
           lib
           ;
       };
+
+      configDirChecks = import ./checks/config-dir.nix {
+        inherit
+          inputs
+          self
+          pkgs
+          lib
+          ;
+      };
     in
     {
       checks = {
@@ -202,6 +211,7 @@
       }
       // mergeJsonSettingsChecks
       // activationChecks
+      // configDirChecks
       // marketplaceDeliveryChecks;
     };
 }

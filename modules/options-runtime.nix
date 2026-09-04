@@ -3,9 +3,64 @@
 # User-facing knobs that change session behaviour: model selection, effort,
 # teammate display mode, auto-updates, remote control, trusted project dirs,
 # commit attribution, and headless API key helper.
-{ lib, ... }:
+{ lib, config, ... }:
+let
+  cfg = config.programs.claude;
+in
 {
   options.programs.claude = {
+    # Where Claude Code's user-global config tree lives, relative to $HOME.
+    # Mirrors upstream's (undocumented) CLAUDE_CONFIG_DIR env var — see
+    # https://github.com/anthropics/claude-code/issues/3833. Every path this
+    # module writes (settings.json, hooks/, commands/, agents/, skills/,
+    # rules/, plugins/, the statusline script) is anchored here instead of a
+    # hardcoded ".claude", and — unless `exportConfigDirEnv` is turned off —
+    # `CLAUDE_CONFIG_DIR` is exported to match, so the `claude` binary reads
+    # from the same place Nix writes to.
+    #
+    # Relative to home rather than absolute: `home.file` keys must be
+    # home-relative, so an absolute value would work for the activation-time
+    # writes but silently fail to relocate the symlinked components.
+    #
+    # Two things this does NOT cover, because CLAUDE_CONFIG_DIR itself
+    # doesn't: per-project `.claude/settings.local.json` files next to each
+    # repo are unaffected, and `~/.claude.json` (the separate runtime-mutable
+    # global file `claude-json.nix` manages) only moves under `configDir`
+    # when `configDir` is non-default — at the default it stays a sibling of
+    # `~/.claude` at `$HOME/.claude.json`, matching upstream's own default.
+    configDir = lib.mkOption {
+      type = lib.types.str;
+      default = ".claude";
+      example = ".config/claude";
+      description = ''
+        Path, relative to `$HOME`, where this module installs Claude Code's
+        user-global config tree. Defaults to `.claude` (upstream's own
+        default location), so leaving this unset changes nothing.
+      '';
+    };
+
+    exportConfigDirEnv = lib.mkOption {
+      type = lib.types.bool;
+      default = true;
+      description = ''
+        Export `CLAUDE_CONFIG_DIR` (via `home.sessionVariables`) whenever
+        `configDir` is set to something other than the default `.claude`.
+        Nothing is exported at the default, regardless of this setting.
+
+        Disable this if you export `CLAUDE_CONFIG_DIR` yourself through some
+        other mechanism (a login-shell script this module doesn't control,
+        for instance) and don't want a second, redundant definition.
+      '';
+    };
+
+    configDirAbs = lib.mkOption {
+      type = lib.types.str;
+      internal = true;
+      readOnly = true;
+      default = "${config.home.homeDirectory}/${cfg.configDir}";
+      description = "Resolved absolute path of `configDir`. Internal — every module that needs an absolute path reads this instead of re-deriving it.";
+    };
+
     # API Key Helper (for headless authentication)
     # Requires ~/.config/bws/.env with Bitwarden/Claude API key env vars.
     # bws_helper.py performs minimal validation — see it for required vars.
@@ -184,4 +239,55 @@
       `programs.claude.settings.schemaUrl` after each activation
     '';
   };
+
+  # `configDir` is documented as a $HOME-relative path and is interpolated
+  # raw into `home.file` keys, activation-time absolute paths, and the
+  # symlink-cleanup globs. Reject values that break that contract — an
+  # empty string, an absolute path, or a `.`/`..` component — at evaluation
+  # time, rather than letting them silently redirect writes or cleanup.
+  config.assertions =
+    let
+      parts = lib.splitString "/" cfg.configDir;
+    in
+    [
+      {
+        assertion = cfg.configDir != "" && !(lib.hasPrefix "/" cfg.configDir);
+        message = ''
+          programs.claude.configDir must be a non-empty path relative to $HOME,
+          not an absolute path. Got: "${cfg.configDir}". `home.file` keys are
+          home-relative, so an absolute value would silently fail to relocate
+          the symlinked components (hooks, commands, agents, skills, rules,
+          plugin marketplaces, the statusline script).
+        '';
+      }
+      {
+        assertion = !(lib.any (p: p == "" || p == "." || p == "..") parts);
+        message = ''
+          programs.claude.configDir must not contain empty, "." or ".." path
+          components. Got: "${cfg.configDir}".
+        '';
+      }
+      {
+        # orphan-cleanup.nix interpolates this value into MARKETPLACES_GLOB,
+        # an intentionally-unquoted `case` pattern that decides which of the
+        # module's own directories cleanup-conflicting-symlinks.sh will
+        # `rm -rf`. A glob metacharacter here would widen that pattern rather
+        # than name a directory, so reject them at evaluation time instead of
+        # letting one reach a deletion decision.
+        assertion =
+          !(lib.any (c: lib.hasInfix c cfg.configDir) [
+            "*"
+            "?"
+            "["
+            "]"
+          ]);
+        message = ''
+          programs.claude.configDir must not contain the glob metacharacters
+          *, ?, [ or ]. Got: "${cfg.configDir}". The value is interpolated
+          into the shell `case` pattern that selects directories for removal
+          during activation cleanup, where a metacharacter would broaden the
+          match instead of naming a path.
+        '';
+      }
+    ];
 }

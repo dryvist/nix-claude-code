@@ -15,7 +15,7 @@ let
     type: components:
     builtins.listToAttrs (
       map (c: {
-        name = ".claude/${type}s/${c.name}.md";
+        name = "${cfg.configDir}/${type}s/${c.name}.md";
         value = {
           inherit (c) source;
           force = true;
@@ -34,8 +34,12 @@ let
     else
       builtins.listToAttrs (
         map (name: {
-          name = ".claude/${type}s/${name}.md";
+          name = "${cfg.configDir}/${type}s/${name}.md";
           value = {
+            # NOTE: the source side (inside `repo`) intentionally stays
+            # ".claude/..." regardless of `cfg.configDir` — this is a path
+            # inside a user-pointed *external* live repo following its own
+            # project-level Claude convention, not this home's config dir.
             source = config.lib.file.mkOutOfStoreSymlink "${repo}/.claude/${type}s/${name}.md";
             force = true;
           };
@@ -48,7 +52,7 @@ let
     type: locals:
     lib.mapAttrs' (
       name: path:
-      lib.nameValuePair ".claude/${type}s/${name}.md" {
+      lib.nameValuePair "${cfg.configDir}/${type}s/${name}.md" {
         source = path;
         force = true;
       }

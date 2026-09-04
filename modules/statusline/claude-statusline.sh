@@ -77,8 +77,11 @@ if [ "$size" -gt 0 ]; then
 else
   pct_used=0
 fi
-# Check reasoning effort
-settings_path="$HOME/.claude/settings.json"
+# Check reasoning effort. Honor CLAUDE_CONFIG_DIR (exported by the module
+# whenever programs.claude.configDir is customized) so a relocated config
+# tree is read from the right place; fall back to upstream's default.
+claude_config_dir="${CLAUDE_CONFIG_DIR:-$HOME/.claude}"
+settings_path="$claude_config_dir/settings.json"
 effort_level="medium"
 if [ -n "$CLAUDE_CODE_EFFORT_LEVEL" ]; then
   effort_level="$CLAUDE_CODE_EFFORT_LEVEL"
@@ -140,8 +143,8 @@ get_oauth_token() {
     fi
   fi
 
-  # 3. Linux credentials file
-  local creds_file="${HOME}/.claude/.credentials.json"
+  # 3. Linux credentials file (moves with CLAUDE_CONFIG_DIR, same as settings)
+  local creds_file="${CLAUDE_CONFIG_DIR:-$HOME/.claude}/.credentials.json"
   if [ -f "$creds_file" ]; then
     token=$(jq -r '.claudeAiOauth.accessToken // empty' "$creds_file" 2>/dev/null)
     if [ -n "$token" ] && [ "$token" != "null" ]; then

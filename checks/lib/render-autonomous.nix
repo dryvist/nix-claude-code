@@ -18,6 +18,14 @@ let
   settings = builtins.fromJSON render.settingsJson;
   claudeJson = builtins.fromJSON render.claudeJson;
 
+  # Same render, but with a non-default configDir — proves the files map
+  # follows configDir (including nesting .claude.json inside it) rather than
+  # a hardcoded ".claude".
+  renderCustomDir = renderAutonomous {
+    inherit residualDeny;
+    configDir = ".config/claude";
+  };
+
   # Guard the lib-only boundary: an autonomous config landing on a host FS
   # would be a bypassPermissions profile with no container around it.
   moduleReferences = builtins.filter (
@@ -74,5 +82,13 @@ in
   "test (autonomous): render is lib-only, referenced by no module" = {
     expr = moduleReferences;
     expected = [ ];
+  };
+
+  "test (autonomous): files map follows a non-default configDir, nesting .claude.json inside it" = {
+    expr = builtins.attrNames renderCustomDir.files;
+    expected = [
+      ".config/claude/.claude.json"
+      ".config/claude/settings.json"
+    ];
   };
 }
