@@ -267,5 +267,27 @@ in
           components. Got: "${cfg.configDir}".
         '';
       }
+      {
+        # orphan-cleanup.nix interpolates this value into MARKETPLACES_GLOB,
+        # an intentionally-unquoted `case` pattern that decides which of the
+        # module's own directories cleanup-conflicting-symlinks.sh will
+        # `rm -rf`. A glob metacharacter here would widen that pattern rather
+        # than name a directory, so reject them at evaluation time instead of
+        # letting one reach a deletion decision.
+        assertion =
+          !(lib.any (c: lib.hasInfix c cfg.configDir) [
+            "*"
+            "?"
+            "["
+            "]"
+          ]);
+        message = ''
+          programs.claude.configDir must not contain the glob metacharacters
+          *, ?, [ or ]. Got: "${cfg.configDir}". The value is interpolated
+          into the shell `case` pattern that selects directories for removal
+          during activation cleanup, where a metacharacter would broaden the
+          match instead of naming a path.
+        '';
+      }
     ];
 }

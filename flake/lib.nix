@@ -28,6 +28,13 @@ let
         # additionalDirectories the CI fixture historically embedded under
         # both top-level `additionalDirectories` and
         # `permissions.additionalDirectories`.
+        #
+        # The "~/.claude/" below is a frozen literal ON PURPOSE and must NOT
+        # follow programs.claude.configDir, even though modules/settings.nix
+        # now renders "~/${cfg.configDir}/". This shim reproduces a fixed
+        # historical byte sequence for the parity comparison; deriving it
+        # from configDir would make the snapshot move with configuration and
+        # defeat the point of comparing against it.
         extraSettings = {
           additionalDirectories = [ "~/.claude/" ];
           alwaysThinkingEnabled = true;
