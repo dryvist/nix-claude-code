@@ -1,9 +1,13 @@
 #!/usr/bin/env bash
-# Verify Claude Code plugin cache integrity after Nix rebuilds
-# Removes stale cache entries when marketplace store paths change
+# Detect Claude Code plugin cache staleness after Nix rebuilds
 #
-# When Nix updates marketplace symlinks to new /nix/store paths,
-# Claude Code's cached plugin data becomes stale and must be purged.
+# When Nix repoints a marketplace symlink at a new /nix/store path, the plugins
+# installed from the old path are stale. This script notices that and leaves a
+# marker for the sessionStart hook to reinstall them.
+#
+# It deletes nothing. Reclaiming superseded cache directories belongs to Claude
+# Code, which refcounts them per version and keeps them while sessions hold
+# them — see the note above the marker write.
 # See: https://github.com/anthropics/claude-code/issues/17361
 
 set -euo pipefail
@@ -81,26 +85,32 @@ if [[ $stale_detected == true ]]; then
   log_info "Wrote marketplace refresh marker: $REFRESH_MARKER"
 fi
 
-# Session-aware guard: if caches are stale but Claude Code is running, defer the
-# purge to avoid breaking active sessions. Hook scripts inside cache directories are
-# resolved at session start — deleting them mid-session causes an unbreakable error
-# loop (every hook fails, including Stop). By also skipping the hash file update,
-# the next rebuild will re-detect staleness and purge when no sessions are active.
-PGREP_BIN=$(command -v pgrep || true)
-if [[ -n $PGREP_BIN && $stale_detected == true ]] && "$PGREP_BIN" -qx "claude"; then
-  log_info "Stale caches detected but Claude Code session is active — deferring purge"
-  exit 0
-fi
-
-# Purge stale caches (safe — no active sessions)
-for name in "${!new_hashes[@]}"; do
-  if [[ ${old_hashes[$name]:-} != "${new_hashes[$name]}" ]]; then
-    if [[ -d "$CACHE_DIR/$name" ]]; then
-      rm -rf "${CACHE_DIR:?}/$name"
-      log_info "Purged stale cache: $name"
-    fi
-  fi
-done
+# No purge. Reclaiming old cache directories is Claude Code's job, and it
+# already does it correctly — better than this script could.
+#
+# Claude Code refcounts every version directory with
+# cache/<marketplace>/<plugin>/<version>/.in_use/<pid>, tombstones an
+# unreferenced one with .orphaned_at, and deletes it only after a 14-day grace
+# period, re-checking .in_use immediately before removal ("Skipping orphan
+# cleanup, in use by live session"). Its own updater never overwrites a live
+# directory either — it defers until the holding session exits. Multiple
+# versions side by side is the documented, supported state.
+#
+# This script used to `rm -rf` the whole marketplace cache on a store-path
+# change. That deleted directories Claude Code was deliberately keeping alive,
+# at marketplace granularity while sessions pin plugin/version granularity. On
+# 2026-09-05 it broke every running session: hooks re-stat ${CLAUDE_PLUGIN_ROOT}
+# on each invocation, so all of them failed with "Plugin directory does not
+# exist", and any skill resource loaded at use time (references/, scripts/)
+# failed with them.
+#
+# The pgrep -x claude guard that used to gate the purge is gone with it. It
+# could not distinguish sessions, subagents, or one starting a millisecond
+# later; .in_use/<pid> is an exact per-version refcount and needs no guessing.
+#
+# Detecting the move is still useful — the marker above tells the sessionStart
+# hook to reinstall so plugins resolve to the new version. That is additive and
+# leaves the old directory standing for whoever is still using it.
 
 # Write updated hashes atomically to avoid leaving a partially written file
 mkdir -p "$CACHE_DIR"
