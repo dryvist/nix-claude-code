@@ -10,6 +10,8 @@
   extraSettings ? { },
 }:
 # Build the contents of `~/.claude/settings.json` from structured inputs.
+# `~/.claude/` is the default `programs.claude.configDir`; the deployed path
+# follows whatever the caller sets it to.
 # Final shape follows https://json.schemastore.org/claude-code-settings.json.
 #
 # `permissions` is the attrset produced by `lib.mkDefaultPermissions`

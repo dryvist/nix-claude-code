@@ -8,6 +8,9 @@ let
   cfg = config.programs.claude;
 in
 {
+  # `~/.claude/...` in the option descriptions below is the default
+  # `programs.claude.configDir`; the deployed path follows whatever the
+  # caller sets it to.
   options.programs.claude = {
     enable = lib.mkEnableOption "Claude Code as a declarative home-manager module";
 

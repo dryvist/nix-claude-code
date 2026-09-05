@@ -2,6 +2,8 @@
 #
 # Generates executable scripts in ~/.claude/hooks/ from the typed hook
 # options (preToolUse, postToolUse, …) declared in `./options-events.nix`.
+# `~/.claude/` here is the default `programs.claude.configDir`; the actual
+# path follows whatever the caller sets it to.
 #
 # Two high-level convenience toggles auto-wire common patterns:
 #   - hooks.captureSessionOutput → postToolUse runs `last-output.sh`
