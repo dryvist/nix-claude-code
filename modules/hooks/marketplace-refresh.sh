@@ -17,6 +17,15 @@ MARKER="${CLAUDE_DIR}/plugins/cache/.nix-refresh-needed"
 
 log_info() { echo "[marketplace-refresh] $1" >&2; }
 
+# Claim the marker by renaming it. rename(2) is atomic, so when several
+# sessions start at once exactly one wins and the losers find nothing and
+# exit — without this they would all reinstall the same plugins concurrently
+# and race each other writing the shared installed_plugins.json. The old
+# sole-session guard used to serialize this as a side effect; claiming does
+# it deliberately and without blocking the repair.
+WORK="${MARKER}.claimed.$$"
+mv "$MARKER" "$WORK" 2>/dev/null || exit 0
+
 # No session guard. Reinstalling is additive and Claude Code protects itself:
 # `claude plugin install` writes a new version directory beside the old one, and
 # when a version directory would be overwritten or relinked in place it checks
@@ -32,7 +41,15 @@ log_info() { echo "[marketplace-refresh] $1" >&2; }
 # a dangling installPath stayed broken until a manual /reload-plugins.
 
 failures_tmp="$(mktemp "${MARKER}.failures.XXXXXX")"
-trap 'rm -f "$failures_tmp"' EXIT
+# Hand the claim back if we die before consuming it, so the marker is not lost
+# and the next session retries. Both success paths drop $WORK first, so this
+# only fires on an abnormal exit.
+cleanup() {
+  rm -f "$failures_tmp"
+  [[ -f $WORK ]] && mv "$WORK" "$MARKER" 2>/dev/null
+  return 0
+}
+trap cleanup EXIT
 echo "timestamp=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >"$failures_tmp"
 
 while IFS='=' read -r key value; do
@@ -82,12 +99,15 @@ while IFS='=' read -r key value; do
     log_info "Failed: $mp (will retry next session)"
     echo "marketplace=$mp" >>"$failures_tmp"
   fi
-done <"$MARKER"
+done <"$WORK"
+
+# Release the claim before writing the marker back, or the EXIT trap would
+# restore the stale claimed copy over the failures we just recorded.
+rm -f "$WORK"
 
 if grep -q "^marketplace=" "$failures_tmp"; then
   mv "$failures_tmp" "$MARKER"
   log_info "Partial refresh — some marketplace(s) queued for next session"
 else
-  rm -f "$MARKER"
   log_info "All marketplace indexes refreshed"
 fi
