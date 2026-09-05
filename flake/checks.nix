@@ -141,6 +141,18 @@
           COMMON = ../modules/scripts/cleanup-common.sh;
         } "bash ${../tests/stale-generation-replace-only-test.sh}";
 
+        # Detecting a moved marketplace must never delete the plugin cache.
+        # The script used to rm -rf the whole marketplace cache at marketplace
+        # granularity while live sessions pin plugin/version granularity, which
+        # broke every running session's hooks (they re-stat CLAUDE_PLUGIN_ROOT
+        # per invocation). Reclamation belongs to Claude Code, which refcounts
+        # each version via .in_use/<pid>. Covers: live-held dir survives,
+        # superseded dir survives, marker written, hashes recorded, idempotence.
+        cache-integrity-no-purge = pkgs.runCommand "cache-integrity-no-purge-test" {
+          nativeBuildInputs = [ pkgs.bash ];
+          SCRIPT = ../modules/scripts/verify-cache-integrity.sh;
+        } "bash ${../tests/cache-integrity-no-purge-test.sh}";
+
         # The linker owns exactly its manifest: it must leave an already-correct
         # link untouched (no churn for running sessions), replace a real
         # directory left in the way, prune only links it used to own, and never
