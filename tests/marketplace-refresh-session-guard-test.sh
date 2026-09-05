@@ -5,12 +5,16 @@
 #   HOOK  store path of the hook script under test
 #   out   file to write the success marker to
 #
-# The property under test: the hook must not reinstall plugins while other
-# Claude Code sessions are live. `claude plugin install` replaces version-pinned
-# cache directories and rewrites the shared installed_plugins.json, and every
-# session resolves its plugin and hook paths once at startup — so refreshing
-# under a peer session breaks every hook in that session at once, Stop included,
-# which cannot be recovered without restarting it.
+# The property under test: the hook refreshes REGARDLESS of how many Claude Code
+# sessions are live. It used to defer unless it was the sole session, which made
+# the repair unreachable on any machine that keeps more than one session open —
+# the marker was queued forever and every plugin with a dangling installPath
+# stayed broken. That guard existed to protect peers from
+# verify-cache-integrity.sh's rm -rf, which no longer exists; Claude Code itself
+# refuses to overwrite or relink a version directory a peer holds via .in_use.
+#
+# A dangling installPath is in any case recoverable in-session with
+# /reload-plugins — it does not require restarting the session.
 #
 # Stub `pgrep` and `claude` on PATH keep the check hermetic: no real process
 # table is consulted and no real plugin is ever installed.
@@ -73,29 +77,29 @@ fail() {
   exit 1
 }
 
-# --- Case 1: peer sessions live -> defer, touch nothing, keep the marker ------
+# --- Case 1: peer sessions live -> still refresh, still consume the marker ----
+# The regression this guards: deferring here left the marker queued forever on a
+# machine that always has peers, so a dangling installPath was never repaired.
 setup_case
-SESSION_COUNT=3 bash "$HOOK" || fail "hook exited non-zero when deferring"
+SESSION_COUNT=3 bash "$HOOK" || fail "hook exited non-zero with peer sessions live"
 
-if [[ -s $CLAUDE_CALL_LOG ]]; then
-  fail "hook invoked claude while 3 sessions were live: $(cat "$CLAUDE_CALL_LOG")"
-fi
-[[ -f "$(marker_path)" ]] ||
-  fail "hook consumed the marker while deferring — the refresh would never retry"
+grep -q "marketplace update testmp" "$CLAUDE_CALL_LOG" ||
+  fail "hook deferred with 3 sessions live — the repair never runs on a busy machine"
+[[ -f "$(marker_path)" ]] &&
+  fail "hook left the marker behind after a successful refresh"
 
-# --- Case 2: only this session -> proceed and consume the marker -------------
+# --- Case 2: solo session -> proceed and consume the marker ------------------
 setup_case
 SESSION_COUNT=1 bash "$HOOK" || fail "hook exited non-zero on the solo path"
 
 grep -q "marketplace update testmp" "$CLAUDE_CALL_LOG" ||
-  fail "hook did not refresh the marketplace when it was the only session"
+  fail "hook did not refresh the marketplace on the solo path"
 [[ -f "$(marker_path)" ]] &&
   fail "hook left the marker behind after a successful refresh"
 
 # --- Case 3: pgrep matches nothing -> still refresh, never abort -------------
-# The real pgrep exits 1 when it finds no match. Under `set -o pipefail` that
-# non-zero must not propagate: the hook has to read it as "no peers" and go
-# ahead, not die silently leaving the marker unconsumed forever.
+# The hook no longer consults pgrep at all; this pins that a process table
+# reporting zero sessions cannot resurrect a deferral or abort the hook.
 setup_case
 SESSION_COUNT=0 bash "$HOOK" || fail "hook aborted when pgrep matched nothing"
 

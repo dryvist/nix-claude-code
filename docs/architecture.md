@@ -123,6 +123,37 @@ nix-ai.
 To eventually reach v1.0.0, a human edits `release-please-config.json` to
 remove the `bump-minor-pre-major` flag.
 
+## Plugin cache lifecycle
+
+When Nix repoints a marketplace symlink at a new store path, the plugins
+installed from the old path are stale. Two scripts handle that, and neither
+deletes anything:
+
+- `modules/scripts/verify-cache-integrity.sh` compares the `readlink` string of
+  each marketplace symlink against a recorded hash and writes a
+  `.nix-refresh-needed` marker on a change.
+- `modules/hooks/marketplace-refresh.sh` consumes the marker at session start,
+  refreshes the marketplace index, and reinstalls only the enabled plugins whose
+  recorded `installPath` no longer exists.
+
+Reclaiming superseded cache directories is Claude Code's own job. It refcounts
+every `cache/<marketplace>/<plugin>/<version>/` with `.in_use/<pid>`, tombstones
+an unreferenced one with `.orphaned_at`, deletes it only after a grace period,
+and defers any overwrite or relink of a directory a live session still holds.
+Side-by-side versions are the supported state, not a leak.
+
+### Recovering a session with a dangling installPath
+
+A session resolves plugin paths at startup, and hooks re-stat
+`${CLAUDE_PLUGIN_ROOT}` on every invocation, so a session that was running
+across a version change can report `Plugin directory does not exist`. Skill
+bodies are read into memory at load and keep working; a skill's bundled
+resources (`references/`, `scripts/`) are read at use time and fail the same
+way.
+
+Run `/reload-plugins` in the affected session. It re-resolves paths in place,
+touches no cache directory, and does not require restarting the session.
+
 ## Testing layout
 
 ```text
