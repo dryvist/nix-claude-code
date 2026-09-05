@@ -29,7 +29,7 @@
     };
 
     ai-assistant-instructions = {
-      url = "github:JacobPEvans/ai-assistant-instructions";
+      url = "github:dryvist/ai-assistant-instructions";
       flake = false;
     };
 
