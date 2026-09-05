@@ -1,3 +1,6 @@
+---
+skill-groups: [core, nix]
+---
 # nix-claude-code - AI Agent Instructions
 
 Declarative Claude Code in Nix — plugins, marketplaces, skills, hooks, MCP, and
