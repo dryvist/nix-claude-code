@@ -17,23 +17,19 @@ MARKER="${CLAUDE_DIR}/plugins/cache/.nix-refresh-needed"
 
 log_info() { echo "[marketplace-refresh] $1" >&2; }
 
-# Reinstalling replaces version-pinned cache directories and rewrites the shared
-# installed_plugins.json. Sessions resolve plugin and hook paths once at startup,
-# so doing this while other sessions are live breaks every hook in all of them at
-# once — including Stop, which makes the failure unrecoverable without a restart.
-# Only this session's own process is expected; anything more means defer. The
-# marker is left in place, so the next session with no peers retries.
-# macOS pgrep has no -c, so count lines. The `|| true` is load-bearing: pgrep
-# exits 1 when nothing matches, and under `set -o pipefail` that would fail the
-# assignment and abort the hook under `set -e` — turning "no peers, go ahead"
-# into "do nothing, silently".
-if command -v pgrep >/dev/null 2>&1; then
-  sessions=$( (pgrep -x claude || true) 2>/dev/null | wc -l | tr -d ' ')
-  if [[ ${sessions:-0} -gt 1 ]]; then
-    log_info "Other Claude Code sessions active ($sessions) — deferring refresh"
-    exit 0
-  fi
-fi
+# No session guard. Reinstalling is additive and Claude Code protects itself:
+# `claude plugin install` writes a new version directory beside the old one, and
+# when a version directory would be overwritten or relinked in place it checks
+# the per-version .in_use/<pid> refcount and defers ("in use by another session;
+# deferring overwrite until it exits" / "deferring the relink until it exits").
+# A peer session's directory therefore cannot be pulled out from under it.
+#
+# This used to defer unless it was the sole session (`pgrep -x claude` counting
+# 1). That was guarding against verify-cache-integrity.sh's rm -rf of the whole
+# marketplace cache, which is gone. The guard made the repair unreachable on any
+# machine that keeps more than one session open — which is the only kind that
+# hits the problem — so the marker was queued indefinitely and every plugin with
+# a dangling installPath stayed broken until a manual /reload-plugins.
 
 failures_tmp="$(mktemp "${MARKER}.failures.XXXXXX")"
 trap 'rm -f "$failures_tmp"' EXIT

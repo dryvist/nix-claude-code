@@ -120,10 +120,10 @@
           GUARD = ../modules/hooks/keychain-secret-read-guard.sh;
         } "bash ${../tests/keychain-secret-read-guard-test.sh}";
 
-        # The marketplace-refresh hook must defer while other Claude Code
-        # sessions are live: reinstalling replaces version-pinned cache dirs and
-        # rewrites the shared installed_plugins.json, which breaks every hook in
-        # every peer session at once. Also covers the solo path and the no-op.
+        # The marketplace-refresh hook must refresh whatever the live session
+        # count is. Reinstalling is additive, and Claude Code defers its own
+        # overwrite/relink of a version dir a peer holds via .in_use. Deferring
+        # here instead left the marker queued forever on a busy machine.
         marketplace-refresh-session-guard = pkgs.runCommand "marketplace-refresh-session-guard-test" {
           nativeBuildInputs = [ pkgs.bash ];
           HOOK = ../modules/hooks/marketplace-refresh.sh;
