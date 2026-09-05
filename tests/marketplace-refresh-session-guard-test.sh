@@ -128,4 +128,28 @@ grep -q "marketplace update testmp" "$CLAUDE_CALL_LOG" ||
   fail "hook left the relocated marker behind after a successful refresh"
 unset CLAUDE_CONFIG_DIR
 
+# --- Case 6: concurrent sessions -> the marker is claimed exactly once -------
+# Reinstalling concurrently would have several sessions racing each other
+# writing the shared installed_plugins.json. The hook claims the marker with an
+# atomic rename, so whichever interleaving occurs, exactly one run refreshes.
+setup_case
+SESSION_COUNT=3 bash "$HOOK" &
+p1=$!
+SESSION_COUNT=3 bash "$HOOK" &
+p2=$!
+wait "$p1" || fail "concurrent run 1 exited non-zero"
+wait "$p2" || fail "concurrent run 2 exited non-zero"
+
+n=$(grep -c "marketplace update testmp" "$CLAUDE_CALL_LOG" || true)
+[[ $n -eq 1 ]] ||
+  fail "marketplace refreshed $n times concurrently — the marker was not claimed atomically"
+[[ -f "$(marker_path)" ]] && fail "marker survived a successful concurrent refresh"
+
+# --- Case 7: no claim file is left behind ------------------------------------
+# A leaked .claimed.<pid> would strand the marker: the next session sees no
+# marker and never retries.
+leftovers=$(find "$(dirname "$(marker_path)")" -name '*.claimed.*' -o -name '*.failures.*' 2>/dev/null | wc -l | tr -d ' ')
+[[ ${leftovers:-0} -eq 0 ]] ||
+  fail "hook left $leftovers claim/temp file(s) behind in the cache dir"
+
 echo "marketplace-refresh session guard: all cases passed" >"${out:-/dev/stdout}"
