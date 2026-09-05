@@ -8,6 +8,10 @@
 # callers can also pass arbitrary keys that are merged into settings.json
 # verbatim (e.g. `programs.claude.settings.statusLine = {...}` used by
 # the statusline sub-modules).
+#
+# `~/.claude/settings.json` in the descriptions below is the default
+# `programs.claude.configDir`; the deployed path follows whatever the
+# caller sets it to.
 { lib, ... }:
 {
   options.programs.claude.settings = lib.mkOption {

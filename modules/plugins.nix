@@ -4,6 +4,8 @@
 # symlinks. Claude Code only READS from ~/.claude/plugins/marketplaces/ — it
 # writes exclusively to ~/.claude/plugins/cache/. Since marketplaces are
 # read-only, immutable nix store symlinks are the correct approach.
+# `~/.claude/` here is the default `programs.claude.configDir`; both paths
+# above follow whatever the caller sets it to.
 #
 # Delivered by activation script, NOT by `home.file`. `home.file` routes every
 # path through the aggregate `home-manager-files` derivation, whose hash covers
