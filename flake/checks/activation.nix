@@ -203,8 +203,17 @@ in
   latest-install-on-activation = pkgs.runCommand "latest-install-on-activation-test" { } ''
     set -euo pipefail
     grep -q "claude-latest-install" ${latestInstallOnActivationFalse}/activate && exit 1
-    test ${if pkgs.stdenv.isDarwin then "1" else "0"} -eq 0 || \
+    test ${if pkgs.stdenv.isDarwin then "1" else "0"} -eq 0 || {
       grep -q "claude-latest-install" ${latestInstallOnActivationTrue}/activate
+      # The wrapper's own PATH must supply every tool the upstream installer
+      # calls on darwin; activation does not inherit the system PATH.
+      bin=$(grep -o '/nix/store/[^ ]*-claude-latest-install/bin/claude-latest-install' \
+        ${latestInstallOnActivationTrue}/activate | head -1)
+      wrapped=$(grep -o 'PATH="[^"]*"' "$bin" | head -1 | sed 's/^PATH="//; s/"$//; s/:\$PATH$//')
+      for tool in curl shasum uname; do
+        PATH="$wrapped" command -v "$tool" >/dev/null || { echo "installer PATH lacks $tool"; exit 1; }
+      done
+    }
     echo ok > $out
   '';
 
