@@ -20,6 +20,9 @@ let
     runtimeInputs = [
       pkgs.curl
       pkgs.coreutils
+      # The upstream installer verifies the download with `shasum` on darwin,
+      # which is perl's; activation runs without the system PATH.
+      pkgs.perl
     ];
     text = builtins.readFile ./scripts/claude-latest-install.sh;
   };
