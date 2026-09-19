@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 with a permanent pre-1.0 cadence — see `release-please-config.json`.
 
+## [1.13.2](https://github.com/dryvist/nix-claude-code/compare/v1.13.1...v1.13.2) (2026-09-19)
+
+
+### Bug Fixes
+
+* **ci:** forward the router secrets to ai-pr-care with secrets: inherit ([846f0f3](https://github.com/dryvist/nix-claude-code/commit/846f0f34ad310aae5a82049b75bb61b92e7410dc))
+* **ci:** forward the router secrets to ai-pr-care with secrets: inherit ([37e131a](https://github.com/dryvist/nix-claude-code/commit/37e131a51d99c6915a231d3cccc6b1b32c0572ec))
+
 ## [1.13.1](https://github.com/dryvist/nix-claude-code/compare/v1.13.0...v1.13.1) (2026-09-13)
 
 
