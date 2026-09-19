@@ -21,6 +21,4 @@ jobs:
       id-token: write
       pull-requests: write
     uses: dryvist/ai-workflows/.github/workflows/cc-dep-review.yml@main
-    secrets:
-      GH_ACTION_AI_API_KEY: ${{ secrets.GH_ACTION_AI_API_KEY }}
-      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+    secrets: inherit
