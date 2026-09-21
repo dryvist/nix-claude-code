@@ -262,7 +262,11 @@ _:
     # environment and then executes whatever follows, so approving the prefix
     # approves arbitrary commands. Only the specific read below is listed.
     "doppler run -- deployment-json fetch"
-    "doppler secrets"
+    # Bare `doppler secrets` dumps every value in the config as plaintext —
+    # narrowed to the two read shapes that can't leak bulk values. See
+    # deny.nix for the bulk-dump forms this narrowing pushes out of allow.
+    "doppler secrets get"
+    "doppler secrets --only-names"
     "vault kv list"
     "vault list"
 
