@@ -22,6 +22,13 @@ in
   # Shell commands hard-denied.
   deny = permissions.deny.commands ++ (forTool.deny or [ ]);
 
+  # Shell commands hard-denied as an EXACT match only — never a prefix.
+  # Reserved for a bare invocation that is dangerous on its own but whose
+  # subcommands are deliberately kept in `allow` (a prefix deny here would
+  # also swallow those, since deny wins over allow regardless of
+  # specificity). See `data/permissions/deny.nix`'s `commandsExact`.
+  denyExact = permissions.deny.commandsExact or [ ] ++ (forTool.denyExact or [ ]);
+
   # File-path glob patterns hard-denied for Read/Edit/Write.
   denyPatterns = permissions.deny.patterns;
 

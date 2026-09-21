@@ -80,6 +80,24 @@ _:
     "security dump"
     "security dump-keychain"
     "security export"
+    # Bulk-plaintext forms of `doppler secrets` — every value in a config,
+    # decrypted, in one call. A leaked value can't be un-leaked. The safe
+    # shapes (`doppler secrets get <name> --plain`, `doppler secrets
+    # --only-names`, `doppler run --`) stay in allow.nix; narrowed there
+    # rather than matched here, since a prefix deny below would also catch
+    # them. `--only-names` must be the first flag after `secrets` for a
+    # command to reach the allow rule — any later position falls through
+    # to these denies (or, unmatched, to Claude's default prompt).
+    "doppler secrets --project"
+    "doppler secrets -p"
+    "doppler secrets --config"
+    "doppler secrets -c"
+    "doppler secrets --json"
+    "doppler secrets --raw"
+    "doppler secrets --plain"
+    "doppler secrets download"
+    "doppler secrets substitute"
+    "doppler configure --json"
     "npm publish"
     "cargo publish"
 
@@ -126,6 +144,18 @@ _:
     "python3 -m pip install"
     "yarn add"
     "yarn install"
+  ];
+
+  # Hard-denied as an EXACT command only — never a prefix. A prefix deny
+  # here would also match every safe subcommand kept in allow.nix (`doppler
+  # secrets get`, `doppler secrets --only-names`), and deny always wins
+  # over allow regardless of specificity, so the exact form is the only
+  # way to block the bare invocation without losing those. Closes the gap
+  # a bare command left unmatched by neither allow nor deny: in
+  # bypassPermissions mode (no human to prompt) an unmatched command just
+  # runs, while a deny rule is enforced in every mode.
+  commandsExact = [
+    "doppler secrets"
   ];
 
   # File-path glob patterns denied across all `Read`/`Edit`/`Write` calls.

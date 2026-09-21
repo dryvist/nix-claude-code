@@ -15,14 +15,17 @@
 # Final shape follows https://json.schemastore.org/claude-code-settings.json.
 #
 # `permissions` is the attrset produced by `lib.mkDefaultPermissions`
-# (six flat-keyed lists: allow, allowMcp, ask, deny, denyPatterns,
-# webfetchDomains). This function applies Claude's permission DSL:
+# (seven flat-keyed lists: allow, allowMcp, ask, deny, denyExact,
+# denyPatterns, webfetchDomains). This function applies Claude's permission
+# DSL:
 #
-#   - shell commands     → `Bash(<cmd> *)` (the trailing ` *` is Claude's
-#                          wildcard-with-word-boundary syntax)
-#   - WebFetch domains   → `WebFetch(domain:<host>)`
-#   - Read-deny patterns → `Read(<glob>)`
-#   - MCP patterns       → pass-through (already in `mcp__<server>__*` form)
+#   - shell commands       → `Bash(<cmd> *)` (the trailing ` *` is Claude's
+#                            wildcard-with-word-boundary syntax)
+#   - exact shell commands → `Bash(<cmd>)` (no wildcard — matches only the
+#                            literal command, deny-only, see `denyExact`)
+#   - WebFetch domains     → `WebFetch(domain:<host>)`
+#   - Read-deny patterns   → `Read(<glob>)`
+#   - MCP patterns         → pass-through (already in `mcp__<server>__*` form)
 #
 # `defaultMode` is Claude Code's permission-mode string (e.g. "auto",
 # "acceptEdits", "plan", "default", "bypassPermissions"). It lands under
@@ -44,6 +47,10 @@
 # tool-specific entries first, then MCP, then shell commands.
 let
   fmtBash = cmd: "Bash(${cmd} *)";
+  # No trailing wildcard: matches only the literal command, not any command
+  # it prefixes. Deny-only — an exact allow rule gains nothing a prefix rule
+  # doesn't already cover, so there is no fmtBashExact use in formatAllow.
+  fmtBashExact = cmd: "Bash(${cmd})";
   fmtWebFetch = domain: "WebFetch(domain:${domain})";
   fmtReadPattern = pattern: "Read(${pattern})";
 
@@ -53,7 +60,11 @@ let
 
   formatAsk = p: map fmtBash (p.ask or [ ]);
 
-  formatDeny = p: map fmtBash (p.deny or [ ]) ++ map fmtReadPattern (p.denyPatterns or [ ]);
+  formatDeny =
+    p:
+    map fmtBash (p.deny or [ ])
+    ++ map fmtBashExact (p.denyExact or [ ])
+    ++ map fmtReadPattern (p.denyPatterns or [ ]);
 
   permsAttrs = lib.optionalAttrs (permissions != null) {
     allow = formatAllow permissions;
