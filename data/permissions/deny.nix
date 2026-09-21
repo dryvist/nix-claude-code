@@ -146,6 +146,18 @@ _:
     "yarn install"
   ];
 
+  # Hard-denied as an EXACT command only — never a prefix. A prefix deny
+  # here would also match every safe subcommand kept in allow.nix (`doppler
+  # secrets get`, `doppler secrets --only-names`), and deny always wins
+  # over allow regardless of specificity, so the exact form is the only
+  # way to block the bare invocation without losing those. Closes the gap
+  # a bare command left unmatched by neither allow nor deny: in
+  # bypassPermissions mode (no human to prompt) an unmatched command just
+  # runs, while a deny rule is enforced in every mode.
+  commandsExact = [
+    "doppler secrets"
+  ];
+
   # File-path glob patterns denied across all `Read`/`Edit`/`Write` calls.
   # Scoped to files that hold live secret material — a leaked key cannot be
   # un-leaked. Deliberately NOT blanket-blocking `.env.*` or `secrets/**`:

@@ -170,7 +170,7 @@ let
   # skills :: [{ name; path; pluginRoot; }]
 
   perms = inputs.nix-claude-code.lib.mkDefaultPermissions { tool = "codex"; };
-  # perms :: { allow; allowMcp; ask; deny; denyPatterns; webfetchDomains; }
+  # perms :: { allow; allowMcp; ask; deny; denyExact; denyPatterns; webfetchDomains; }
   # (`ask` is always empty — see data/permissions/README.md. Claude Code
   #  itself no longer consumes this; auto mode is its gate.)
 in
