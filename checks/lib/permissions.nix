@@ -35,6 +35,11 @@ in
     expected = true;
   };
 
+  "test: deny.commandsExact is non-empty" = {
+    expr = builtins.length permissions.deny.commandsExact > 0;
+    expected = true;
+  };
+
   "test: domains.webfetch is non-empty" = {
     expr = builtins.length permissions.domains.webfetch > 0;
     expected = true;
@@ -69,6 +74,11 @@ in
     expected = true;
   };
 
+  "test: deny.commandsExact has no duplicates" = {
+    expr = lib.unique permissions.deny.commandsExact == permissions.deny.commandsExact;
+    expected = true;
+  };
+
   "test: domains.webfetch has no duplicates" = {
     expr = lib.unique permissions.domains.webfetch == permissions.domains.webfetch;
     expected = true;
@@ -82,8 +92,15 @@ in
     expected = [ ];
   };
 
+  # An exact-match deny still has to leave the allow list reachable: it
+  # must not equal one of the commands allow.nix relies on staying usable.
+  "test: allow.commands and deny.commandsExact are disjoint" = {
+    expr = lib.intersectLists permissions.allow.commands permissions.deny.commandsExact;
+    expected = [ ];
+  };
+
   # `mkDefaultPermissions` shape contract: callers receive a flat-keyed
-  # attrset with the six expected lists for any registered tool.
+  # attrset with the seven expected lists for any registered tool.
 
   "test: mkDefaultPermissions claude returns expected keys" = {
     expr = lib.attrNames (mkDefault {
@@ -94,6 +111,7 @@ in
       "allowMcp"
       "ask"
       "deny"
+      "denyExact"
       "denyPatterns"
       "webfetchDomains"
     ];
