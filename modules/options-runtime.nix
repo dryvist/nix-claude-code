@@ -196,9 +196,12 @@ in
         Adaptive reasoning effort for Opus and Sonnet. ("max" is session-only
         and not accepted here.)
         - null: Use upstream default (varies by model; see /effort docs)
-        - "high": Recommended. Balances token spend and intelligence
+        - "medium": Recommended default. Coding accuracy drops only about
+          2 points versus high effort, for roughly half the token cost.
+          Escalate per session when a fix stalls at one layer.
+        - "high": Balances token spend and intelligence; worth it once
+          medium has stalled on a given task.
         - "xhigh": Deeper reasoning at higher token spend; heavier on opus
-        - "medium": Reduced token usage; trades off some intelligence
         - "low": Minimal reasoning, fastest and cheapest
         Override per-session via /effort command.
       '';
