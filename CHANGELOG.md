@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 with a permanent pre-1.0 cadence — see `release-please-config.json`.
 
+## [1.13.4](https://github.com/dryvist/nix-claude-code/compare/v1.13.3...v1.13.4) (2026-09-23)
+
+
+### Bug Fixes
+
+* **settings:** disable experimental agent teams ([#279](https://github.com/dryvist/nix-claude-code/issues/279)) ([f441b01](https://github.com/dryvist/nix-claude-code/commit/f441b01ab4554bcc1028f6082c8f3575a576cfbd))
+
 ## [1.13.3](https://github.com/dryvist/nix-claude-code/compare/v1.13.2...v1.13.3) (2026-09-21)
 
 
