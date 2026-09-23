@@ -65,7 +65,7 @@ an override-friendly default (see `docs/settings.md`):
   in `modules/settings.nix` rather than an option default, so nix-ai's
   host-specific entries keep concatenating rather than being replaced.
 - **Sensible `env` defaults** (`MCP_TIMEOUT`, `MCP_TOOL_TIMEOUT`,
-  `ENABLE_TOOL_SEARCH`, `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS`) — same
+  `ENABLE_TOOL_SEARCH`) — same
   builder-merge pattern, merged _under_ `programs.claude.settings.env` so a
   per-key override in nix-ai still wins.
 
