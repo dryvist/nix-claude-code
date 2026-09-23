@@ -151,7 +151,7 @@ letting callers add to or override individual entries:
   `/tmp/`, concatenated with `programs.claude.settings.additionalDirectories`
   (deduplicated).
 - **`env`** always includes `MCP_TIMEOUT`, `MCP_TOOL_TIMEOUT`,
-  `ENABLE_TOOL_SEARCH`, `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS`, and
+  `ENABLE_TOOL_SEARCH`, and
   `CLAUDE_AUTOCOMPACT_PCT_OVERRIDE` (derived from
   `autoCompactThresholdPercent` above), merged _under_
   `programs.claude.settings.env` — set any of these keys yourself to override

@@ -81,14 +81,13 @@ let
   };
 
   # Sensible env defaults every adopter benefits from (MCP timeouts long
-  # enough for slow servers, deferred MCP tool-schema loading, agent teams).
+  # enough for slow servers, deferred MCP tool-schema loading).
   # Merged *under* `cfg.settings.env` so overriding any single key wins
   # per-key rather than requiring the whole map to be redeclared.
   upstreamEnvDefaults = {
     MCP_TIMEOUT = "300000";
     MCP_TOOL_TIMEOUT = "300000";
     ENABLE_TOOL_SEARCH = "auto:10";
-    CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS = "1";
   };
 
   # autoCompactThresholdPercent is a curated option (options-settings.nix),
