@@ -13,8 +13,6 @@ set -euo pipefail
 CLAUDE_DIR="${CLAUDE_CONFIG_DIR:-$HOME/.claude}"
 MARKER="${CLAUDE_DIR}/plugins/cache/.nix-refresh-needed"
 [[ -f $MARKER ]] || exit 0
-# Leave the marker queued until jq is on PATH; without it no plugin is listed.
-command -v jq >/dev/null 2>&1 || exit 0
 
 log_info() { echo "[marketplace-refresh] $1" >&2; }
 
@@ -52,11 +50,15 @@ while IFS='=' read -r key value; do
   # dir beside the old one, so sessions still using the old one keep it.
   log_info "Updating plugins from: $mp"
   failed=false
-  while IFS= read -r plugin_id; do
-    [[ -n $plugin_id ]] || continue
-    claude plugin update "$plugin_id" >/dev/null 2>&1 || failed=true
-  done < <(claude plugin list --json 2>/dev/null |
-    jq -r --arg mp "$mp" '.[]? | select(.enabled and (.id | type == "string" and endswith("@" + $mp))) | .id' 2>/dev/null)
+  # A failed listing re-queues too, rather than dropping the marker.
+  if ids=$(claude plugin list --json 2>/dev/null |
+    jq -r --arg mp "$mp" '.[]? | select(.enabled and (.id | type == "string" and endswith("@" + $mp))) | .id'); then
+    for plugin_id in $ids; do
+      claude plugin update "$plugin_id" >/dev/null 2>&1 || failed=true
+    done
+  else
+    failed=true
+  fi
   if [[ $failed == true ]]; then
     log_info "Update failed: $mp (will retry next session)"
     echo "marketplace=$mp" >>"$failures_tmp"

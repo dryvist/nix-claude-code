@@ -73,7 +73,7 @@ that wants Claude Code as Nix):
 - `homeModules.core` — `settings.json` + permissions + the `claude-code` binary
 - `homeModules.plugins` — Marketplace + plugin management
 - `homeModules.statusline` — Powerline / ccstatusline / daniel3303 themes
-- `homeModules.hooks` — Session-output capture + marketplace-refresh hooks
+- `homeModules.hooks` — Marketplace-refresh hook
 - `homeModules.mcp` — `programs.claude.mcpServers` option (data only)
 - `homeModules.latest` — Opt-in auto-installer for the latest Claude Code release
 - `flakeModule` — flake-parts wiring

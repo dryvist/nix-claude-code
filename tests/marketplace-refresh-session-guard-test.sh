@@ -7,7 +7,7 @@
 #
 # A stub `claude` on PATH keeps the check hermetic: it logs every call, answers
 # `plugin list --json` with $PLUGIN_LIST_JSON, and fails `plugin update` when
-# $FAIL_UPDATE is set.
+# $FAIL_UPDATE is set; `plugin list` fails when $FAIL_LIST is set.
 
 set -euo pipefail
 
@@ -20,7 +20,7 @@ export PATH="$fakebin:$PATH"
 cat >"$fakebin/claude" <<EOF
 #!$bash_bin
 echo "called \$*" >>"\${CLAUDE_CALL_LOG}"
-[ "\$1 \$2" = "plugin list" ] && printf '%s' "\${PLUGIN_LIST_JSON}"
+[ "\$1 \$2" = "plugin list" ] && { [ -n "\${FAIL_LIST:-}" ] && exit 1; printf '%s' "\${PLUGIN_LIST_JSON}"; }
 [ "\$1 \$2" = "plugin update" ] && [ -n "\${FAIL_UPDATE:-}" ] && exit 1
 exit 0
 EOF
@@ -69,6 +69,11 @@ bash "$HOOK" || fail "hook exited non-zero with no marker"
 setup_case
 FAIL_UPDATE=1 bash "$HOOK" || fail "hook exited non-zero on a failed update"
 grep -qx "marketplace=testmp" "$(marker_path)" || fail "failed update was not re-queued"
+
+# --- Case 3b: failed listing -> marker re-queued, not dropped ---------------
+setup_case
+FAIL_LIST=1 bash "$HOOK" || fail "hook exited non-zero on a failed listing"
+grep -qx "marketplace=testmp" "$(marker_path)" || fail "failed listing dropped the marker"
 
 # --- Case 4: custom CLAUDE_CONFIG_DIR -> marker read from the relocated tree -
 setup_case

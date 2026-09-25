@@ -132,9 +132,9 @@ deletes anything:
 - `modules/scripts/verify-cache-integrity.sh` compares the `readlink` string of
   each marketplace symlink against a recorded hash and writes a
   `.nix-refresh-needed` marker on a change.
-- `modules/hooks/marketplace-refresh.sh` consumes the marker at session start,
-  refreshes the marketplace index, and runs `claude plugin update` on each
-  enabled plugin from it (a no-op when the version is unchanged).
+- `modules/hooks/marketplace-refresh.sh` consumes the marker at session start
+  and runs `claude plugin update` on each enabled plugin from the moved
+  marketplace (a no-op when the version is unchanged).
 
 Reclaiming superseded cache directories is Claude Code's own job. It refcounts
 every `cache/<marketplace>/<plugin>/<version>/` with `.in_use/<pid>`, tombstones

@@ -13,7 +13,12 @@
 #                                → preToolUse runs `keychain-secret-read-guard.sh`
 #   - hooks.worktreesUnderRepo   → worktreeCreate/worktreeRemove run the git
 #                                  commands in `lib/worktree-hook-commands.nix`
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 let
   cfg = config.programs.claude;
 
@@ -69,7 +74,16 @@ in
     # Convenience toggles: wire vendored hook scripts. `mkDefault` so a
     # user setting an explicit hook value at the same path always wins.
     (lib.mkIf (cfg.enable && cfg.hooks.refreshMarketplaces) {
-      programs.claude.hooks.sessionStart = lib.mkDefault ./hooks/marketplace-refresh.sh;
+      programs.claude.hooks.sessionStart = lib.mkDefault ''
+        #!${pkgs.runtimeShell}
+        exec ${
+          pkgs.writeShellApplication {
+            name = "marketplace-refresh";
+            runtimeInputs = [ pkgs.jq ];
+            text = builtins.readFile ./hooks/marketplace-refresh.sh;
+          }
+        }/bin/marketplace-refresh "$@"
+      '';
     })
     (lib.mkIf (cfg.enable && cfg.hooks.blockExternalSubagentsInPrivateWorkspace) {
       programs.claude.hooks.preToolUse = lib.mkDefault ./hooks/private-workspace-agent-guard.sh;
