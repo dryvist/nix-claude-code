@@ -28,9 +28,9 @@ in
     # activation (so Claude reads them locally instead of re-fetching from GitHub).
 
     # NOTE: installed_plugins.json is runtime state Claude owns; Nix never writes it.
-    # When a marketplace store path changes, verify-cache-integrity purges the stale
-    # cache and the marketplace-refresh sessionStart hook has Claude natively
-    # reinstall the affected enabled plugins, re-pointing their installPath.
+    # When a marketplace store path changes, verify-cache-integrity queues a marker
+    # and the marketplace-refresh sessionStart hook runs `claude plugin update` on
+    # the affected enabled plugins, re-pointing their installPath.
 
     # Migration: Remove stale Nix symlink if it exists
     # After switching from Nix-managed to Claude-managed known_marketplaces.json,

@@ -136,12 +136,14 @@
             REMOVE = pkgs.writeShellScript "worktree-remove" commands.remove;
           } "bash ${../tests/worktree-hooks-test.sh}";
 
-        # The marketplace-refresh hook must refresh whatever the live session
-        # count is. Reinstalling is additive, and Claude Code defers its own
-        # overwrite/relink of a version dir a peer holds via .in_use. Deferring
-        # here instead left the marker queued forever on a busy machine.
+        # The marketplace-refresh hook updates enabled plugins of each queued
+        # marketplace without `marketplace update`, re-queues on failure, and
+        # claims the marker atomically.
         marketplace-refresh-session-guard = pkgs.runCommand "marketplace-refresh-session-guard-test" {
-          nativeBuildInputs = [ pkgs.bash ];
+          nativeBuildInputs = [
+            pkgs.bash
+            pkgs.jq
+          ];
           HOOK = ../modules/hooks/marketplace-refresh.sh;
         } "bash ${../tests/marketplace-refresh-session-guard-test.sh}";
 
