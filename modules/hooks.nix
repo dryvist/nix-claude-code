@@ -5,8 +5,7 @@
 # `~/.claude/` here is the default `programs.claude.configDir`; the actual
 # path follows whatever the caller sets it to.
 #
-# Two high-level convenience toggles auto-wire common patterns:
-#   - hooks.captureSessionOutput → postToolUse runs `last-output.sh`
+# High-level convenience toggles auto-wire common patterns:
 #   - hooks.refreshMarketplaces  → sessionStart runs `marketplace-refresh.sh`
 #   - hooks.blockExternalSubagentsInPrivateWorkspace
 #                                → preToolUse runs `private-workspace-agent-guard.sh`
@@ -58,14 +57,17 @@ in
       [ "programs" "claude" "hooks" "extraHooks" ]
       [ "programs" "claude" "settings" "hooks" ]
     )
+    (lib.mkRemovedOptionModule [
+      "programs"
+      "claude"
+      "hooks"
+      "captureSessionOutput"
+    ] "It ran on every tool call and nothing consumed its output.")
   ];
 
   config = lib.mkMerge [
     # Convenience toggles: wire vendored hook scripts. `mkDefault` so a
     # user setting an explicit hook value at the same path always wins.
-    (lib.mkIf (cfg.enable && cfg.hooks.captureSessionOutput) {
-      programs.claude.hooks.postToolUse = lib.mkDefault ./hooks/last-output.sh;
-    })
     (lib.mkIf (cfg.enable && cfg.hooks.refreshMarketplaces) {
       programs.claude.hooks.sessionStart = lib.mkDefault ./hooks/marketplace-refresh.sh;
     })
