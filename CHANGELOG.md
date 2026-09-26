@@ -6,6 +6,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 with a permanent pre-1.0 cadence — see `release-please-config.json`.
 
+## [2.0.0](https://github.com/dryvist/nix-claude-code/compare/v1.13.4...v2.0.0) (2026-09-26)
+
+
+### ⚠ BREAKING CHANGES
+
+* **hooks:** remove the captureSessionOutput hook
+
+### Bug Fixes
+
+* **hooks:** ship jq with the refresh hook; re-queue on a failed listing ([cef6335](https://github.com/dryvist/nix-claude-code/commit/cef6335755f465bc296ce7c627b27790bd37f3cf))
+* **hooks:** update plugins directly on marketplace refresh ([f41edd7](https://github.com/dryvist/nix-claude-code/commit/f41edd7bddad32da03dd71a96c3d6d3dee450a3b))
+* **hooks:** update plugins directly on refresh; remove captureSessionOutput ([67b1035](https://github.com/dryvist/nix-claude-code/commit/67b1035610db3592a75352191ed8bb9c43ed028a))
+
+
+### Code Refactoring
+
+* **hooks:** remove the captureSessionOutput hook ([3fb1fa8](https://github.com/dryvist/nix-claude-code/commit/3fb1fa87a35987aa0c3ffe1a9c629d05517ccaab))
+
 ## [1.13.4](https://github.com/dryvist/nix-claude-code/compare/v1.13.3...v1.13.4) (2026-09-23)
 
 
