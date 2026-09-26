@@ -14,7 +14,6 @@ _: {
     };
 
     hooks = {
-      captureSessionOutput = true;
       refreshMarketplaces = true;
     };
 

@@ -60,14 +60,6 @@ in
         upstream default of `<repo>/.claude/worktrees/`.
       '';
 
-      # High-level toggle: wires postToolUse to a vendored capture script.
-      captureSessionOutput = lib.mkEnableOption ''
-        session-output capture hook. When enabled, sets `postToolUse` to
-        a vendored script that writes a compact summary of each tool
-        invocation to `~/.cache/claude-last-output.txt` for statusline
-        consumption.
-      '';
-
       # High-level toggle: wires preToolUse to a vendored Agent-tool guard.
       blockExternalSubagentsInPrivateWorkspace = lib.mkEnableOption ''
         private-workspace subagent guard. When enabled, sets `preToolUse` to

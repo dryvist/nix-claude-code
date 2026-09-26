@@ -116,7 +116,7 @@ credentials in Nix.
 | `homeModules.core`       | `settings.json`, auto-mode posture, the `claude-code` binary        |
 | `homeModules.plugins`    | Marketplace + plugin management                                     |
 | `homeModules.statusline` | Powerline / ccstatusline / daniel3303 themes                        |
-| `homeModules.hooks`      | Session-output capture + marketplace-refresh hooks                  |
+| `homeModules.hooks`      | Marketplace-refresh hook                                            |
 | `homeModules.mcp`        | `programs.claude.mcpServers` option (you populate from any runtime) |
 | `homeModules.latest`     | Opt-in auto-installer for the latest Claude Code release            |
 

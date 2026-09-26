@@ -3,7 +3,7 @@
 #
 # When Nix repoints a marketplace symlink at a new /nix/store path, the plugins
 # installed from the old path are stale. This script notices that and leaves a
-# marker for the sessionStart hook to reinstall them.
+# marker for the sessionStart hook to update them.
 #
 # It deletes nothing. Reclaiming superseded cache directories belongs to Claude
 # Code, which refcounts them per version and keeps them while sessions hold
@@ -109,7 +109,7 @@ fi
 # later; .in_use/<pid> is an exact per-version refcount and needs no guessing.
 #
 # Detecting the move is still useful — the marker above tells the sessionStart
-# hook to reinstall so plugins resolve to the new version. That is additive and
+# hook to update so plugins resolve to the new version. That is additive and
 # leaves the old directory standing for whoever is still using it.
 
 # Write updated hashes atomically to avoid leaving a partially written file

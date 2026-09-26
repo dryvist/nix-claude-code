@@ -5,8 +5,7 @@
 # `~/.claude/` here is the default `programs.claude.configDir`; the actual
 # path follows whatever the caller sets it to.
 #
-# Two high-level convenience toggles auto-wire common patterns:
-#   - hooks.captureSessionOutput → postToolUse runs `last-output.sh`
+# High-level convenience toggles auto-wire common patterns:
 #   - hooks.refreshMarketplaces  → sessionStart runs `marketplace-refresh.sh`
 #   - hooks.blockExternalSubagentsInPrivateWorkspace
 #                                → preToolUse runs `private-workspace-agent-guard.sh`
@@ -14,7 +13,12 @@
 #                                → preToolUse runs `keychain-secret-read-guard.sh`
 #   - hooks.worktreesUnderRepo   → worktreeCreate/worktreeRemove run the git
 #                                  commands in `lib/worktree-hook-commands.nix`
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 let
   cfg = config.programs.claude;
 
@@ -58,16 +62,28 @@ in
       [ "programs" "claude" "hooks" "extraHooks" ]
       [ "programs" "claude" "settings" "hooks" ]
     )
+    (lib.mkRemovedOptionModule [
+      "programs"
+      "claude"
+      "hooks"
+      "captureSessionOutput"
+    ] "It ran on every tool call and nothing consumed its output.")
   ];
 
   config = lib.mkMerge [
     # Convenience toggles: wire vendored hook scripts. `mkDefault` so a
     # user setting an explicit hook value at the same path always wins.
-    (lib.mkIf (cfg.enable && cfg.hooks.captureSessionOutput) {
-      programs.claude.hooks.postToolUse = lib.mkDefault ./hooks/last-output.sh;
-    })
     (lib.mkIf (cfg.enable && cfg.hooks.refreshMarketplaces) {
-      programs.claude.hooks.sessionStart = lib.mkDefault ./hooks/marketplace-refresh.sh;
+      programs.claude.hooks.sessionStart = lib.mkDefault ''
+        #!${pkgs.runtimeShell}
+        exec ${
+          pkgs.writeShellApplication {
+            name = "marketplace-refresh";
+            runtimeInputs = [ pkgs.jq ];
+            text = builtins.readFile ./hooks/marketplace-refresh.sh;
+          }
+        }/bin/marketplace-refresh "$@"
+      '';
     })
     (lib.mkIf (cfg.enable && cfg.hooks.blockExternalSubagentsInPrivateWorkspace) {
       programs.claude.hooks.preToolUse = lib.mkDefault ./hooks/private-workspace-agent-guard.sh;

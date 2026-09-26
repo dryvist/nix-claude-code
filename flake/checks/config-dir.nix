@@ -154,6 +154,8 @@ in
           echo "marketplace-refresh hook not deployed at .config/claude/hooks/session-start.sh" >&2
           exit 1
         }
+        # The deployed file is a wrapper; inspect the script it execs.
+        hook=$(grep -o '/nix/store/[^ ]*/bin/marketplace-refresh' "$hook")
         grep -q 'CLAUDE_CONFIG_DIR' "$hook" || {
           echo "deployed marketplace-refresh hook does not honor CLAUDE_CONFIG_DIR:" >&2
           cat "$hook" >&2
