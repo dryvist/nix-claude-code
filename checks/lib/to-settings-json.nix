@@ -121,7 +121,7 @@ in
   };
 
   "test (settings): MCP patterns pass through unchanged" = {
-    expr = builtins.any (s: s == "mcp__codex__*") withPerms.permissions.allow;
+    expr = builtins.any (s: s == "mcp__fabric__*") withPerms.permissions.allow;
     expected = true;
   };
 
@@ -140,7 +140,7 @@ in
       let
         idxOf = needle: lib.lists.findFirstIndex (s: s == needle) (-1) withPerms.permissions.allow;
         web = idxOf "WebFetch(domain:anthropic.com)";
-        mcp = idxOf "mcp__codex__*";
+        mcp = idxOf "mcp__fabric__*";
         bash = idxOf "Bash(jq *)";
       in
       web < mcp && mcp < bash;
