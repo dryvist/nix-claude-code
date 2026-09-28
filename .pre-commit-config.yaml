@@ -19,7 +19,7 @@ repos:
         files: \.md$
 
   - repo: https://github.com/gitleaks/gitleaks
-    rev: v8.28.0
+    rev: v8.30.1
     hooks:
       - id: gitleaks
 
