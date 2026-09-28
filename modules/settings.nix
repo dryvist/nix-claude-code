@@ -84,10 +84,13 @@ let
   # enough for slow servers, deferred MCP tool-schema loading).
   # Merged *under* `cfg.settings.env` so overriding any single key wins
   # per-key rather than requiring the whole map to be redeclared.
+  # ENABLE_TOOL_SEARCH=true always defers MCP schemas; an `auto:N` threshold
+  # loads them all upfront until they pass N% of the window, which on a
+  # 1M-token window is never.
   upstreamEnvDefaults = {
     MCP_TIMEOUT = "300000";
     MCP_TOOL_TIMEOUT = "300000";
-    ENABLE_TOOL_SEARCH = "auto:10";
+    ENABLE_TOOL_SEARCH = "true";
   };
 
   # autoCompactThresholdPercent is a curated option (options-settings.nix),

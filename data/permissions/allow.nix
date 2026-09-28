@@ -371,7 +371,6 @@ _:
   # Each pattern follows Anthropic's `mcp__<server>__<tool>` convention with
   # `*` as the tool-name wildcard.
   mcp = [
-    "mcp__codex__*"
     "mcp__fabric__*"
     "mcp__huggingface__*"
     "mcp__memory__*"
