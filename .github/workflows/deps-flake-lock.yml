@@ -11,13 +11,19 @@
 # input's REFERENCE changes, and the nixpkgs pin here is a moving channel branch
 # whose reference never changes. Its `nix` manager is disabled org-wide
 # (renovate-nix.json) so this workflow stays the only writer of flake.lock.
+# The hourly run is a seconds-long check that relocks only our inputs behind their branch head.
 name: Update flake.lock
 
 on:
   schedule:
     # Thursday 18:00 UTC. GitHub Actions cron is always UTC. The minute differs
     # per repo so the six nix repos do not all fire in the same instant.
+    # Weekly: relock the whole flake (third-party inputs included).
     - cron: "43 18 * * 4"
+    # Hourly: a seconds-long check that relocks only our inputs behind their branch head.
+    - cron: "19 * * * *"
+  repository_dispatch:
+    types: [update-flake-input]
   workflow_dispatch: {}
 
 permissions: {}
@@ -25,5 +31,7 @@ permissions: {}
 jobs:
   relock:
     uses: dryvist/.github/.github/workflows/_update-flake-lock.yml@main
+    with:
+      targeted: ${{ github.event_name == 'repository_dispatch' || github.event.schedule == '19 * * * *' }}
     secrets:
       GH_APP_PRIVATE_KEY: ${{ secrets.GH_APP_PRIVATE_KEY }}
