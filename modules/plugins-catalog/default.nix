@@ -10,4 +10,8 @@ let
 in
 {
   inherit (marketplacesModule) marketplaces;
+
+  # Consumer metadata, separate from Anthropic's marketplace manifest schema.
+  # These plugins depend on Claude's tools and complete plugin runtime.
+  claudeOnlyMarketplaces = [ "openai-codex" ];
 }

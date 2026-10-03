@@ -50,6 +50,14 @@
           lib
           ;
       };
+      codexPluginChecks = import ./checks/codex-plugin.nix {
+        inherit
+          inputs
+          self
+          pkgs
+          lib
+          ;
+      };
 
       activationChecks = import ./checks/activation.nix {
         inherit
@@ -242,6 +250,7 @@
       // mergeJsonSettingsChecks
       // activationChecks
       // configDirChecks
-      // marketplaceDeliveryChecks;
+      // marketplaceDeliveryChecks
+      // codexPluginChecks;
     };
 }

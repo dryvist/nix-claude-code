@@ -28,11 +28,13 @@
   config,
   lib,
   pkgs,
+  openai-codex,
   ...
 }:
 
 let
   cfg = config.programs.claude;
+  catalog = import ./plugins-catalog { inherit lib; };
 
   # Extract marketplace name from the identifier
   # e.g., "anthropics/claude-plugins-official" -> "claude-plugins-official"
@@ -86,6 +88,12 @@ in
   ];
 
   config = lib.mkIf cfg.enable {
+    programs.claude.plugins.marketplaces =
+      lib.mkIf (cfg.plugins.enabled."codex@openai-codex" or false)
+        {
+          openai-codex = lib.mkDefault (catalog.marketplaces.openai-codex // { flakeInput = openai-codex; });
+        };
+
     # Ordered explicitly ahead of linkGeneration (see lib/stable-links.nix), so
     # the links are in place before anything sequenced after it reads the
     # directory — orphan-cleanup's verifyCacheIntegrity above all, which would

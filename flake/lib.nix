@@ -3,7 +3,7 @@ let
   lib = inputs.nixpkgs.lib;
   ncc = import ../lib { inherit lib; };
 
-  marketplaceCatalog = import ../modules/plugins-catalog/marketplaces.nix { inherit lib; };
+  marketplaceCatalog = import ../modules/plugins-catalog { inherit lib; };
 
   # CI shim used to byte-equivalent-test settings.json output. Keeping it
   # in `flake.lib.ci.*` lets downstream repos do exact comparisons during

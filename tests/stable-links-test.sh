@@ -40,6 +40,9 @@ ln -s "$store/skill-b" "$skills/already-correct"     # already at the right targ
 ln -s "$store/gone-away" "$skills/no-longer-managed" # ours once, dropped from the manifest
 ln -s "$store/aaaa-home-manager-files/.agents/skills/INDEX.md" "$skills/INDEX.md"
 ln -s "$root/elsewhere" "$skills/user-owned" # points outside the store
+echo user >"$skills/user-file"
+mkdir -p "$skills/user-directory"
+echo user >"$skills/user-directory/notes.md"
 
 printf '.agents/skills/replaced-real-dir\t%s\n' "$store/skill-a" >"$root/manifest"
 printf '.agents/skills/already-correct\t%s\n' "$store/skill-b" >>"$root/manifest"
@@ -83,6 +86,8 @@ expect_link "$skills/INDEX.md" "$store/aaaa-home-manager-files/.agents/skills/IN
 
 # A symlink pointing outside the store belongs to whoever put it there.
 expect_link "$skills/user-owned" "$root/elsewhere"
+[ "$(cat "$skills/user-file")" = user ] || fail "unmanaged user file was removed"
+[ "$(cat "$skills/user-directory/notes.md")" = user ] || fail "unmanaged user directory was removed"
 
 # Idempotence: a second run must change nothing and prune nothing.
 log2="$root/log2"
