@@ -400,11 +400,11 @@
     "jacobpevans-cc-plugins": {
       "flake": false,
       "locked": {
-        "lastModified": 1790899125,
-        "narHash": "sha256-D85n8WhO3JBHCc4+TQHkTwlWg5pX7XY4sJeNRmSHr7M=",
+        "lastModified": 1791042780,
+        "narHash": "sha256-uKVoQGVOey3S68zXciSnvPQzvksEfOEedHfhN0B0PnI=",
         "owner": "JacobPEvans",
         "repo": "claude-code-plugins",
-        "rev": "67c6d2d852a39b1fdb46dbba0bfd72dc692285c7",
+        "rev": "626ed3b7d97fb6b5ea8e847fb516023540b4eb9d",
         "type": "github"
       },
       "original": {
