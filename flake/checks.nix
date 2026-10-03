@@ -71,6 +71,10 @@
     in
     {
       checks = {
+        launcher = import ../checks/launcher.nix {
+          inherit pkgs;
+          inherit (self.lib) mkLauncher;
+        };
         lib-tests =
           if failures == [ ] then
             pkgs.runCommand "nix-claude-code-lib-tests" { } ''
