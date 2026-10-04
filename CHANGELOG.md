@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 with a permanent pre-1.0 cadence — see `release-please-config.json`.
 
+## [2.2.0](https://github.com/dryvist/nix-claude-code/compare/v2.1.0...v2.2.0) (2026-10-04)
+
+
+### Features
+
+* **launcher:** export bounded CLI launcher ([b7573f2](https://github.com/dryvist/nix-claude-code/commit/b7573f2d1c96b11ba11344f3a1655f6e760efd7e))
+
 ## [2.1.0](https://github.com/dryvist/nix-claude-code/compare/v2.0.0...v2.1.0) (2026-09-28)
 
 
