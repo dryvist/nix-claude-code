@@ -47,6 +47,7 @@ in
 {
   flake.lib = ncc // {
     inherit marketplaceCatalog;
+    mkLauncher = import ../lib/mk-launcher.nix;
 
     # `marketplaceOverrides { inherit pkgs; ... }` returns synthetic
     # marketplace derivations (browserUseMarketplace, fabricMarketplace,
