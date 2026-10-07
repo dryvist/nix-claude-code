@@ -3,11 +3,11 @@
     "ai-assistant-instructions": {
       "flake": false,
       "locked": {
-        "lastModified": 1791222926,
-        "narHash": "sha256-sK/EzVn2S5eYiK/EUa6vETNhdYsRo8JgviWET3pO9mY=",
+        "lastModified": 1791396719,
+        "narHash": "sha256-Q7OIpXyzLLFz7VH2pluTqa1R8miqP3M61F00IIpE/oY=",
         "owner": "dryvist",
         "repo": "ai-assistant-instructions",
-        "rev": "9c462772efc26d0bcec646c2286d80c991511291",
+        "rev": "263e63c27d391ab82d6b4b98410b4fa5e1a8c4be",
         "type": "github"
       },
       "original": {
@@ -250,11 +250,11 @@
         "treefmt-nix": "treefmt-nix"
       },
       "locked": {
-        "lastModified": 1791235971,
-        "narHash": "sha256-cTDlhEvGv88934au5sPIVNAeIj5vYygJrWFOSSi/asU=",
+        "lastModified": 1791391472,
+        "narHash": "sha256-HiCv93JeVrW715XYWXkIfpumH19T59Ozucd4WEmny8Q=",
         "owner": "dryvist",
         "repo": ".github",
-        "rev": "79a1e6bfd0b3d2b4864e30bfad3a1b2f2ef77dfc",
+        "rev": "d93c868d5e3a12d012eb381200d17b34c10eea59",
         "type": "github"
       },
       "original": {
