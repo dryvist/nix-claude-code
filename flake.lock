@@ -67,11 +67,11 @@
     "bitwarden-marketplace": {
       "flake": false,
       "locked": {
-        "lastModified": 1791465255,
-        "narHash": "sha256-L6SMZutR6lExU5TnL31+WCyBUHvg/sG08KJMhpxmN+8=",
+        "lastModified": 1791491699,
+        "narHash": "sha256-L2t6tFFzw3nl7fDEptXrJAOdQp4KWXkYAkdoYcFC7rE=",
         "owner": "bitwarden",
         "repo": "ai-plugins",
-        "rev": "b20d84ff31968885736c76f5f4b01d2d0ce75672",
+        "rev": "4ac7ae42f604a070d8dc5431c7da2baf2ceeac9f",
         "type": "github"
       },
       "original": {
@@ -131,11 +131,11 @@
     "claude-code-plugins": {
       "flake": false,
       "locked": {
-        "lastModified": 1791435816,
-        "narHash": "sha256-m3yPhZdwe5VVhA5ap71wMR+oA4CCLV4teDWaY7neUJQ=",
+        "lastModified": 1791498806,
+        "narHash": "sha256-sjF2i7gu2cDCz1jCLpvQeoV2VCNqpkKETZutQeW1DPo=",
         "owner": "anthropics",
         "repo": "claude-code",
-        "rev": "71cdddec623889d38af14b7a489670a03186f659",
+        "rev": "e47cc82bdbd27b5f799acd5b05fd0c29d33bb48c",
         "type": "github"
       },
       "original": {
