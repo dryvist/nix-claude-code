@@ -3,15 +3,16 @@
     "ai-assistant-instructions": {
       "flake": false,
       "locked": {
-        "lastModified": 1791616166,
-        "narHash": "sha256-kYCngK9gLgy+dWCccMTjPrqTLwWclyyU1hTJ2O8XlyU=",
+        "lastModified": 1791599289,
+        "narHash": "sha256-HrfsbTRLKJQ8AV3wBm8gQQfytWZ4hz7Moh7KMeQ6b8s=",
         "owner": "dryvist",
         "repo": "ai-assistant-instructions",
-        "rev": "d6bb59ea70c53f985038c64510bb885c99034714",
+        "rev": "8726293d4189159500e8814ccc7e3afbec8ec859",
         "type": "github"
       },
       "original": {
         "owner": "dryvist",
+        "ref": "v1",
         "repo": "ai-assistant-instructions",
         "type": "github"
       }
@@ -250,15 +251,16 @@
         "treefmt-nix": "treefmt-nix"
       },
       "locked": {
-        "lastModified": 1791638964,
-        "narHash": "sha256-UdBm7bJ2xEdn4npFdhyoZzBP8kJ2NvIj4CByW2x9zVk=",
+        "lastModified": 1791657473,
+        "narHash": "sha256-zEscuyK2Pigzia0o4pk3akpLuO3gT7oRMtp94IGkd60=",
         "owner": "dryvist",
         "repo": ".github",
-        "rev": "f6294265ad22ed92cde14cae21be211d6b55b1a4",
+        "rev": "c4501ea67ce4469a5cc95216c9a989516da2adb8",
         "type": "github"
       },
       "original": {
         "owner": "dryvist",
+        "ref": "v1",
         "repo": ".github",
         "type": "github"
       }
@@ -400,15 +402,16 @@
     "jacobpevans-cc-plugins": {
       "flake": false,
       "locked": {
-        "lastModified": 1791609528,
-        "narHash": "sha256-Oq46L0JwykpfkAeRbRjjMJ4Cg0yC0fBqBD0fIEmYRRw=",
-        "owner": "JacobPEvans",
+        "lastModified": 1791655841,
+        "narHash": "sha256-AHmXSdKPXe3pnyDCyKsivjyKCiNFXmMMS3Akj5efKnY=",
+        "owner": "dryvist",
         "repo": "claude-code-plugins",
-        "rev": "40785ac95b51e108f6fdd4d4248ec750bd813e7a",
+        "rev": "6391a538f217e99267ac92771df31457cb15380d",
         "type": "github"
       },
       "original": {
-        "owner": "JacobPEvans",
+        "owner": "dryvist",
+        "ref": "v6",
         "repo": "claude-code-plugins",
         "type": "github"
       }

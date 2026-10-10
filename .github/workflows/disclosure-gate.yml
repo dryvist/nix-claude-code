@@ -1,0 +1,27 @@
+---
+# Disclosure Gate — thin wrapper over the dryvist org reusable workflow
+#
+# Delegates the gitleaks and disclosure-denylist checks to
+# `dryvist/.github/.github/workflows/_disclosure-gate.yml@<40-hex commit SHA> # vX.Y.Z`.
+
+name: Disclosure Gate
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  disclosure-gate:
+    permissions:
+      contents: read
+      pull-requests: read
+    uses: dryvist/.github/.github/workflows/_disclosure-gate.yml@26e28bf87868d0c71119bf8ce914325dbd468cdc # v1.11.0
+    secrets: inherit
