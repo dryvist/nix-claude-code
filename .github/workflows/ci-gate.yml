@@ -38,6 +38,8 @@ jobs:
     # so Nix could reach `develop` never having been evaluated, formatted, or
     # lib-tested. `ci.yml` does not cover the gap: it fires only on `main`.
     with:
+      # Nix preset: a changed file that no filter maps runs the full Nix gate.
+      profile: nix
       osv_scan: true
       nix_validate: true
       # treefmt/pre-commit checks are platform-specific; restrict to the
