@@ -402,11 +402,11 @@
     "jacobpevans-cc-plugins": {
       "flake": false,
       "locked": {
-        "lastModified": 1791647218,
-        "narHash": "sha256-PJO22UJ60YF5V3nSSfJFA9SEIJG1zC5IJfAPHY7+awo=",
+        "lastModified": 1791655841,
+        "narHash": "sha256-AHmXSdKPXe3pnyDCyKsivjyKCiNFXmMMS3Akj5efKnY=",
         "owner": "dryvist",
         "repo": "claude-code-plugins",
-        "rev": "9d278544022eb79525a50ff235758b92867dc90a",
+        "rev": "6391a538f217e99267ac92771df31457cb15380d",
         "type": "github"
       },
       "original": {
