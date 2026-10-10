@@ -30,7 +30,7 @@ jobs:
       # so `actions: write` must be granted here or the run fails at graph
       # validation (startup_failure).
       actions: write
-    uses: dryvist/.github/.github/workflows/_ci-gate.yml@main
+    uses: dryvist/.github/.github/workflows/_ci-gate.yml@v1
     # The `nix` filter is load-bearing, not decorative. `Nix Validate` is
     # gated on BOTH `nix_validate` and `needs.changes.outputs.nix == 'true'`,
     # and `File Size` is gated on the `nix` OR `markdown` filter. Without a
