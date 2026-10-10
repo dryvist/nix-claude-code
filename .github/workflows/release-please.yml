@@ -11,7 +11,7 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
-    uses: dryvist/.github/.github/workflows/_release-please.yml@v1
+    uses: dryvist/.github/.github/workflows/_release-please.yml@c4501ea67ce4469a5cc95216c9a989516da2adb8 # v1.10.0
     with:
       # Config-free (non-manifest) mode: no release-please-config.json /
       # .release-please-manifest.json in this repo. Behaviour comes from these

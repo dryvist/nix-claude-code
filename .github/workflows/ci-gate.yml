@@ -1,7 +1,7 @@
 # CI Gate — thin wrapper over the dryvist org reusable workflow
 #
 # Delegates the standard checks to the org orchestrator
-# `dryvist/.github/.github/workflows/_ci-gate.yml@main`; its `Merge Gate`
+# `dryvist/.github/.github/workflows/_ci-gate.yml@<40-hex commit SHA> # vX.Y.Z`; its `Merge Gate`
 # summary job always reports, making it safe to require in rulesets.
 
 name: CI Gate
@@ -30,7 +30,7 @@ jobs:
       # so `actions: write` must be granted here or the run fails at graph
       # validation (startup_failure).
       actions: write
-    uses: dryvist/.github/.github/workflows/_ci-gate.yml@v1
+    uses: dryvist/.github/.github/workflows/_ci-gate.yml@c4501ea67ce4469a5cc95216c9a989516da2adb8 # v1.10.0
     # The `nix` filter is load-bearing, not decorative. `Nix Validate` is
     # gated on BOTH `nix_validate` and `needs.changes.outputs.nix == 'true'`,
     # and `File Size` is gated on the `nix` OR `markdown` filter. Without a
