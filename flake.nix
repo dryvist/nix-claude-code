@@ -24,12 +24,12 @@
     # devenv / crate2nix / devshell baggage nix-devenv would drag in, while
     # keeping the config in one org-wide home instead of inlined here.
     dryvist-github = {
-      url = "github:dryvist/.github";
+      url = "github:dryvist/.github?ref=v1";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
     ai-assistant-instructions = {
-      url = "github:dryvist/ai-assistant-instructions";
+      url = "github:dryvist/ai-assistant-instructions?ref=v1";
       flake = false;
     };
 
@@ -79,7 +79,7 @@
       flake = false;
     };
     jacobpevans-cc-plugins = {
-      url = "github:JacobPEvans/claude-code-plugins";
+      url = "github:dryvist/claude-code-plugins?ref=v6";
       flake = false;
     };
     karpathy-skills = {
