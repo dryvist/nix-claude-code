@@ -46,7 +46,7 @@ Add `nix-claude-code` to your flake inputs:
     home-manager.url = "github:nix-community/home-manager/release-26.05";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
-    nix-claude-code.url = "github:dryvist/nix-claude-code";
+    nix-claude-code.url = "github:dryvist/nix-claude-code?ref=v<major>";
     nix-claude-code.inputs.nixpkgs.follows = "nixpkgs";
     nix-claude-code.inputs.home-manager.follows = "home-manager";
   };
