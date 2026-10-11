@@ -19,8 +19,8 @@ permissions as composable home-manager modules. Reproducible on macOS and Linux.
    no proprietary extensions.
 6. **`doppler secrets set` only with `--silent`**: without it, the command
    echoes the new value back to stdout/transcript. Pass the value through a
-   variable (`doppler secrets set NAME="$VALUE" --silent`), never a literal
-   on the command line. `data/permissions/deny.nix` can't express this as a
+   variable rather than a literal on the command line, and always pass
+   `--silent`. `data/permissions/deny.nix` can't express this as a
    narrower-allow exception — Claude Code's permission rules are deny-first
    regardless of specificity, so a `set`-wide deny would also block the safe
    form. This is documentation, not an enforced rule.
