@@ -14,6 +14,6 @@ jobs:
     permissions:
       contents: write
       checks: read
-    uses: dryvist/.github/.github/workflows/promote-major-tag.yml@f9e8814ad8f82e4bc8cdaac73ee49b1ffa6d4cf2 # v1.12.1
+    uses: dryvist/.github/.github/workflows/promote-major-tag.yml@6d4a39e4006e374803b7a0794148575b8bfc9be1 # v1.14.0
     with:
       tag: ${{ github.event.release.tag_name }}
