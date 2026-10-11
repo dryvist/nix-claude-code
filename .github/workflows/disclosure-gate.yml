@@ -23,5 +23,5 @@ jobs:
     permissions:
       contents: read
       pull-requests: read
-    uses: dryvist/.github/.github/workflows/_disclosure-gate.yml@f9e8814ad8f82e4bc8cdaac73ee49b1ffa6d4cf2 # v1.12.1
+    uses: dryvist/.github/.github/workflows/_disclosure-gate.yml@6d4a39e4006e374803b7a0794148575b8bfc9be1 # v1.14.0
     secrets: inherit
