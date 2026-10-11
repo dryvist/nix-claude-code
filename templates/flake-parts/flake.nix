@@ -15,7 +15,7 @@
     };
 
     nix-claude-code = {
-      url = "github:dryvist/nix-claude-code";
+      url = "github:dryvist/nix-claude-code?ref=v2";
       inputs = {
         nixpkgs.follows = "nixpkgs";
         home-manager.follows = "home-manager";

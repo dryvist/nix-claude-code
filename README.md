@@ -56,9 +56,9 @@ Add `nix-claude-code` to your flake inputs:
 Or scaffold from a template:
 
 ```bash
-nix flake init -t github:dryvist/nix-claude-code#minimal
+nix flake init -t "github:dryvist/nix-claude-code?ref=vN#minimal"
 # or, if you already use flake-parts:
-nix flake init -t github:dryvist/nix-claude-code#flake-parts
+nix flake init -t "github:dryvist/nix-claude-code?ref=vN#flake-parts"
 ```
 
 ## Usage
