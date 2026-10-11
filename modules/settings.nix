@@ -29,26 +29,9 @@ let
     inherit (cfg) configDir;
   };
   inherit (claudeRegistry) toClaudeMarketplaceFormat;
-  hookEventMapping = import ../lib/hook-event-mapping.nix;
 
-  # Register each configured typed hook (modules/hooks.nix writes the
-  # script file; this makes Claude Code actually invoke it) under its
-  # Claude Code event name. `cfg.settings.hooks` (freeform passthrough)
-  # is merged on top so a caller-supplied entry for the same event wins.
-  typedHooksAttrs = lib.mapAttrs' (
-    _hookName: mapping:
-    lib.nameValuePair mapping.claudeEvent [
-      {
-        matcher = "";
-        hooks = [
-          {
-            type = "command";
-            command = "${cfg.configDirAbs}/hooks/${mapping.fileName}";
-          }
-        ];
-      }
-    ]
-  ) (lib.filterAttrs (hookName: _: cfg.hooks.${hookName} != null) hookEventMapping);
+  # Typed hooks registered under their Claude Code event names; see the file.
+  typedHooksAttrs = import ../lib/typed-hooks.nix { inherit lib cfg; };
 
   # `hooks` is freeform (no typed option), so an unset value must be
   # accessed with `or { }` — the submodule attrset only materializes keys
