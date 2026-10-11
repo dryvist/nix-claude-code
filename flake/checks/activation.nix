@@ -272,6 +272,13 @@ in
           echo "expected hooks.SessionStart to register session-start.sh, got: $command" >&2
           exit 1
         }
+        # The refresh must not block session start or re-run on resume/compact.
+        jq -e '.hooks.SessionStart[0] | .matcher == "startup" and .hooks[0].async == true and .hooks[0].timeout == 300' \
+          "$settings_json" >/dev/null || {
+          echo "expected refresh SessionStart hook: matcher=startup, async=true, timeout=300; got:" >&2
+          jq '.hooks.SessionStart' "$settings_json" >&2
+          exit 1
+        }
         echo ok > $out
       '';
 
