@@ -115,7 +115,7 @@ consumption, MCP, plugin tiers, MLX, and the glue that feeds
 flows and how"). Tiered rule delivery — top-level `agentsmd/rules/*.md` delivered,
 `on-demand/` not — is a property of nix-ai's discovery (`discoverMarkdownFiles`),
 using this repo's `rules` option verbatim. Mirror in
-[nix-ai `CLAUDE.md`](https://github.com/JacobPEvans/nix-ai/blob/main/CLAUDE.md).
+[nix-ai `CLAUDE.md`](https://github.com/dryvist/nix-ai/blob/main/CLAUDE.md).
 
 ### Test ownership follows the same boundary
 
@@ -156,7 +156,7 @@ Where a package belongs across the nix repos is documented in
   `MD024` strict-by-default everywhere actually linted — never
   disabled across the board.
 - **Pre-commit / formatters / zizmor:** centralized via the
-  [`nix-devenv`](https://github.com/JacobPEvans/nix-devenv) flake module
+  [`nix-devenv`](https://github.com/dryvist/nix-devenv) flake module
   `flakeModules.dev-hygiene`, imported in `flake.nix`. No
   `.pre-commit-config.yaml` in this repo — the module declares treefmt,
   pre-commit hooks (including `gitleaks` and the Nix toolchain
@@ -173,10 +173,10 @@ around stale tooling. Pre-commit hook definitions belong in `nix-devenv`
 
 ## Related Repos
 
-- [JacobPEvans/nix-ai](https://github.com/JacobPEvans/nix-ai) — multi-tool AI workspace that consumes this flake
-- [JacobPEvans/nix-home](https://github.com/JacobPEvans/nix-home) — user dev environment in Nix
-- [JacobPEvans/nix-devenv](https://github.com/JacobPEvans/nix-devenv) — reusable dev shells
-- [JacobPEvans/ai-assistant-instructions](https://github.com/JacobPEvans/ai-assistant-instructions) —
+- [dryvist/nix-ai](https://github.com/dryvist/nix-ai) — multi-tool AI workspace that consumes this flake
+- [dryvist/nix-home](https://github.com/dryvist/nix-home) — user dev environment in Nix
+- [dryvist/nix-devenv](https://github.com/dryvist/nix-devenv) — reusable dev shells
+- [dryvist/ai-assistant-instructions](https://github.com/dryvist/ai-assistant-instructions) —
   agent rules and permission sources
-- [JacobPEvans/claude-code-plugins](https://github.com/JacobPEvans/claude-code-plugins) —
+- [dryvist/claude-code-plugins](https://github.com/dryvist/claude-code-plugins) —
   custom marketplace consumed via the `jacobpevans-cc-plugins` input
