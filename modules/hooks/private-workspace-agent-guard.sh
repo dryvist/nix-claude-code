@@ -91,10 +91,10 @@ if [ -z "$info" ]; then
   printf '%s\n%s\n' "$now" "$info" >"$tmp" && mv -f "$tmp" "$CACHE_FILE"
 fi
 
-# First deployment named `subagent` is what the role resolves to today.
-params=$(jq -c 'first(.data[]? | select(.model_name == "subagent") | .litellm_params) // empty' <<<"$info") ||
+# First deployment named `medium` is what the `subagent` alias resolves to today.
+params=$(jq -c 'first(.data[]? | select(.model_name == "medium") | .litellm_params) // empty' <<<"$info") ||
   allow "/model/info returned no parsable body"
-[ -n "$params" ] && [ "$params" != "null" ] || allow "no deployment named 'subagent'"
+[ -n "$params" ] && [ "$params" != "null" ] || allow "no deployment named 'medium'"
 
 # Local means an openai/ or anthropic/ deployment whose base URL stays inside
 # the operator's own estate: loopback, or a host in one of the domains they
