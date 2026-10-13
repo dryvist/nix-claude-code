@@ -2,7 +2,7 @@ name: Release Please
 
 on:
   push:
-    branches: [main]
+    branches: [main, develop]
 
 permissions: {}
 
@@ -11,7 +11,7 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
-    uses: dryvist/.github/.github/workflows/_release-please.yml@6d4a39e4006e374803b7a0794148575b8bfc9be1 # v1.14.0
+    uses: dryvist/.github/.github/workflows/_release-please.yml@26e6933fbebcf11bfbe6d675f9ce7b322ffd7de9 # v1.17.0
     with:
       # Config-free (non-manifest) mode: no release-please-config.json /
       # .release-please-manifest.json in this repo. Behaviour comes from these
