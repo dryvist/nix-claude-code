@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 with a permanent pre-1.0 cadence — see `release-please-config.json`.
 
+## [2.2.2](https://github.com/dryvist/nix-claude-code/compare/v2.2.1...v2.2.2) (2026-10-13)
+
+
+### Bug Fixes
+
+* **hooks:** look up the medium route group in the private-workspace agent guard ([e5952e0](https://github.com/dryvist/nix-claude-code/commit/e5952e03b750fc36c7b64c61e721e2c9aa100a03))
+* **hooks:** look up the medium route group in the private-workspace agent guard ([#380](https://github.com/dryvist/nix-claude-code/issues/380)) ([9abf64c](https://github.com/dryvist/nix-claude-code/commit/9abf64c9fccbd662275f8b68103641a8d903bff9))
+
 ## [2.2.1](https://github.com/dryvist/nix-claude-code/compare/v2.2.0...v2.2.1) (2026-10-11)
 
 
