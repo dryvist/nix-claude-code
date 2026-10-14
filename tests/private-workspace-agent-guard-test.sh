@@ -38,12 +38,12 @@ run() {
   printf '{"tool_name":"Agent","cwd":"%s"}' "$1" | bash "$GUARD"
 }
 
-external='{"data":[{"model_name":"subagent","litellm_params":{"model":"openrouter/stealth/ox-alpha"}}]}'
-loopback='{"data":[{"model_name":"subagent","litellm_params":{"model":"openai/local","api_base":"http://127.0.0.1:4100/v1"}}]}'
-in_estate='{"data":[{"model_name":"subagent","litellm_params":{"model":"openai/local","api_base":"https://box.estate.invalid:11434/v1"}}]}'
-lookalike='{"data":[{"model_name":"subagent","litellm_params":{"model":"openai/local","api_base":"https://notestate.invalid/v1"}}]}'
-foreign_host='{"data":[{"model_name":"subagent","litellm_params":{"model":"openai/hosted","api_base":"https://api.someone-else.invalid/v1"}}]}'
-vendor_api='{"data":[{"model_name":"subagent","litellm_params":{"model":"openai/gpt-4o"}}]}'
+external='{"data":[{"model_name":"medium","litellm_params":{"model":"openrouter/stealth/ox-alpha"}}]}'
+loopback='{"data":[{"model_name":"medium","litellm_params":{"model":"openai/local","api_base":"http://127.0.0.1:4100/v1"}}]}'
+in_estate='{"data":[{"model_name":"medium","litellm_params":{"model":"openai/local","api_base":"https://box.estate.invalid:11434/v1"}}]}'
+lookalike='{"data":[{"model_name":"medium","litellm_params":{"model":"openai/local","api_base":"https://notestate.invalid/v1"}}]}'
+foreign_host='{"data":[{"model_name":"medium","litellm_params":{"model":"openai/hosted","api_base":"https://api.someone-else.invalid/v1"}}]}'
+vendor_api='{"data":[{"model_name":"medium","litellm_params":{"model":"openai/gpt-4o"}}]}'
 
 # External deployment + private cwd -> deny.
 stub_body "$external"
