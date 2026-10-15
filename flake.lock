@@ -20,11 +20,11 @@
     "anthropic-agent-skills": {
       "flake": false,
       "locked": {
-        "lastModified": 1791208002,
-        "narHash": "sha256-APw+xMKqRvkLnuQxttiyyIeylrIMSxZovQnw3xEl1C4=",
+        "lastModified": 1791571549,
+        "narHash": "sha256-+UIqBnzyeIOvJSKYaDaE3GYPEpLw7qQqyUw5S971AfU=",
         "owner": "anthropics",
         "repo": "skills",
-        "rev": "683bc88e56f3e09ba94f7055977f3d3aa499f202",
+        "rev": "dbd4588f9e1033efb41dad4bef2f7947c8993d44",
         "type": "github"
       },
       "original": {
@@ -68,11 +68,11 @@
     "bitwarden-marketplace": {
       "flake": false,
       "locked": {
-        "lastModified": 1791491699,
-        "narHash": "sha256-L2t6tFFzw3nl7fDEptXrJAOdQp4KWXkYAkdoYcFC7rE=",
+        "lastModified": 1792092667,
+        "narHash": "sha256-wIcDefb/Q6Mw272ey80W+UtaHPbJ2od0fXha0qP0gIk=",
         "owner": "bitwarden",
         "repo": "ai-plugins",
-        "rev": "4ac7ae42f604a070d8dc5431c7da2baf2ceeac9f",
+        "rev": "1fc3d580ba45267f15131bea850c9cf39091d716",
         "type": "github"
       },
       "original": {
@@ -84,11 +84,11 @@
     "browser-use-skills": {
       "flake": false,
       "locked": {
-        "lastModified": 1791391145,
-        "narHash": "sha256-s8wJ6b3l2Vc9/FqczYWeT+luISz59j44IT4oX0UooIQ=",
+        "lastModified": 1792090936,
+        "narHash": "sha256-0ZlDU0CJnjWxAGzUCS73t0RLHCQZJtK0tUUxHxtW6uo=",
         "owner": "browser-use",
         "repo": "browser-use",
-        "rev": "c75e8476e26d18b7617643bc2ae082fae8eae431",
+        "rev": "a71d5478e4187cbe5295aab6403dfe7e4a6861a4",
         "type": "github"
       },
       "original": {
@@ -132,11 +132,11 @@
     "claude-code-plugins": {
       "flake": false,
       "locked": {
-        "lastModified": 1791498806,
-        "narHash": "sha256-sjF2i7gu2cDCz1jCLpvQeoV2VCNqpkKETZutQeW1DPo=",
+        "lastModified": 1792092105,
+        "narHash": "sha256-EVYhlYiNa4En3SCHynR8+IcF39GaJl8+ucSzTasvqNw=",
         "owner": "anthropics",
         "repo": "claude-code",
-        "rev": "e47cc82bdbd27b5f799acd5b05fd0c29d33bb48c",
+        "rev": "03b5892ee77de289bcd5dfa39f541525ade74aff",
         "type": "github"
       },
       "original": {
@@ -148,11 +148,11 @@
     "claude-code-plugins-plus": {
       "flake": false,
       "locked": {
-        "lastModified": 1791456227,
-        "narHash": "sha256-dcYUgDxb1HV5p59i6HflV75/n+h1WuIzyBHVjCjRQT0=",
+        "lastModified": 1791953622,
+        "narHash": "sha256-ENp5MthparYUnCh8MuTPpA676iYBnijKRoJRe3/3on8=",
         "owner": "jeremylongshore",
         "repo": "claude-code-plugins-plus",
-        "rev": "80f86dfbdb02e5d74c625f411ba6834c66ca0705",
+        "rev": "2b8581ba895974fc2339f964667d42bf21d98947",
         "type": "github"
       },
       "original": {
@@ -164,11 +164,11 @@
     "claude-code-workflows": {
       "flake": false,
       "locked": {
-        "lastModified": 1791146571,
-        "narHash": "sha256-vKawxqxGv0QygVztpMai7h4SXtK2JmmLEqCZ8hFr+qE=",
+        "lastModified": 1792077115,
+        "narHash": "sha256-psbY9IcfBhFqGv0RqnR8yZtok+QV70kKmliTCi7g1Qw=",
         "owner": "wshobson",
         "repo": "agents",
-        "rev": "46891e7e60da0e52baf1050b7b6391b64e84c6d9",
+        "rev": "044b4b21f083948e69ec878a7b07c8d0951a6ffa",
         "type": "github"
       },
       "original": {
@@ -180,11 +180,11 @@
     "claude-cookbooks": {
       "flake": false,
       "locked": {
-        "lastModified": 1790614595,
-        "narHash": "sha256-AN9FwfLuosq1AqQZnkfGidIambhG0ffjh5QWhjtBh10=",
+        "lastModified": 1791998124,
+        "narHash": "sha256-vPrO8I8FvXEZWkG20MbgEUJRTG6wmyTeLiWYMwbMFXM=",
         "owner": "anthropics",
         "repo": "claude-cookbooks",
-        "rev": "d7265d6ae994ccd8429db0594b000073b2f9ad43",
+        "rev": "b2b0aa1ff7d8980b005b225d3802969c87bedad5",
         "type": "github"
       },
       "original": {
@@ -196,11 +196,11 @@
     "claude-plugins-official": {
       "flake": false,
       "locked": {
-        "lastModified": 1791479201,
-        "narHash": "sha256-uVtG87hx2ksdrsq2cI7o5F6cycMTXNnmluHTUmcjVO8=",
+        "lastModified": 1792100417,
+        "narHash": "sha256-AjlBQpo/dpX7N4zblpOw8aOwHEmni5wMnQomRem0dyw=",
         "owner": "anthropics",
         "repo": "claude-plugins-official",
-        "rev": "315c4e48967d9541c29c3c656441dded353ca7aa",
+        "rev": "83e004a98e1fc268a94cc6a74b1b054630542696",
         "type": "github"
       },
       "original": {
@@ -268,11 +268,11 @@
     "fabric-src": {
       "flake": false,
       "locked": {
-        "lastModified": 1791359037,
-        "narHash": "sha256-T9nssqZgLm/q6edxEQKjgVuY0EuhNUp+baEHAyK9rKY=",
+        "lastModified": 1792098186,
+        "narHash": "sha256-KX38YxUJ72Cu1neUZ5kuB1xwXPWXubvtP1iMTkUTEOo=",
         "owner": "danielmiessler",
         "repo": "fabric",
-        "rev": "76cd291d4704a12933263ac7cb2d667509408db2",
+        "rev": "5edafbe0c9b72ffb347d406ea1998aa1c358e358",
         "type": "github"
       },
       "original": {
@@ -369,11 +369,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1791484883,
-        "narHash": "sha256-iKxFHJrg7Sltwhq3ssCZYQ4CFEDVvReVVuVuO9dj3sE=",
+        "lastModified": 1792098797,
+        "narHash": "sha256-u4DIIZgznEGzByxXrxWCXK19VcMtTBmi/M9gZ7Jk9bM=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "dfadbe5162d5e86bc0808badec8f346f81b4b3f0",
+        "rev": "640725978b99076e18e069f6e7d2959124584f8f",
         "type": "github"
       },
       "original": {
@@ -435,11 +435,11 @@
     "lunar-claude": {
       "flake": false,
       "locked": {
-        "lastModified": 1783631797,
-        "narHash": "sha256-i2X9q+VcDGQHa+xQB7iimcrzIX4E3GPhj6SYxX9fhys=",
+        "lastModified": 1791956058,
+        "narHash": "sha256-MPMgOdhjSKq6AG5xFIqshiopFBHI5s5T9jKLHsVBnWk=",
         "owner": "basher83",
         "repo": "lunar-claude",
-        "rev": "e81cabf81e7c58eb90b2dc656c8bc15d4a23227b",
+        "rev": "24e5f9a73dd7b5415e5fa4fad0dfc1d97f35720c",
         "type": "github"
       },
       "original": {
@@ -450,11 +450,11 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1791456040,
-        "narHash": "sha256-H83yz/do+hjOO0uujHyH8RgtIQP2v7Mw+cLwcZK/xKc=",
+        "lastModified": 1791956154,
+        "narHash": "sha256-jBYGPi4udQ9uo4KQp9m2J0546nJVQitG15gvZSaVVAs=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "e7439b6b14ad3cc35d05608ebca9bce01a25f5f8",
+        "rev": "55bfb4d7437bd4e09ab7cba58a43bd68eb310044",
         "type": "github"
       },
       "original": {
@@ -532,11 +532,11 @@
     "superpowers-marketplace": {
       "flake": false,
       "locked": {
-        "lastModified": 1788899471,
-        "narHash": "sha256-DrIvLmmqZkrwaD/L0QPgGA2GC1OK/6Xo5P9h0lLwff4=",
+        "lastModified": 1791596558,
+        "narHash": "sha256-4tjtJjqVHfDaRE8VLR4pZ6HJl3keoSSZMebCdxFA3s4=",
         "owner": "obra",
         "repo": "superpowers-marketplace",
-        "rev": "ff9fa8a51f422d81414fa355587620d4ad2df81c",
+        "rev": "2cf27fa76667afa0ba724ad8141a6938a3834e32",
         "type": "github"
       },
       "original": {
@@ -569,11 +569,11 @@
     "vct-cribl-pack-validator-skills": {
       "flake": false,
       "locked": {
-        "lastModified": 1774484708,
-        "narHash": "sha256-cQEbj7K2HcFlL7vUVFYKsjlgZbzQqbVcAtw2QX7H4WQ=",
+        "lastModified": 1792016467,
+        "narHash": "sha256-MK7p50AjsQOf+g9e1zOuaP9Qf7icTnvM9nczqEHXxiE=",
         "owner": "VisiCore",
         "repo": "vct-cribl-pack-validator",
-        "rev": "eaf3b3f17f77faf6825c587dfdd552f8a9837926",
+        "rev": "f6b905fdace951e559a9bd3f494de77c521b41ad",
         "type": "github"
       },
       "original": {
@@ -585,11 +585,11 @@
     "visual-explainer-marketplace": {
       "flake": false,
       "locked": {
-        "lastModified": 1791321305,
-        "narHash": "sha256-SZHF5LqA7Cu9Vp+DibKn00UwA0FtB76Ij8PuV3/mbIY=",
+        "lastModified": 1792045248,
+        "narHash": "sha256-f+EeXYjGmLf7qWSYIKt+CjBCvj+PMNiWZGJ3Q9OYp2c=",
         "owner": "nicobailon",
         "repo": "visual-explainer",
-        "rev": "0cc6f15452c455a05fb7fceb036d0da31387c69c",
+        "rev": "69cd7395cee2979aa7301ebe51bb4c2ba5f5ef9e",
         "type": "github"
       },
       "original": {
