@@ -98,6 +98,7 @@ _:
     "doppler secrets download"
     "doppler secrets substitute"
     "doppler configure --json"
+    "doppler configure debug"
     "npm publish"
     "cargo publish"
 
