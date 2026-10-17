@@ -84,11 +84,11 @@
     "browser-use-skills": {
       "flake": false,
       "locked": {
-        "lastModified": 1792144538,
-        "narHash": "sha256-9sgmu+2peIZgfPvlFNab95n0uYG3yYslYhOIpHMNhvg=",
+        "lastModified": 1792263201,
+        "narHash": "sha256-6cDX2m7R/I801+F3IkaAkkZfhVUdiG/9blWuTlk3gmc=",
         "owner": "browser-use",
         "repo": "browser-use",
-        "rev": "ccd22fef47a1a36e0c4596fef5db73a5117b9d06",
+        "rev": "aa093a843da5edbf323c0b4145c9b6a0db3ecde8",
         "type": "github"
       },
       "original": {
@@ -148,11 +148,11 @@
     "claude-code-plugins-plus": {
       "flake": false,
       "locked": {
-        "lastModified": 1792210132,
-        "narHash": "sha256-QoMdFr4u43VC6mqcUSsPHmAFYJ1ucd41RFd5rU44rYk=",
+        "lastModified": 1792269520,
+        "narHash": "sha256-QY21zDO6ZHCsgucxBKVVppWNGrKDFgMxj8mF4MtTYB8=",
         "owner": "jeremylongshore",
         "repo": "claude-code-plugins-plus",
-        "rev": "a5b7c71e82f0c666265fe59218746eb346dedc70",
+        "rev": "bb21ad82a7f950dbc08a6d92bc3367b8455041a1",
         "type": "github"
       },
       "original": {
@@ -251,11 +251,11 @@
         "treefmt-nix": "treefmt-nix"
       },
       "locked": {
-        "lastModified": 1792225030,
-        "narHash": "sha256-XPFh4NzeWqWAv7IPIEG09+rVbZlYr/Q5733Oxif1ryk=",
+        "lastModified": 1792268011,
+        "narHash": "sha256-6CswH2jJud7ouUUCqbepiDWL4hR2KwmsKTr5rC8xg40=",
         "owner": "JacobPEvans",
         "repo": ".github",
-        "rev": "602d44da37723b2f97dd00a51f9dd0fef1050d62",
+        "rev": "be2c3eb47b3119e742b4e0bf712f1c0ada56ec2d",
         "type": "github"
       },
       "original": {
@@ -585,11 +585,11 @@
     "visual-explainer-marketplace": {
       "flake": false,
       "locked": {
-        "lastModified": 1792227682,
-        "narHash": "sha256-vEQeFGTSHxtpAHYPMQXWt8sjbmzkVHVgjdqrdjHBXEQ=",
+        "lastModified": 1792268854,
+        "narHash": "sha256-dc/I9aqlU/DX7K36yXxuWH1mxeGAlipEsdXgIcNv/Aw=",
         "owner": "nicobailon",
         "repo": "visual-explainer",
-        "rev": "5a1b3c4d6e86c6d0225c6d8ee0972f4d02108be2",
+        "rev": "37c5de97e8410a666c310041a3f72a033b17012a",
         "type": "github"
       },
       "original": {
