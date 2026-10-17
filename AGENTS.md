@@ -13,7 +13,9 @@ permissions as composable home-manager modules. Reproducible on macOS and Linux.
 2. **Module args injection**: All flake inputs reach modules via `_module.args`,
    not function parameters.
 3. **Worktrees required**: Run `/refresh-repo` then create a worktree before any work.
-4. **No direct main commits**: Always use feature branches.
+4. **No direct main commits**: Always use feature branches. Open a ready PR, never a draft, and enable
+   auto-merge on a low-risk PR
+   ([PR rules](https://github.com/dryvist/ai-assistant-instructions/blob/develop/agentsmd/projects-brief.md)).
 5. **Anthropic spec compliance**: Plugin and marketplace formats follow the
    [official spec](https://code.claude.com/docs/en/plugins-reference) verbatim;
    no proprietary extensions.
