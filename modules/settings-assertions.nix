@@ -1,7 +1,7 @@
 # Build-time validation for `programs.claude.settings`.
 #
 # PURE function — split out of `./settings.nix` to keep that file under the
-# org-wide 12KB per-file error limit (dryvist/.github's `File Size` gate;
+# org-wide 12KB per-file error limit (JacobPEvans/.github's `File Size` gate;
 # this repo carries no override — see the removal of `.file-size.yml`).
 # Returns the list
 # that `settings.nix` assigns to `assertions`; it is not a home-manager

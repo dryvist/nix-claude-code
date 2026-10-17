@@ -19,12 +19,12 @@
     };
 
     # Org-wide dev-hygiene (treefmt + pre-commit + zizmor) is imported as a
-    # flake-module from dryvist/.github (see imports below). That flake is
+    # flake-module from JacobPEvans/.github (see imports below). That flake is
     # lean — treefmt-nix + git-hooks only — so this stays free of the
     # devenv / crate2nix / devshell baggage nix-devenv would drag in, while
     # keeping the config in one org-wide home instead of inlined here.
     dryvist-github = {
-      url = "github:dryvist/.github?ref=v1";
+      url = "github:JacobPEvans/.github?ref=v1";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -150,7 +150,7 @@
         ./flake/modules.nix
         ./flake/lib.nix
         # treefmt + pre-commit + zizmor — org-wide flake-module from
-        # dryvist/.github (lean: no devenv/crate2nix/devshell baggage).
+        # JacobPEvans/.github (lean: no devenv/crate2nix/devshell baggage).
         inputs.dryvist-github.flakeModules.dev-hygiene
         ./flake/checks.nix
         ./flake/dev-shell.nix

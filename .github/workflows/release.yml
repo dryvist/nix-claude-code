@@ -1,0 +1,24 @@
+# Shared release-please, major-tag and release-freeze caller.
+name: Release
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+
+permissions: {}
+
+jobs:
+  release:
+    uses: JacobPEvans/.github/.github/workflows/_release.yml@v1
+    with:
+      release-type: simple
+      config-file: ''
+      manifest-file: ''
+    permissions:
+      contents: write
+      pull-requests: write
+      statuses: write
+      checks: read
+    secrets:
+      GH_ACTION_RELEASE_PLEASE_PRIVATE_KEY: ${{ secrets.GH_ACTION_RELEASE_PLEASE_PRIVATE_KEY }}

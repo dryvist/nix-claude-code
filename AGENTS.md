@@ -146,11 +146,11 @@ Where a package belongs across the nix repos is documented in
 - `templates/` — Flake init scaffolds (`minimal`, `flake-parts`)
 - `checks/` — nix-unit regression tests for lib functions
 
-## Tooling baseline (inherited from dryvist/.github)
+## Tooling baseline (inherited from JacobPEvans/.github)
 
 - **Markdown lint:** `markdownlint-cli2` with the canonical
   `.markdownlint-cli2.yaml` synced from
-  [`dryvist/.github`](https://github.com/dryvist/.github).
+  [`JacobPEvans/.github`](https://github.com/JacobPEvans/.github).
   `MD013 line_length: 160`; no 80-char heading/code restrictions.
   `CHANGELOG.md` is ignored (release-please auto-generated).
   `MD024` strict-by-default everywhere actually linted — never
