@@ -11,7 +11,6 @@ flowchart TB
         IT[import-tree]
         TF[treefmt-nix]
         GH[git-hooks.nix]
-        AAI[ai-assistant-instructions]
         CCP[claude-code-plugins]
         CCK[claude-cookbooks]
         CPO[claude-plugins-official]
@@ -54,6 +53,9 @@ flowchart TB
     flake_parts --> FLM
 ```
 
+Shared instruction files live in the [dryvist/ai-llm-prompts catalog](https://github.com/dryvist/ai-llm-prompts).
+This flake does not consume them as an input.
+
 ## Module composition
 
 `homeModules.default` imports all feature modules. Each feature module:
@@ -93,7 +95,7 @@ don't drag `pkgs` into call sites.
 
 ```text
 data/permissions/
-├── allow.nix         # Auto-approved actions, mirrors ai-assistant-instructions/permissions/allow/
+├── allow.nix         # Auto-approved actions, originally mirrored from the retired ai-assistant-instructions permission JSON copy
 ├── ask.nix           # Permanently empty — an ask stalls unattended runs
 ├── deny.nix          # Hard-denied actions (catastrophic only)
 ├── domains.nix       # Per-feature domain allowlists (WebFetch)

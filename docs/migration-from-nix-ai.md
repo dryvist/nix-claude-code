@@ -3,6 +3,9 @@
 `nix-claude-code` was extracted from [`nix-ai`](https://github.com/JacobPEvans/nix-ai)
 following a 4-checkpoint plan. This document tracks the migration state.
 
+Shared instruction files live in the [dryvist/ai-llm-prompts catalog](https://github.com/dryvist/ai-llm-prompts).
+The permission-data migration below records the history of a separate, retired JSON copy.
+
 ## Checkpoint 0 — baseline snapshot
 
 Captured in nix-ai/main:

@@ -15,7 +15,7 @@ permissions as composable home-manager modules. Reproducible on macOS and Linux.
 3. **Worktrees required**: Run `/refresh-repo` then create a worktree before any work.
 4. **No direct main commits**: Always use feature branches. Open a ready PR, never a draft, and enable
    auto-merge on a low-risk PR
-   ([PR rules](https://github.com/dryvist/ai-assistant-instructions/blob/develop/agentsmd/projects-brief.md)).
+   ([PR rules](https://github.com/dryvist/ai-llm-prompts/blob/develop/agentsmd/projects-brief.md)).
 5. **Anthropic spec compliance**: Plugin and marketplace formats follow the
    [official spec](https://code.claude.com/docs/en/plugins-reference) verbatim;
    no proprietary extensions.
@@ -105,7 +105,8 @@ inputs.nix-claude-code.inputs.home-manager.follows = "home-manager";
 
 - MCP server _implementations_ and runtimes — those live in nix-ai
 - Non-Claude AI tools (Gemini, Copilot, Codex) — those live in nix-ai
-- Permission rule sources — sourced from `ai-assistant-instructions`
+- Permission rule sources — defined in `data/permissions/*`; shared instructions live in the
+  `dryvist/ai-llm-prompts` catalog.
 
 ### nix-ai vs nix-claude-code boundary
 
@@ -113,7 +114,7 @@ inputs.nix-claude-code.inputs.home-manager.follows = "home-manager";
 the `settings.json` renderer, permission data (`data/permissions/*`), and the
 marketplace catalog (the "what the config looks like"). `nix-ai` = discovery,
 consumption, MCP, plugin tiers, MLX, and the glue that feeds
-`ai-assistant-instructions` content through this repo's options (the "what content
+shared instruction content from `dryvist/ai-llm-prompts` through this repo's options (the "what content
 flows and how"). Tiered rule delivery — top-level `agentsmd/rules/*.md` delivered,
 `on-demand/` not — is a property of nix-ai's discovery (`discoverMarkdownFiles`),
 using this repo's `rules` option verbatim. Mirror in
@@ -178,7 +179,7 @@ around stale tooling. Pre-commit hook definitions belong in `nix-devenv`
 - [dryvist/nix-ai](https://github.com/dryvist/nix-ai) — multi-tool AI workspace that consumes this flake
 - [dryvist/nix-home](https://github.com/dryvist/nix-home) — user dev environment in Nix
 - [dryvist/nix-devenv](https://github.com/dryvist/nix-devenv) — reusable dev shells
-- [dryvist/ai-assistant-instructions](https://github.com/dryvist/ai-assistant-instructions) —
-  agent rules and permission sources
+- [dryvist/ai-llm-prompts](https://github.com/dryvist/ai-llm-prompts) — shared agent instructions
+  and prompts
 - [dryvist/claude-code-plugins](https://github.com/dryvist/claude-code-plugins) —
   custom marketplace consumed via the `jacobpevans-cc-plugins` input
