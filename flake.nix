@@ -28,11 +28,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    ai-assistant-instructions = {
-      url = "github:dryvist/ai-assistant-instructions?ref=v1";
-      flake = false;
-    };
-
     claude-code-plugins = {
       url = "github:anthropics/claude-code";
       flake = false;

@@ -2,7 +2,6 @@
 let
   marketplaceArgs = {
     inherit (inputs)
-      ai-assistant-instructions
       claude-code-plugins
       claude-cookbooks
       claude-plugins-official
