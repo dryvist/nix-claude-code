@@ -585,11 +585,11 @@
     "visual-explainer-marketplace": {
       "flake": false,
       "locked": {
-        "lastModified": 1792275125,
-        "narHash": "sha256-j8vneonmUPCj/r0yFymGZRphxoddYmQ3sG2voPcwrkw=",
+        "lastModified": 1792310373,
+        "narHash": "sha256-ZETuK8RW066UogZ+FBtPDBG1Zl8WL6X4LMHg2XkQwcQ=",
         "owner": "nicobailon",
         "repo": "visual-explainer",
-        "rev": "de82e3d1fbf2851ecdf873960b09cc7c8dab45b1",
+        "rev": "c820ac6173c46d236d139238ea9b8ee98d3513b7",
         "type": "github"
       },
       "original": {
