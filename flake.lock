@@ -148,11 +148,11 @@
     "claude-code-plugins-plus": {
       "flake": false,
       "locked": {
-        "lastModified": 1792269520,
-        "narHash": "sha256-QY21zDO6ZHCsgucxBKVVppWNGrKDFgMxj8mF4MtTYB8=",
+        "lastModified": 1792319334,
+        "narHash": "sha256-SxiNs3vE2R8B7/SJ1baiTVFZbESE/7bZ6c6DCUyGkNk=",
         "owner": "jeremylongshore",
         "repo": "claude-code-plugins-plus",
-        "rev": "bb21ad82a7f950dbc08a6d92bc3367b8455041a1",
+        "rev": "c19dd8b95b25eae5562c1b0781e9bffdc321b305",
         "type": "github"
       },
       "original": {
@@ -251,11 +251,11 @@
         "treefmt-nix": "treefmt-nix"
       },
       "locked": {
-        "lastModified": 1792268011,
-        "narHash": "sha256-6CswH2jJud7ouUUCqbepiDWL4hR2KwmsKTr5rC8xg40=",
+        "lastModified": 1792327415,
+        "narHash": "sha256-plmxaK1IrN5nDssGEp9RzwyBoPHyQYazZ9GwGnZYW3g=",
         "owner": "JacobPEvans",
         "repo": ".github",
-        "rev": "be2c3eb47b3119e742b4e0bf712f1c0ada56ec2d",
+        "rev": "b6c7d9be8f93af36e215831b2d28a60e13ab2227",
         "type": "github"
       },
       "original": {
@@ -402,11 +402,11 @@
     "jacobpevans-cc-plugins": {
       "flake": false,
       "locked": {
-        "lastModified": 1792226969,
-        "narHash": "sha256-Q/yv1C4NKt9CgqgARK/yALnAXMLdrNBQqZotjMmGuuo=",
+        "lastModified": 1792325611,
+        "narHash": "sha256-udZXf9u+QAVRoXKwypOCJYYYsUtn/WVa6cO6vGW+rmY=",
         "owner": "dryvist",
         "repo": "claude-code-plugins",
-        "rev": "a91e8766e83505503053ab34c9164abf82d27bb6",
+        "rev": "41c595782461b083b62e422626e046757e6a0315",
         "type": "github"
       },
       "original": {
