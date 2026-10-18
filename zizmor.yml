@@ -11,10 +11,9 @@
 # references). Everything else falls through to zizmor's implicit
 # `hash-pin` default.
 #
-# `dryvist/*` is the org itself: first-party reusable workflows (e.g.
-# dryvist/.github's `_nix-validate.yml`, dryvist/ai-workflows) are
-# referenced via `@main` per the self-reference convention, so they must
-# be trusted here rather than SHA-pinned.
+# First-party shared workflows in JacobPEvans/.github and
+# JacobPEvans/.github-ai use the floating `@v1` major tag. Third-party
+# actions remain SHA-pinned.
 rules:
   # `secrets: inherit` from thin callers into first-party (dryvist/*)
   # reusable workflows is the org's standard delegation pattern: the callee
@@ -49,9 +48,9 @@ rules:
         astral-sh/*: ref-pin
         DeterminateSystems/*: ref-pin
         dryvist/*: ref-pin
-        # JacobPEvans / JacobPEvans-personal are the same first-party family as
-        # dryvist/* (the org is mid-migration); their reusable workflows are
-        # referenced via `@main` like dryvist/*.
+        # JacobPEvans/.github and .github-ai are the shared-workflow homes;
+        # consumers use their floating `@v1` tags. The wider first-party
+        # family follows this same trust tier.
         JacobPEvans/*: ref-pin
         JacobPEvans-personal/*: ref-pin
         # google/* (osv-scanner-action) — same trusted-publisher family as googleapis/*.
