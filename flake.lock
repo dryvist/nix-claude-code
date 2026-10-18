@@ -1,22 +1,5 @@
 {
   "nodes": {
-    "ai-assistant-instructions": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1791689938,
-        "narHash": "sha256-vCjPPY9TMaQvEkdCZnGzQOhy+b71A7+p+PE2p5r8eyc=",
-        "owner": "dryvist",
-        "repo": "ai-assistant-instructions",
-        "rev": "f652b04d5a3edffdee975764b56970cc23c033be",
-        "type": "github"
-      },
-      "original": {
-        "owner": "dryvist",
-        "ref": "v1",
-        "repo": "ai-assistant-instructions",
-        "type": "github"
-      }
-    },
     "anthropic-agent-skills": {
       "flake": false,
       "locked": {
@@ -498,7 +481,6 @@
     },
     "root": {
       "inputs": {
-        "ai-assistant-instructions": "ai-assistant-instructions",
         "anthropic-agent-skills": "anthropic-agent-skills",
         "axton-obsidian-visual-skills": "axton-obsidian-visual-skills",
         "bills-claude-skills": "bills-claude-skills",
