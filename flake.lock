@@ -115,11 +115,11 @@
     "claude-code-plugins": {
       "flake": false,
       "locked": {
-        "lastModified": 1792278889,
-        "narHash": "sha256-6srs0iDoLqNtQRubYLdklTpuhQN/575NDfN+o/Yov6w=",
+        "lastModified": 1792362395,
+        "narHash": "sha256-X9Oz1dTVx2XYuaDTiPWg+n5iU3nhLJo2u9QJpC/Alik=",
         "owner": "anthropics",
         "repo": "claude-code",
-        "rev": "dd6bee38458cc3e6dc5f2b16eca1f0f364619ad8",
+        "rev": "ef7bfdca55d906929fe6b782025b93758c325074",
         "type": "github"
       },
       "original": {
@@ -234,11 +234,11 @@
         "treefmt-nix": "treefmt-nix"
       },
       "locked": {
-        "lastModified": 1792327415,
-        "narHash": "sha256-plmxaK1IrN5nDssGEp9RzwyBoPHyQYazZ9GwGnZYW3g=",
+        "lastModified": 1792347836,
+        "narHash": "sha256-m6SQjUxHkILFoi8LXuUcnrotO5K4kh8NVwEg2v1LhJ4=",
         "owner": "JacobPEvans",
         "repo": ".github",
-        "rev": "b6c7d9be8f93af36e215831b2d28a60e13ab2227",
+        "rev": "9ec96ccce0784075e23965a54ec45c9bb4c64101",
         "type": "github"
       },
       "original": {
@@ -251,11 +251,11 @@
     "fabric-src": {
       "flake": false,
       "locked": {
-        "lastModified": 1792164018,
-        "narHash": "sha256-RP9s7UeLwOGbEvc3u2zj6M8KZ96hOd6nBuGZ6l+KO3g=",
+        "lastModified": 1792357119,
+        "narHash": "sha256-9OHGkJ3u09sN0qawows1HRbP33hkx+bxS/CDL0AljGI=",
         "owner": "danielmiessler",
         "repo": "fabric",
-        "rev": "cef213cd9c2e4b90658a33b24693bb8ffc34c742",
+        "rev": "0018f793d746344c12aa9f1585fc3bff4faddf3f",
         "type": "github"
       },
       "original": {
