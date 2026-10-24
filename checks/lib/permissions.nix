@@ -40,6 +40,36 @@ in
     expected = true;
   };
 
+  # Agents never send email. Every send path stays hard-denied; reading mail
+  # and creating drafts are not in this list and must stay reachable.
+  "test: deny.commands blocks every email-send command" = {
+    expr = lib.subtractLists permissions.deny.commands [
+      "gws gmail +forward"
+      "gws gmail +reply"
+      "gws gmail +reply-all"
+      "gws gmail +send"
+      "gws gmail users drafts send"
+      "gws gmail users messages send"
+      "mail"
+      "mailx"
+      "msmtp"
+      "mutt"
+      "sendmail"
+      "swaks"
+      "/usr/sbin/sendmail"
+    ];
+    expected = [ ];
+  };
+
+  "test: deny.commands leaves gmail read and draft commands reachable" = {
+    expr = lib.filter (
+      c:
+      lib.hasPrefix "gws gmail" c
+      && !(lib.hasInfix "send" c || lib.hasInfix "+reply" c || lib.hasInfix "+forward" c)
+    ) permissions.deny.commands;
+    expected = [ ];
+  };
+
   "test: domains.webfetch is non-empty" = {
     expr = builtins.length permissions.domains.webfetch > 0;
     expected = true;

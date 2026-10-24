@@ -16,8 +16,15 @@
     if git -C "$cwd" rev-parse --verify --quiet "refs/heads/$name" >/dev/null; then
       git -C "$cwd" worktree add "$path" "$name" >&2
     else
-      base=$(git -C "$cwd" rev-parse --verify --quiet refs/remotes/origin/HEAD >/dev/null && echo origin/HEAD || echo HEAD)
-      git -C "$cwd" worktree add -b "$name" "$path" "$base" >&2
+      if ! git -C "$cwd" fetch origin >&2; then
+        echo "error: git fetch origin failed; refusing to create worktree branch '$name'" >&2
+        exit 1
+      fi
+      if ! git -C "$cwd" remote set-head origin --auto >&2; then
+        echo "error: git remote set-head origin --auto failed; refusing to create worktree branch '$name'" >&2
+        exit 1
+      fi
+      git -C "$cwd" worktree add --no-track -b "$name" "$path" origin/HEAD >&2
     fi
     echo "$path"
   '';

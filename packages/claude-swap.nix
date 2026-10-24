@@ -1,16 +1,19 @@
 { pkgs, src }:
 let
+  # renovate: datasource=pypi depName=textual
+  textualVersion = "8.2.8";
   textual = pkgs.python3Packages.textual.overridePythonAttrs (_: {
-    version = "8.2.8";
+    version = textualVersion;
     src = pkgs.fetchPypi {
       pname = "textual";
-      version = "8.2.8";
+      version = textualVersion;
       hash = "sha256-PxBqn7xz453SZslxJDIIfeeKbWRAhMfCQdaiXDFpEVs=";
     };
   });
 in
 pkgs.python3Packages.buildPythonApplication {
   pname = "claude-swap";
+  # renovate: datasource=github-releases depName=realiti4/claude-swap
   version = "0.25.0";
   inherit src;
 
