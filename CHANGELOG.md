@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 with a permanent pre-1.0 cadence — see `release-please-config.json`.
 
+## [2.2.7](https://github.com/dryvist/nix-claude-code/compare/v2.2.6...v2.2.7) (2026-10-24)
+
+
+### Bug Fixes
+
+* **permissions:** deny email-sending commands ([#415](https://github.com/dryvist/nix-claude-code/issues/415)) ([e66d4aa](https://github.com/dryvist/nix-claude-code/commit/e66d4aab11c74282d267f0daf80692e9606026e5))
+
 ## [2.2.6](https://github.com/dryvist/nix-claude-code/compare/v2.2.5...v2.2.6) (2026-10-24)
 
 
