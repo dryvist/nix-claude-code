@@ -52,7 +52,7 @@ let
     };
   };
 
-  # `latest.installOnActivation` is gated on pkgs.stdenv.isDarwin same as
+  # `latest.installOnActivation` is gated on pkgs.stdenv.hostPlatform.isDarwin same as
   # `latest.enable` itself — on x86_64-linux CI the module stays inert
   # either way, so only the darwin leg of this check actually exercises the
   # activation entry; the linux leg proves it stays absent by default.
@@ -203,7 +203,7 @@ in
   latest-install-on-activation = pkgs.runCommand "latest-install-on-activation-test" { } ''
     set -euo pipefail
     grep -q "claude-latest-install" ${latestInstallOnActivationFalse}/activate && exit 1
-    test ${if pkgs.stdenv.isDarwin then "1" else "0"} -eq 0 || {
+    test ${if pkgs.stdenv.hostPlatform.isDarwin then "1" else "0"} -eq 0 || {
       grep -q "claude-latest-install" ${latestInstallOnActivationTrue}/activate
       # The wrapper's own PATH must supply every tool the upstream installer
       # calls on darwin; activation does not inherit the system PATH.
