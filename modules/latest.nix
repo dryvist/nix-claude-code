@@ -14,6 +14,7 @@
 }:
 let
   cfg = config.programs.claude.latest;
+  isDarwin = pkgs.stdenv.hostPlatform.isDarwin;
 
   installScript = pkgs.writeShellApplication {
     name = "claude-latest-install";
@@ -48,7 +49,7 @@ in
     };
   };
 
-  config = lib.mkIf (config.programs.claude.enable && cfg.enable && pkgs.stdenv.isDarwin) {
+  config = lib.mkIf (config.programs.claude.enable && cfg.enable && isDarwin) {
     home.packages = [ installScript ];
 
     home.activation = lib.mkIf cfg.installOnActivation {
