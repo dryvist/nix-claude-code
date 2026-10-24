@@ -102,6 +102,26 @@ _:
     "npm publish"
     "cargo publish"
 
+    # email — an agent never sends email by any path. A sent message cannot
+    # be recalled. Reading mail and creating drafts stay allowed: drafts sit
+    # in the mailbox owner's account until a human sends them. Prefix rules
+    # cannot see through a global flag placed before the service name
+    # (`gws --format json gmail +send`), so the `gws` wrapper in nix-ai also
+    # refuses these subcommands itself; this list is the second layer.
+    "gws gmail +forward"
+    "gws gmail +reply"
+    "gws gmail +reply-all"
+    "gws gmail +send"
+    "gws gmail users drafts send"
+    "gws gmail users messages send"
+    "mail"
+    "mailx"
+    "msmtp"
+    "mutt"
+    "sendmail"
+    "swaks"
+    "/usr/sbin/sendmail"
+
     # git — hook-bypass and history-corruption. Disabling the check IS the
     # damage; never route around a blocker by removing the blocker.
     "chmod -x .git/hooks/"
