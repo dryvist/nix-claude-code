@@ -127,6 +127,7 @@
     # Multi-account Claude Code session manager. Kept as a source input so the
     # packaged version is locked with the rest of this flake.
     claude-swap = {
+      # renovate: datasource=github-releases depName=realiti4/claude-swap
       url = "github:realiti4/claude-swap/v0.25.0";
       flake = false;
     };
