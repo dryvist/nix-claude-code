@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 with a permanent pre-1.0 cadence — see `release-please-config.json`.
 
+## [2.2.8](https://github.com/dryvist/nix-claude-code/compare/v2.2.7...v2.2.8) (2026-10-27)
+
+
+### Bug Fixes
+
+* start worktrees with git town hack ([#420](https://github.com/dryvist/nix-claude-code/issues/420)) ([5f285e8](https://github.com/dryvist/nix-claude-code/commit/5f285e8139dd0dd8fc7f9f44d6b5edb74ec643e1))
+
 ## [2.2.7](https://github.com/dryvist/nix-claude-code/compare/v2.2.6...v2.2.7) (2026-10-24)
 
 
