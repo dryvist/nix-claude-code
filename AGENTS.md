@@ -12,7 +12,7 @@ permissions as composable home-manager modules. Reproducible on macOS and Linux.
 1. **Flakes-only**: Never use `nix-env` or imperative Nix commands.
 2. **Module args injection**: All flake inputs reach modules via `_module.args`,
    not function parameters.
-3. **Worktrees required**: Run `/refresh-repo` then create a worktree before any work.
+3. **Worktrees required**: Start a worktree with `git town hack` before any work.
 4. **No direct main commits**: Always use feature branches. Open a ready PR, never a draft, and enable
    auto-merge on a low-risk PR
    ([PR rules](https://github.com/dryvist/ai-llm-prompts/blob/develop/agentsmd/projects-brief.md)).
