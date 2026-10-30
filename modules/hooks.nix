@@ -55,9 +55,7 @@ in
 {
   imports = [
     # Back-compat for the pre-port flat `extraHooks` option. The freeform
-    # pass-through equivalent is now `settings.hooks` — the merger in
-    # `./settings.nix` and `lib.toSettingsJson` writes whatever lands
-    # under `programs.claude.settings.hooks` straight into settings.json.
+    # equivalent is now `settings.hooks`, which overrides typed event entries.
     (lib.mkRenamedOptionModule
       [ "programs" "claude" "hooks" "extraHooks" ]
       [ "programs" "claude" "settings" "hooks" ]

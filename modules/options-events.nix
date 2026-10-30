@@ -10,8 +10,13 @@ in
 {
   options.programs.claude = {
     # Hooks - fully implemented in modules/hooks.nix (typed per-event hooks)
-    # plus modules/settings.nix (free-form pass-through).
+    # plus additive event lists in programs.claude.hooks.events.
     hooks = {
+      events = lib.mkOption {
+        type = lib.types.attrsOf (lib.types.listOf lib.types.attrs);
+        default = { };
+        description = "Claude Code hook entries appended by event after typed and settings hooks.";
+      };
       preToolUse = lib.mkOption {
         type = hookType;
         default = null;

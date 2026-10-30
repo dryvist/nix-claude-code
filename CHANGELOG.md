@@ -6,6 +6,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 with a permanent pre-1.0 cadence — see `release-please-config.json`.
 
+## [2.3.0](https://github.com/dryvist/nix-claude-code/compare/v2.2.8...v2.3.0) (2026-10-30)
+
+
+### Features
+
+* add composable Claude hook events ([#426](https://github.com/dryvist/nix-claude-code/issues/426)) ([3789a71](https://github.com/dryvist/nix-claude-code/commit/3789a7162efabb8e3b3a0966676b6f952a909aa2))
+
+
+### Bug Fixes
+
+* anchor release preparation to the published manifest ([#428](https://github.com/dryvist/nix-claude-code/issues/428)) ([7f9ca7f](https://github.com/dryvist/nix-claude-code/commit/7f9ca7f591e8dc14d156ff62898d3b77f50e2413))
+* merge Claude hook definitions by event ([#423](https://github.com/dryvist/nix-claude-code/issues/423)) ([f599100](https://github.com/dryvist/nix-claude-code/commit/f599100ebb1226b6e7f1665e258b43bf965dc06e))
+
 ## [2.2.8](https://github.com/dryvist/nix-claude-code/compare/v2.2.7...v2.2.8) (2026-10-27)
 
 
