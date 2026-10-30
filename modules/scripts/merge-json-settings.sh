@@ -60,7 +60,7 @@ if [[ -f $TARGET ]] && [[ ! -L $TARGET ]]; then
   # its own upstream defaults underneath, so the key is never absent.
   #
   # `.hooks` strips too, but conditionally: unlike `.env`, Nix only emits
-  # `.hooks` when at least one typed hook or `settings.hooks` override is
+  # `.hooks` when at least one typed hook or `settings.hooks` entry is
   # configured (`hooksAttrs != {}` in modules/settings.nix) - so stripping
   # it unconditionally could wipe a hook a user added at runtime via
   # `/hooks` on a generation where Nix declares none. Stripping only when

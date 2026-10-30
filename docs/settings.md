@@ -140,12 +140,10 @@ set it only to go lower. See "Permissions: full-trust auto mode" above.
 
 `outputStyle` can also be set via top-level `programs.claude.outputStyle` (e.g. `"concise"`), matching `programs.claude.model`.
 
-## Builder-merged defaults (always present, per-key overridable)
+## Builder-merged settings
 
-These values are merged by `modules/settings.nix` rather than exposed as plain
-options, because a Nix option `default` would be _replaced_ wholesale the
-moment a caller sets the option — these need to always apply while still
-letting callers add to or override individual entries:
+These values are assembled by `modules/settings.nix`. Callers can add entries,
+and can override individual environment defaults:
 
 - **`permissions.additionalDirectories`** always includes `~/.claude/` and
   `/tmp/`, concatenated with `programs.claude.settings.additionalDirectories`

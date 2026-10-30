@@ -323,10 +323,11 @@ in
     jq -e '
       .hooks.SessionStart as $events |
       ($events | length == 3) and
-      ([$events[].hooks[].command] | any(endswith("/.claude/hooks/session-start.sh"))) and
       ([$events[].hooks[].command] | any(. == "caller-hook")) and
       ([$events[].hooks[].command] | any(. == "integration-hook")) and
-      ($events | any(.matcher == "startup" and .hooks[0].async == true and .hooks[0].timeout == 300))
+      ($events | any(.matcher == "startup" and
+        (.hooks[0].command | endswith("/.claude/hooks/session-start.sh")) and
+        .hooks[0].async == true and .hooks[0].timeout == 300))
     ' "$settings_json" > /dev/null
     echo ok > $out
   '';
