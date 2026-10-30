@@ -142,7 +142,7 @@ set it only to go lower. See "Permissions: full-trust auto mode" above.
 
 ## Builder-merged defaults (always present, per-key overridable)
 
-Two values are merged by `modules/settings.nix` rather than exposed as plain
+These values are merged by `modules/settings.nix` rather than exposed as plain
 options, because a Nix option `default` would be _replaced_ wholesale the
 moment a caller sets the option — these need to always apply while still
 letting callers add to or override individual entries:
@@ -163,8 +163,8 @@ letting callers add to or override individual entries:
   `~/.claude/hooks/<event>.sh`. Writing the script alone does nothing —
   Claude Code only runs hooks registered in `settings.json`, and has no
   directory-convention auto-discovery — so this registration is required,
-  not cosmetic. Merged _under_ `programs.claude.settings.hooks`, so a
-  caller-supplied entry for the same event wins.
+  not cosmetic. Entries from `programs.claude.settings.hooks` are appended by
+  event, so typed and caller-supplied hooks both run.
 
 ## Schema validation (opt-in)
 
