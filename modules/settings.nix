@@ -33,10 +33,10 @@ let
   # Typed hooks registered under their Claude Code event names; see the file.
   typedHooksAttrs = import ../lib/typed-hooks.nix { inherit lib cfg; };
 
-  # `hooks` is freeform (no typed option), so an unset value must be
-  # accessed with `or { }` — the submodule attrset only materializes keys
-  # a caller actually set.
-  hooksAttrs = typedHooksAttrs // (cfg.settings.hooks or { });
+  hooksAttrs = lib.zipAttrsWith (_: lib.concatLists) [
+    typedHooksAttrs
+    cfg.settings.hooks
+  ];
 
   # Directories every adopter needs Claude Code to reach without prompting.
   # `~/${cfg.configDir}/` is Claude's own config/plugin tree; `/tmp/` covers
@@ -141,8 +141,7 @@ let
   # a curated `nullOr` option, because it has no settings.json key of its
   # own — it's consumed above into `autoCompactEnv`/`envAttrs` instead, so
   # letting it ride freeform would leak a bogus top-level JSON key.
-  # `hooks` is also listed here (unlike the freeform-only convention its
-  # comment above describes) because it needs the typed-hooks merge above,
+  # `hooks` is listed here because it needs the typed-hooks merge above,
   # not a verbatim passthrough — see `hooksAttrs`.
   knownSettingsKeys = [
     "alwaysThinkingEnabled"

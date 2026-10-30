@@ -52,6 +52,40 @@ let
     };
   };
 
+  hooksMergeActivation = mkActivation {
+    imports = [
+      {
+        programs.claude.settings.hooks.SessionStart = [
+          {
+            hooks = [
+              {
+                command = "caller-hook";
+                type = "command";
+              }
+            ];
+          }
+        ];
+      }
+      {
+        programs.claude.settings.hooks.SessionStart = [
+          {
+            hooks = [
+              {
+                command = "integration-hook";
+                type = "command";
+              }
+            ];
+          }
+        ];
+      }
+    ];
+    programs.claude = {
+      enable = true;
+      package = null;
+      hooks.refreshMarketplaces = true;
+    };
+  };
+
   # `latest.installOnActivation` is gated on pkgs.stdenv.hostPlatform.isDarwin same as
   # `latest.enable` itself — on x86_64-linux CI the module stays inert
   # either way, so only the darwin leg of this check actually exercises the
@@ -281,6 +315,22 @@ in
         }
         echo ok > $out
       '';
+
+  hooks-merge = pkgs.runCommand "hooks-merge-test" { nativeBuildInputs = [ pkgs.jq ]; } ''
+    set -euo pipefail
+    settings_json=$(grep -o '/nix/store/[a-z0-9]*-claude-settings\.json' \
+      ${hooksMergeActivation}/activate | head -1)
+    jq -e '
+      .hooks.SessionStart as $events |
+      ($events | length == 3) and
+      ([$events[].hooks[].command] | any(. == "caller-hook")) and
+      ([$events[].hooks[].command] | any(. == "integration-hook")) and
+      ($events | any(.matcher == "startup" and
+        (.hooks[0].command | endswith("/.claude/hooks/session-start.sh")) and
+        .hooks[0].async == true and .hooks[0].timeout == 300))
+    ' "$settings_json" > /dev/null
+    echo ok > $out
+  '';
 
   claude-swap-default-disabled =
     assert claudeSwapDefaultDisabled;

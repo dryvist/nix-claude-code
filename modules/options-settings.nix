@@ -19,7 +19,7 @@
     description = ''
       Contents of `~/.claude/settings.json`. Module-generated values
       (permissions, plugins, mcpServers, statusLine) are merged first;
-      entries here override them. Sub-options below cover the
+      entries here override them, except hooks, which are concatenated by event. Sub-options below cover the
       well-known schema fields; arbitrary keys are accepted via the
       freeform submodule type.
     '';
@@ -33,6 +33,11 @@
       ];
       freeformType = lib.types.attrs;
       options = {
+        hooks = lib.mkOption {
+          type = lib.types.attrsOf (lib.types.listOf lib.types.attrs);
+          default = { };
+          description = "Claude Code hooks by event. Lists from modules are concatenated with typed hooks.";
+        };
         # Extended thinking mode
         alwaysThinkingEnabled = lib.mkOption {
           type = lib.types.bool;

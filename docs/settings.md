@@ -140,12 +140,10 @@ set it only to go lower. See "Permissions: full-trust auto mode" above.
 
 `outputStyle` can also be set via top-level `programs.claude.outputStyle` (e.g. `"concise"`), matching `programs.claude.model`.
 
-## Builder-merged defaults (always present, per-key overridable)
+## Builder-merged settings
 
-Two values are merged by `modules/settings.nix` rather than exposed as plain
-options, because a Nix option `default` would be _replaced_ wholesale the
-moment a caller sets the option — these need to always apply while still
-letting callers add to or override individual entries:
+These values are assembled by `modules/settings.nix`. Callers can add entries,
+and can override individual environment defaults:
 
 - **`permissions.additionalDirectories`** always includes `~/.claude/` and
   `/tmp/`, concatenated with `programs.claude.settings.additionalDirectories`
@@ -163,8 +161,8 @@ letting callers add to or override individual entries:
   `~/.claude/hooks/<event>.sh`. Writing the script alone does nothing —
   Claude Code only runs hooks registered in `settings.json`, and has no
   directory-convention auto-discovery — so this registration is required,
-  not cosmetic. Merged _under_ `programs.claude.settings.hooks`, so a
-  caller-supplied entry for the same event wins.
+  not cosmetic. Entries from `programs.claude.settings.hooks` are appended by
+  event, so typed and caller-supplied hooks both run.
 
 ## Schema validation (opt-in)
 
