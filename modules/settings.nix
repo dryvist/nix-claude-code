@@ -33,10 +33,10 @@ let
   # Typed hooks registered under their Claude Code event names; see the file.
   typedHooksAttrs = import ../lib/typed-hooks.nix { inherit lib cfg; };
 
-  hooksAttrs = lib.zipAttrsWith (_: lib.concatLists) [
-    typedHooksAttrs
-    cfg.settings.hooks
-  ];
+  legacyHooks = typedHooksAttrs // (cfg.settings.hooks or { });
+  hooksAttrs =
+    legacyHooks
+    // lib.mapAttrs (event: entries: (legacyHooks.${event} or [ ]) ++ entries) cfg.hooks.events;
 
   # Directories every adopter needs Claude Code to reach without prompting.
   # `~/${cfg.configDir}/` is Claude's own config/plugin tree; `/tmp/` covers

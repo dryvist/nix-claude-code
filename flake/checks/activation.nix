@@ -55,7 +55,7 @@ let
   hooksMergeActivation = mkActivation {
     imports = [
       {
-        programs.claude.settings.hooks.SessionStart = [
+        programs.claude.hooks.events.SessionStart = [
           {
             hooks = [
               {
@@ -67,7 +67,7 @@ let
         ];
       }
       {
-        programs.claude.settings.hooks.SessionStart = [
+        programs.claude.hooks.events.SessionStart = [
           {
             hooks = [
               {
@@ -83,6 +83,37 @@ let
       enable = true;
       package = null;
       hooks.refreshMarketplaces = true;
+    };
+  };
+
+  hooksLegacyOverrideActivation = mkActivation {
+    programs.claude = {
+      enable = true;
+      package = null;
+      hooks.refreshMarketplaces = true;
+      hooks.events.Stop = [
+        {
+          hooks = [
+            {
+              command = "added-stop";
+              type = "command";
+            }
+          ];
+        }
+      ];
+      settings.hooks.LegacyFixture = {
+        untouched = true;
+      };
+      settings.hooks.SessionStart = [
+        {
+          hooks = [
+            {
+              command = "legacy-hook";
+              type = "command";
+            }
+          ];
+        }
+      ];
     };
   };
 
@@ -331,6 +362,18 @@ in
     ' "$settings_json" > /dev/null
     echo ok > $out
   '';
+
+  hooks-legacy-override =
+    pkgs.runCommand "hooks-legacy-override-test" { nativeBuildInputs = [ pkgs.jq ]; }
+      ''
+            set -euo pipefail
+            settings_json=$(grep -o '/nix/store/[a-z0-9]*-claude-settings\.json' \
+              ${hooksLegacyOverrideActivation}/activate | head -1)
+        jq -e '(.hooks.SessionStart | length == 1 and .[0].hooks[0].command == "legacy-hook") and
+          .hooks.LegacyFixture == {"untouched": true} and .hooks.Stop[0].hooks[0].command == "added-stop"' \
+              "$settings_json" > /dev/null
+            echo ok > $out
+      '';
 
   claude-swap-default-disabled =
     assert claudeSwapDefaultDisabled;
