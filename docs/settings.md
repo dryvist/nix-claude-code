@@ -161,8 +161,9 @@ and can override individual environment defaults:
   `~/.claude/hooks/<event>.sh`. Writing the script alone does nothing —
   Claude Code only runs hooks registered in `settings.json`, and has no
   directory-convention auto-discovery — so this registration is required,
-  not cosmetic. Entries from `programs.claude.settings.hooks` are appended by
-  event, so typed and caller-supplied hooks both run.
+  not cosmetic. `programs.claude.settings.hooks` overrides typed entries for
+  the same event. Use `programs.claude.hooks.events` to append lists by event;
+  contributions from multiple modules are concatenated.
 
 ## Schema validation (opt-in)
 

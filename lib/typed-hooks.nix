@@ -1,7 +1,7 @@
 # Register each configured typed hook (modules/hooks.nix writes the
 # script file; this makes Claude Code actually invoke it) under its
-# Claude Code event name. modules/settings.nix appends settings.hooks entries
-# for the same event.
+# Claude Code event name. settings.hooks overrides the same event; hooks.events
+# entries are appended afterwards by modules/settings.nix.
 #
 # The sessionStart entry carries the marketplace refresh, which runs one
 # `claude plugin update` per enabled plugin (~1s each, serial). It only needs
