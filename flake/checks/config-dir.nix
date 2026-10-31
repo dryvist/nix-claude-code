@@ -82,9 +82,46 @@ let
     };
   };
 
+  headersHelper = "printf '{\"X-Test\":\"%s\"}\\n' \"\${TEST_VAR}\"";
+
+  mcpActivation = mkActivation {
+    programs.claude = {
+      enable = true;
+      package = null;
+      mcpServers = {
+        with-helper = {
+          type = "http";
+          url = "https://example.invalid/mcp";
+          inherit headersHelper;
+        };
+        plain = {
+          type = "http";
+          url = "https://example.invalid/mcp";
+          headers.X-Static = "v";
+        };
+      };
+    };
+  };
+
   sessionVarsRelPath = "home-path/etc/profile.d/hm-session-vars.sh";
 in
 {
+  mcp-headers-helper-overlay =
+    pkgs.runCommand "mcp-headers-helper-overlay-test" { nativeBuildInputs = [ pkgs.jq ]; }
+      ''
+        overlay=$(grep -o '/nix/store/[^" ]*-claude-json-overlay.json' ${mcpActivation}/activate | head -1)
+        jq -e --arg helper ${lib.escapeShellArg headersHelper} \
+          '.mcpServers["with-helper"] | .headersHelper == $helper and (has("headers") | not)' "$overlay" > /dev/null
+        echo ok > $out
+      '';
+
+  mcp-plain-headers-overlay =
+    pkgs.runCommand "mcp-plain-headers-overlay-test" { nativeBuildInputs = [ pkgs.jq ]; }
+      ''
+        overlay=$(grep -o '/nix/store/[^" ]*-claude-json-overlay.json' ${mcpActivation}/activate | head -1)
+        jq -e '.mcpServers.plain | .headers["X-Static"] == "v" and (has("headersHelper") | not)' "$overlay" > /dev/null
+        echo ok > $out
+      '';
 
   # Hard requirement (see the configDir option's own description): leaving
   # configDir unset must reproduce today's behavior byte-for-byte. No
