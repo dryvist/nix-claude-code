@@ -14,7 +14,7 @@ in
 pkgs.python3Packages.buildPythonApplication {
   pname = "claude-swap";
   # renovate: datasource=github-releases depName=realiti4/claude-swap
-  version = "0.25.0";
+  version = "0.28.0";
   inherit src;
 
   pyproject = true;

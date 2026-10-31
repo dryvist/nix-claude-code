@@ -128,7 +128,7 @@
     # packaged version is locked with the rest of this flake.
     claude-swap = {
       # renovate: datasource=github-releases depName=realiti4/claude-swap
-      url = "github:realiti4/claude-swap/v0.25.0";
+      url = "github:realiti4/claude-swap/v0.28.0";
       flake = false;
     };
   };
