@@ -71,6 +71,11 @@
         type = lib.types.attrsOf lib.types.str;
         default = { };
       };
+      headersHelper = lib.mkOption {
+        type = lib.types.nullOr lib.types.str;
+        default = null;
+        description = "Shell command whose stdout is a JSON object of request headers, run on each connection.";
+      };
       disabled = lib.mkOption {
         type = lib.types.bool;
         default = false;

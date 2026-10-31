@@ -50,7 +50,11 @@ let
     if v.type == "stdio" then
       { inherit (v) command args; } // lib.optionalAttrs (v.env != { }) { inherit (v) env; }
     else
-      { inherit (v) type url; } // lib.optionalAttrs (v.headers != { }) { inherit (v) headers; }
+      {
+        inherit (v) type url;
+      }
+      // lib.optionalAttrs (v.headers != { }) { inherit (v) headers; }
+      // lib.optionalAttrs (v.headersHelper != null) { inherit (v) headersHelper; }
   ) activeMcpServers;
 
   # Static JSON overlay merged into ~/.claude.json at activation time.
