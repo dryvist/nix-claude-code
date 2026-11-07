@@ -21,4 +21,11 @@ jobs:
       id-token: write
       pull-requests: write
     uses: JacobPEvans/.github-ai/.github/workflows/cc-dep-review.yml@v2
-    secrets: inherit
+    with:
+      runner_label: review
+      review_runner_label: review
+    secrets:
+      GH_APP_CLAUDE_BOT_PRIVATE_KEY: ${{ secrets.GH_APP_CLAUDE_BOT_PRIVATE_KEY }}
+      LLM_ROUTER_BASE_URL: ${{ secrets.LLM_ROUTER_BASE_URL }}
+      LLM_ROUTER_API_KEY: ${{ secrets.LLM_ROUTER_API_KEY }}
+      LLM_ROUTER_OSS_API_KEY: ${{ secrets.LLM_ROUTER_OSS_API_KEY }}
