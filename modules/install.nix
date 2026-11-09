@@ -76,15 +76,6 @@ in
       };
     }
 
-    (lib.mkIf cfg.enable {
-      assertions = [
-        {
-          assertion = cfg.install != "nix" || cfg.package != null;
-          message = "programs.claude.install = \"nix\" requires programs.claude.package to be set.";
-        }
-      ];
-    })
-
     (lib.mkIf (cfg.enable && isNative) {
       programs.claude = {
         package = lib.mkOverride 900 null; # beats a consumer mkDefault package
