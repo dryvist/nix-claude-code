@@ -99,25 +99,6 @@ let
     };
   };
 
-  claudeSwapDefaultDisabled =
-    (inputs.home-manager.lib.homeManagerConfiguration {
-      inherit pkgs;
-      modules = [
-        self.homeModules.default
-        {
-          home = {
-            username = "ci-tester";
-            homeDirectory = "/tmp/ci-tester-home";
-            stateVersion = "25.11";
-          };
-        }
-      ];
-    }).config.programs.claude.swap.disabled;
-
-  claudeSwapPackage = import ../../packages/claude-swap.nix {
-    inherit pkgs;
-    src = inputs.claude-swap;
-  };
 in
 {
   programs-claude-eval = programsClaudeEval;
@@ -254,18 +235,5 @@ in
         }
         echo ok > $out
       '';
-
-  claude-swap-default-disabled =
-    assert claudeSwapDefaultDisabled;
-    pkgs.runCommand "claude-swap-default-disabled-test" { } ''
-      echo ok > $out
-    '';
-
-  claude-swap-package = pkgs.runCommand "claude-swap-package-test" { } ''
-    test -x ${claudeSwapPackage}/bin/cswap
-    test -x ${claudeSwapPackage}/bin/claude-swap
-    ${claudeSwapPackage}/bin/cswap --help > /dev/null
-    echo ok > $out
-  '';
 }
 // (import ./hook-events.nix { inherit pkgs mkActivation; })

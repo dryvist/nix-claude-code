@@ -25,7 +25,6 @@ let
       browser-use-skills
       vct-cribl-pack-validator-skills
       fabric-src
-      claude-swap
       ;
   };
   wrap =
