@@ -60,11 +60,16 @@ let
     };
   };
 
+  # installOnActivation is set explicitly: on darwin, install = "native" (the
+  # default) would otherwise turn it on, and this fixture tests the false path.
   latestInstallOnActivationFalse = mkActivation {
     programs.claude = {
       enable = true;
       package = null;
-      latest.enable = true;
+      latest = {
+        enable = true;
+        installOnActivation = false;
+      };
     };
   };
 

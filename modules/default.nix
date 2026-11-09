@@ -16,6 +16,7 @@
     ./plugins.nix
     ./hooks.nix
     ./mcp.nix
+    ./install.nix
     ./latest.nix
     ./components.nix
     ./registry.nix

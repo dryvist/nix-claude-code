@@ -64,6 +64,10 @@ document — see that file for rationale.
 `programs.claude.defaultMode` (`"auto"`, in `modules/core.nix`) has a section
 of its own below.
 
+## Install method (`install`)
+
+See [install-method.md](install-method.md).
+
 ## Permissions: full-trust auto mode
 
 This module ships **no** hard-coded permission rules for Claude Code.

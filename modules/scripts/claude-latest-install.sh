@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # claude-latest-install.sh - Install bleeding-edge Claude Code via the official installer
 #
-# Idempotent: if ~/.local/bin/claude already resolves to a native install
+# Idempotent: if $CLAUDE_LATEST_BIN already resolves to a native install
 # (symlink into ~/.local/share/claude/versions/), exit 0 without touching anything.
 # Otherwise, run the official Anthropic installer from claude.ai/install.sh.
 #
@@ -10,6 +10,8 @@
 #
 # Invoked manually as `claude-latest-install` (writeShellApplication on PATH,
 # exposed by ./latest.nix when `programs.claude.latest.enable = true`).
+# CLAUDE_LATEST_BIN is exported by that writeShellApplication from
+# `programs.claude.binaryPath`; the script does not run without it.
 #
 # Exit codes:
 #   0 - Already installed (no-op) OR installer succeeded
@@ -17,7 +19,7 @@
 
 set -euo pipefail
 
-BIN="$HOME/.local/bin/claude"
+BIN="$CLAUDE_LATEST_BIN"
 STATE_DIR="$HOME/.local/share/claude"
 TS() { date '+%Y-%m-%d %H:%M:%S'; }
 
