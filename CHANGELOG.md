@@ -6,17 +6,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 with a permanent pre-1.0 cadence — see `release-please-config.json`.
 
-## [3.0.0](https://github.com/dryvist/nix-claude-code/compare/v2.5.0...v3.0.0) (2026-11-09)
-
-
-### ⚠ BREAKING CHANGES
-
-* programs.claude.swap.disabled no longer exists; consumers that set it must drop it.
-
-### Code Refactoring
-
-* remove claude-swap ([#447](https://github.com/dryvist/nix-claude-code/issues/447)) ([cfbbf12](https://github.com/dryvist/nix-claude-code/commit/cfbbf129cf3fd2907df23ea2906286963dc413a8))
-
 ## [2.5.0](https://github.com/dryvist/nix-claude-code/compare/v2.4.0...v2.5.0) (2026-11-09)
 
 
