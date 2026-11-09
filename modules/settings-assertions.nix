@@ -42,6 +42,24 @@ let
       seconds = parseDurationSeconds value;
     in
     seconds != null && seconds <= humanWaitCapSeconds;
+
+  # Subagents must never run on Fable. Match case-insensitively, as a word
+  # or alias prefix — "fable", "claude-fable-5-1", and "fable[1m]" all trip;
+  # "table", "fables", or "antfable" do not.
+  isFableModel =
+    value:
+    let
+      lower = lib.toLower value;
+    in
+    builtins.match "fable([^a-z0-9].*)?" lower != null
+    || builtins.match ".*[^a-z0-9]fable([^a-z0-9].*)?" lower != null;
+
+  # A consumer who moved forceSubagentModel or forkSubagents off this
+  # module's defaults has made a deliberate choice and may override the
+  # rendered force/fork policy (including via a raw env entry); only the
+  # untouched defaults are held to it. The Fable ban is absolute and sits
+  # outside this escape hatch — `subagentModel` is deliberately not listed.
+  subagentOptionsExplicit = !cfg.settings.forceSubagentModel || cfg.settings.forkSubagents;
 in
 [
   {
@@ -101,5 +119,29 @@ in
       Use a "<number>s" or "<number>m" value up to "5m", or leave it null to
       keep Claude Code's own 5m default.
     '';
+  }
+  {
+    # Absolute, with no override: no configuration may render a Fable
+    # subagent model, whether the Fable value came from
+    # settings.subagentModel itself or a raw env entry.
+    assertion =
+      !(isFableModel cfg.settings.subagentModel)
+      && !(isFableModel (envAttrs.CLAUDE_CODE_SUBAGENT_MODEL or ""));
+    message = "Subagent policy: no configuration may render a Fable subagent model — settings.subagentModel is \"${cfg.settings.subagentModel}\" and rendered env CLAUDE_CODE_SUBAGENT_MODEL=\"${
+      envAttrs.CLAUDE_CODE_SUBAGENT_MODEL or ""
+    }\"; set both to a non-Fable model (the default is \"haiku\").";
+  }
+  {
+    assertion =
+      subagentOptionsExplicit
+      || (
+        (envAttrs.CLAUDE_CODE_SUBAGENT_MODEL_FORCE or "") == "1"
+        && (envAttrs.CLAUDE_CODE_FORK_SUBAGENT or "") == "0"
+      );
+    message = "Subagent policy: rendered env CLAUDE_CODE_SUBAGENT_MODEL_FORCE=\"${
+      envAttrs.CLAUDE_CODE_SUBAGENT_MODEL_FORCE or ""
+    }\" must be \"1\" and CLAUDE_CODE_FORK_SUBAGENT=\"${
+      envAttrs.CLAUDE_CODE_FORK_SUBAGENT or ""
+    }\" must be \"0\" — set settings.forceSubagentModel/forkSubagents explicitly to override.";
   }
 ]

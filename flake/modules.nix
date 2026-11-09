@@ -25,7 +25,6 @@ let
       browser-use-skills
       vct-cribl-pack-validator-skills
       fabric-src
-      claude-swap
       ;
   };
   wrap =
@@ -45,6 +44,7 @@ in
     statusline = wrap ../modules/statusline;
     hooks = wrap ../modules/hooks.nix;
     mcp = wrap ../modules/mcp.nix;
+    install = wrap ../modules/install.nix;
     latest = wrap ../modules/latest.nix;
     components = wrap ../modules/components.nix;
     registry = wrap ../modules/registry.nix;

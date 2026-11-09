@@ -40,6 +40,15 @@ either surprising or actively unhelpful:
 setting and disables the advisor. Set it to `"fable"`, `"opus"`, `"sonnet"`,
 or a full model ID to enable the server-side advisor.
 
+Subagents stay off Fable even when the main session runs on it:
+`programs.claude.settings.subagentModel` defaults to `"haiku"`,
+`forceSubagentModel` to `true` (every subagent, teammate, and workflow agent
+runs on that model), and `forkSubagents` to `false` (forks, which inherit the
+main session's model, are off). `modules/settings.nix` renders the three env
+vars and `modules/settings-assertions.nix` rejects a rendered Fable value
+unless you set those options yourself; `env.CLAUDE_CODE_SUBAGENT_MODEL`
+overrides the env var per key (e.g. to a local router model).
+
 `autoCompactThresholdPercent` isn't a real settings.json key — Claude Code has
 none for this (context windows are trending toward 1M tokens, and Claude's own
 default of ~90%+ used leaves too little headroom for the summarization pass
@@ -54,6 +63,10 @@ override just the env var.
 document — see that file for rationale.
 `programs.claude.defaultMode` (`"auto"`, in `modules/core.nix`) has a section
 of its own below.
+
+## Install method (`install`)
+
+See [install-method.md](install-method.md).
 
 ## Permissions: full-trust auto mode
 
