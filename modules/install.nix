@@ -87,7 +87,7 @@ in
 
     (lib.mkIf (cfg.enable && isNative) {
       programs.claude = {
-        package = lib.mkDefault null;
+        package = lib.mkOverride 900 null; # beats a consumer mkDefault package
         latest = {
           enable = lib.mkDefault true;
           installOnActivation = lib.mkDefault true;
@@ -98,7 +98,7 @@ in
 
     (lib.mkIf (cfg.enable && isBrew) {
       programs.claude = {
-        package = lib.mkDefault null;
+        package = lib.mkOverride 900 null; # beats a consumer mkDefault package
         settings.env.CLAUDE_CODE_PACKAGE_MANAGER_AUTO_UPDATE = lib.mkDefault "1";
       };
     })
