@@ -6,6 +6,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 with a permanent pre-1.0 cadence — see `release-please-config.json`.
 
+## [2.7.0](https://github.com/dryvist/nix-claude-code/compare/v2.6.0...v2.7.0) (2026-11-09)
+
+
+### Features
+
+* add programs.claude.install method selector ([#454](https://github.com/dryvist/nix-claude-code/issues/454)) ([53295b4](https://github.com/dryvist/nix-claude-code/commit/53295b42b6cfcae9531a3416c3d0f65f3e52fd1f))
+* **agent:** autonomous zcode run j-203449730bcc8ac4 ([#453](https://github.com/dryvist/nix-claude-code/issues/453)) ([848c7cc](https://github.com/dryvist/nix-claude-code/commit/848c7ccb91ceaea9e3509d1a576aae6a11b1eb72))
+* **agent:** zcode run j-203449730bcc8ac4 ([848c7cc](https://github.com/dryvist/nix-claude-code/commit/848c7ccb91ceaea9e3509d1a576aae6a11b1eb72))
+
 ## [2.6.0](https://github.com/dryvist/nix-claude-code/compare/v2.5.0...v2.6.0) (2026-11-09)
 
 
