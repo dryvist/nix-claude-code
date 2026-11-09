@@ -22,7 +22,6 @@
     ./orphan-cleanup.nix
     ./settings.nix
     ./claude-json.nix
-    ./claude-swap.nix
     ./api-key-helper.nix
     ./statusline
 
