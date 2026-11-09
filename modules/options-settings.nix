@@ -30,6 +30,7 @@
       imports = [
         ./options-settings-catalog.nix
         ./options-settings-policy.nix
+        ./options-subagents.nix
       ];
       freeformType = lib.types.attrs;
       options = {
