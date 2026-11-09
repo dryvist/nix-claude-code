@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 with a permanent pre-1.0 cadence — see `release-please-config.json`.
 
+## [2.5.0](https://github.com/dryvist/nix-claude-code/compare/v2.4.0...v2.5.0) (2026-11-09)
+
+
+### Features
+
+* **settings:** default model switching and dialog expiry so sessions never wait ([#443](https://github.com/dryvist/nix-claude-code/issues/443)) ([308b8cb](https://github.com/dryvist/nix-claude-code/commit/308b8cb8a4f3878f5f1fbfa110354313a678f773))
+
 ## [2.4.0](https://github.com/dryvist/nix-claude-code/compare/v2.3.0...v2.4.0) (2026-10-31)
 
 
