@@ -84,12 +84,26 @@ let
     CLAUDE_AUTOCOMPACT_PCT_OVERRIDE = toString cfg.settings.autoCompactThresholdPercent;
   };
 
+  # Subagent model pinning (options-subagents.nix). With
+  # CLAUDE_CODE_SUBAGENT_MODEL_FORCE = "1", Claude Code v2.1.257+ applies
+  # CLAUDE_CODE_SUBAGENT_MODEL to every subagent, teammate, and workflow
+  # agent, and CLAUDE_CODE_FORK_SUBAGENT = "0" keeps forks — which inherit
+  # the main session's model — off. settings-assertions.nix holds the
+  # rendered values to this. Merged before cfg.settings.env so a
+  # caller-supplied raw env entry for the same var still wins.
+  subagentEnv = {
+    CLAUDE_CODE_SUBAGENT_MODEL = cfg.settings.subagentModel;
+    CLAUDE_CODE_SUBAGENT_MODEL_FORCE = if cfg.settings.forceSubagentModel then "1" else "0";
+    CLAUDE_CODE_FORK_SUBAGENT = if cfg.settings.forkSubagents then "1" else "0";
+  };
+
   # Build the env attribute (merge upstream defaults, the auto-compact
-  # threshold, user env vars, and API_KEY_HELPER if enabled — later entries
-  # win on key conflict).
+  # threshold, the subagent pin, user env vars, and API_KEY_HELPER if
+  # enabled — later entries win on key conflict).
   envAttrs =
     upstreamEnvDefaults
     // autoCompactEnv
+    // subagentEnv
     // cfg.settings.env
     // lib.optionalAttrs cfg.apiKeyHelper.enable {
       API_KEY_HELPER = "${homeDir}/${cfg.apiKeyHelper.scriptPath}";
@@ -140,7 +154,9 @@ let
   # Exception: `autoCompactThresholdPercent` IS listed here even though it's
   # a curated `nullOr` option, because it has no settings.json key of its
   # own — it's consumed above into `autoCompactEnv`/`envAttrs` instead, so
-  # letting it ride freeform would leak a bogus top-level JSON key.
+  # letting it ride freeform would leak a bogus top-level JSON key. Same
+  # for the subagent trio (`options-subagents.nix`), consumed into
+  # `subagentEnv`/`envAttrs` above.
   # `hooks` is listed here because it needs the typed-hooks merge above,
   # not a verbatim passthrough — see `hooksAttrs`.
   knownSettingsKeys = [
@@ -154,6 +170,9 @@ let
     "schemaUrl"
     "sandbox"
     "autoCompactThresholdPercent"
+    "subagentModel"
+    "forceSubagentModel"
+    "forkSubagents"
     "hooks"
     "outputStyle"
   ];
