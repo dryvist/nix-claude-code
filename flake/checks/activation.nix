@@ -148,6 +148,8 @@ in
         expect '.permissions.defaultMode' '"auto"'
         expect '.autoMode.classifyAllShell' 'true'
         expect '.askUserQuestionTimeout' '"5m"'
+        expect '.dialogExpiry' '"5m"'
+        expect '.switchModelsOnFlag' 'true'
         expect '.useAutoModeDuringPlan' 'true'
         expect 'has("advisorModel")' 'false'
         expect 'has("outputStyle")' 'false'

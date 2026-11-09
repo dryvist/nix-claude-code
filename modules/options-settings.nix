@@ -213,19 +213,36 @@
 
         dialogExpiry = lib.mkOption {
           type = lib.types.nullOr lib.types.str;
-          default = null;
+          default = "5m";
           example = "60s";
           description = ''
             Deadline for dialogs Claude Code forwards to a remote client
             (Remote Control, SDK hosts) — model-choice prompts after a
             safety refusal, approval dialogs for held cross-session
-            messages. Accepts "60s" or "5m" style values.
+            messages. Accepts "60s" or "5m" style values. Requires Claude
+            Code v2.1.224 or later. Permission prompts and
+            `AskUserQuestion` dialogs use their own flows and are not
+            governed by this deadline.
 
-            `null` (the default) leaves Claude Code's own default of "5m",
-            which is already within this module's five-minute cap, so we do
-            not override it. Set it only to go LOWER: `./settings.nix`
-            asserts a non-null value never exceeds 5m. Requires Claude Code
-            v2.1.224 or later.
+            Defaults to "5m", Claude Code's own default, rendered
+            explicitly so it cannot drift past this module's five-minute
+            cap, which `./settings.nix` asserts. Set it only LOWER: the
+            assertion rejects a value beyond 5m. `null` omits the key and
+            defers to Claude Code's built-in default.
+          '';
+        };
+
+        switchModelsOnFlag = lib.mkOption {
+          type = lib.types.bool;
+          default = true;
+          description = ''
+            Switch to the fallback model automatically when a request is
+            flagged, instead of pausing for a choice. With `false`, an
+            interactive session stops at the flag so you can pick between
+            switching and rewording the prompt, and a `-p` run ends the
+            flagged request as an error. Upstream's default is unset,
+            which switches automatically but may still ask first in an
+            interactive session.
           '';
         };
 
