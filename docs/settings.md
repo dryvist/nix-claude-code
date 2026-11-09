@@ -32,6 +32,8 @@ either surprising or actively unhelpful:
 | ------------------------------------------------------ | ------- | ----------------------------------------------------------------------------------- |
 | `programs.claude.settings.askUserQuestionTimeout`      | `"5m"`  | Real runtime default is `"never"` despite the docs — blocks a session indefinitely. |
 | `programs.claude.settings.useAutoModeDuringPlan`       | `true`  | Runs plan mode through the cheaper/faster auto-mode classifier, not its own gating. |
+| `programs.claude.settings.switchModelsOnFlag`          | `true`  | Switches models automatically after a safety flag instead of pausing to ask.        |
+| `programs.claude.settings.dialogExpiry`                | `"5m"`  | Pins the dialogs forwarded to Remote Control/SDK hosts at the five-minute cap.      |
 | `programs.claude.settings.autoCompactThresholdPercent` | `60`    | Compact well before the hard limit — see below for the full rationale and override. |
 
 `programs.claude.settings.advisorModel` is opt-in: its default `null` omits the
@@ -106,11 +108,19 @@ confirm your entries took effect.
 ### Human-wait dialogs are capped at five minutes
 
 `askUserQuestionTimeout` defaults to `"5m"` (upstream's real default is
-`"never"`). `dialogExpiry` — the deadline for dialogs forwarded to Remote
-Control and SDK hosts — is left at Claude Code's own `"5m"` default, which is
-already within the cap. `modules/settings.nix` asserts that neither exceeds
-five minutes and rejects `"never"`, so no dialog can hold a session open
-indefinitely.
+`"never"`), and `dialogExpiry` renders `"5m"` explicitly — Claude Code's own
+default, pinned so it cannot move past the cap. `modules/settings.nix` asserts
+that neither exceeds five minutes and rejects `"never"`, so no forwarded
+dialog can hold a session open indefinitely.
+
+Two upstream gaps the cap cannot close:
+
+- The `askUserQuestionTimeout` timer never starts in background sessions or
+  while Remote Control is connected, so an unanswered question there still
+  waits for a human to return.
+- Permission prompts are governed by neither timeout and never auto-resolve
+  on idle; in this module's default configuration the auto-mode classifier
+  answers them instead — see "Denials never wait for a human" above.
 
 [auto-mode]: https://code.claude.com/docs/en/permission-modes#eliminate-prompts-with-auto-mode
 [fallback]: https://code.claude.com/docs/en/permission-modes#when-auto-mode-falls-back
@@ -132,11 +142,6 @@ Declared in `modules/options-settings.nix`, all default to `null` — meaning
 | `plansDirectory`             | str                   | `~/.claude/plans`            |
 | `language`                   | str                   | unset (follows conversation) |
 | `fallbackModel`              | list of str           | unset (no fallback)          |
-| `dialogExpiry`               | str                   | `"5m"`                       |
-
-`dialogExpiry` is the one entry here whose upstream default is already inside
-this module's five-minute human-wait cap, so it is left unset deliberately —
-set it only to go lower. See "Permissions: full-trust auto mode" above.
 
 `outputStyle` can also be set via top-level `programs.claude.outputStyle` (e.g. `"concise"`), matching `programs.claude.model`.
 
