@@ -68,6 +68,15 @@
           lib
           ;
       };
+
+      installModeChecks = import ./checks/install-mode.nix {
+        inherit
+          inputs
+          self
+          pkgs
+          lib
+          ;
+      };
     in
     {
       checks = {
@@ -246,6 +255,7 @@
       // mergeJsonSettingsChecks
       // activationChecks
       // configDirChecks
+      // installModeChecks
       // marketplaceDeliveryChecks;
     };
 }
