@@ -42,6 +42,26 @@ let
       seconds = parseDurationSeconds value;
     in
     seconds != null && seconds <= humanWaitCapSeconds;
+
+  # Subagents must never run on Fable. Match case-insensitively, as a word
+  # or alias prefix — "fable", "claude-fable-5-1", and "fable[1m]" all trip;
+  # "table", "fables", or "antfable" do not.
+  isFableModel =
+    value:
+    let
+      lower = lib.toLower value;
+    in
+    builtins.match "fable([^a-z0-9].*)?" lower != null
+    || builtins.match ".*[^a-z0-9]fable([^a-z0-9].*)?" lower != null;
+
+  # A consumer who moved any of the subagent options off this module's
+  # defaults has made a deliberate choice and may override the rendered
+  # policy (including via a raw env entry); only the untouched defaults
+  # are held to it.
+  subagentOptionsExplicit =
+    cfg.settings.subagentModel != "haiku"
+    || !cfg.settings.forceSubagentModel
+    || cfg.settings.forkSubagents;
 in
 [
   {
@@ -101,5 +121,21 @@ in
       Use a "<number>s" or "<number>m" value up to "5m", or leave it null to
       keep Claude Code's own 5m default.
     '';
+  }
+  {
+    assertion =
+      subagentOptionsExplicit
+      || (
+        !(isFableModel (envAttrs.CLAUDE_CODE_SUBAGENT_MODEL or ""))
+        && (envAttrs.CLAUDE_CODE_SUBAGENT_MODEL_FORCE or "") == "1"
+        && (envAttrs.CLAUDE_CODE_FORK_SUBAGENT or "") == "0"
+      );
+    message = "Subagent policy: rendered env CLAUDE_CODE_SUBAGENT_MODEL=\"${
+      envAttrs.CLAUDE_CODE_SUBAGENT_MODEL or ""
+    }\" must not match Fable, CLAUDE_CODE_SUBAGENT_MODEL_FORCE=\"${
+      envAttrs.CLAUDE_CODE_SUBAGENT_MODEL_FORCE or ""
+    }\" must be \"1\", CLAUDE_CODE_FORK_SUBAGENT=\"${
+      envAttrs.CLAUDE_CODE_FORK_SUBAGENT or ""
+    }\" must be \"0\" — set settings.subagentModel/forceSubagentModel/forkSubagents explicitly to override.";
   }
 ]

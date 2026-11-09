@@ -4,6 +4,7 @@
   inputs,
   self,
   pkgs,
+  lib,
   ...
 }:
 let
@@ -99,6 +100,34 @@ let
     };
   };
 
+  # A caller-supplied raw env entry must beat the subagent pin per key —
+  # a consuming repository points CLAUDE_CODE_SUBAGENT_MODEL at local
+  # router model names.
+  subagentEnvActivation = mkActivation {
+    programs.claude = {
+      enable = true;
+      package = null;
+      settings.env.CLAUDE_CODE_SUBAGENT_MODEL = "local-router-model";
+    };
+  };
+
+  # A Fable env value must fail evaluation via the settings-assertions.nix
+  # subagent policy. tryEval rather than reading `config.assertions`:
+  # home-manager enforces them during evaluation, so the value throws
+  # before any list can be inspected (same pattern as config-dir.nix).
+  fableSubagentEvaluates =
+    (builtins.tryEval (
+      builtins.seq
+        (mkActivation {
+          programs.claude = {
+            enable = true;
+            package = null;
+            settings.env.CLAUDE_CODE_SUBAGENT_MODEL = "fable";
+          };
+        }).drvPath
+        true
+    )).success;
+
 in
 {
   programs-claude-eval = programsClaudeEval;
@@ -136,6 +165,37 @@ in
         expect 'has("outputStyle")' 'false'
         echo ok > $out
       '';
+
+  # Subagent model pinning (options-subagents.nix → settings.nix
+  # subagentEnv): the defaults render all three env vars, an explicit
+  # non-Fable CLAUDE_CODE_SUBAGENT_MODEL wins, and a Fable value fails
+  # evaluation — subagents, teammates, workflow agents, and forks must
+  # never run on Fable by default, even under a Fable main session.
+  subagent-model-policy =
+    assert lib.assertMsg (!fableSubagentEvaluates)
+      "env CLAUDE_CODE_SUBAGENT_MODEL = \"fable\" evaluated cleanly; the subagent Fable assertion did not fire";
+    pkgs.runCommand "subagent-model-policy-test" { nativeBuildInputs = [ pkgs.jq ]; } ''
+      set -euo pipefail
+      expect() {
+        local file="$1" filter="$2" want="$3" got
+        got=$(jq -c "$filter" "$file")
+        [[ "$got" == "$want" ]] || {
+          echo "$filter: expected $want, got $got" >&2
+          exit 1
+        }
+      }
+
+      default_json=$(grep -o '/nix/store/[a-z0-9]*-claude-settings\.json' \
+        ${programsClaudeEval}/activate | head -1)
+      expect "$default_json" '.env.CLAUDE_CODE_SUBAGENT_MODEL' '"haiku"'
+      expect "$default_json" '.env.CLAUDE_CODE_SUBAGENT_MODEL_FORCE' '"1"'
+      expect "$default_json" '.env.CLAUDE_CODE_FORK_SUBAGENT' '"0"'
+
+      custom_json=$(grep -o '/nix/store/[a-z0-9]*-claude-settings\.json' \
+        ${subagentEnvActivation}/activate | head -1)
+      expect "$custom_json" '.env.CLAUDE_CODE_SUBAGENT_MODEL' '"local-router-model"'
+      echo ok > $out
+    '';
 
   # Regression: every sandbox sub-key a caller sets must reach settings.json.
   # `sandbox` is in settings.nix's `knownSettingsKeys`, so it is excluded from
