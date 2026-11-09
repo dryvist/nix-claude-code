@@ -25,6 +25,10 @@ let
       # which is perl's; activation runs without the system PATH.
       pkgs.perl
     ];
+    # The binary the installer checks for: programs.claude.binaryPath.
+    runtimeEnv = {
+      CLAUDE_LATEST_BIN = config.programs.claude.binaryPath;
+    };
     text = builtins.readFile ./scripts/claude-latest-install.sh;
   };
 in
