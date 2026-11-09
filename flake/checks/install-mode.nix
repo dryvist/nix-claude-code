@@ -1,5 +1,5 @@
 # `programs.claude.install` checks for nix-claude-code.
-# Each mode must resolve binaryPath, package, and brewCask as docs/settings.md
+# Each mode must resolve binaryPath, package, and brewCask as docs/install-method.md
 # states, and an explicit value must still win over the mode's defaults.
 {
   inputs,
