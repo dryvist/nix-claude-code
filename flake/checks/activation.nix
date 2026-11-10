@@ -228,6 +228,8 @@ in
       expect "$default_json" '.env.CLAUDE_CODE_SUBAGENT_MODEL' '"haiku"'
       expect "$default_json" '.env.CLAUDE_CODE_SUBAGENT_MODEL_FORCE' '"1"'
       expect "$default_json" '.env.CLAUDE_CODE_FORK_SUBAGENT' '"0"'
+      expect "$default_json" '.env.BASH_DEFAULT_TIMEOUT_MS' '"60000"'
+      expect "$default_json" '.env.BASH_MAX_TIMEOUT_MS' '"300000"'
 
       custom_json=$(grep -o '/nix/store/[a-z0-9]*-claude-settings\.json' \
         ${subagentEnvActivation}/activate | head -1)

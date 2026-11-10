@@ -63,8 +63,8 @@ let
     text = builtins.readFile ./scripts/validate-settings.sh;
   };
 
-  # Sensible env defaults every adopter benefits from (MCP timeouts long
-  # enough for slow servers, deferred MCP tool-schema loading).
+  # Env defaults: MCP timeouts, deferred MCP tool-schema loading, and the
+  # Bash tool's default (60s) and maximum (300s) timeouts.
   # Merged *under* `cfg.settings.env` so overriding any single key wins
   # per-key rather than requiring the whole map to be redeclared.
   # ENABLE_TOOL_SEARCH=true always defers MCP schemas; an `auto:N` threshold
@@ -74,6 +74,8 @@ let
     MCP_TIMEOUT = "300000";
     MCP_TOOL_TIMEOUT = "300000";
     ENABLE_TOOL_SEARCH = "true";
+    BASH_DEFAULT_TIMEOUT_MS = "60000";
+    BASH_MAX_TIMEOUT_MS = "300000";
   };
 
   # autoCompactThresholdPercent is a curated option (options-settings.nix),
