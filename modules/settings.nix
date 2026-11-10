@@ -74,6 +74,8 @@ let
     MCP_TIMEOUT = "300000";
     MCP_TOOL_TIMEOUT = "300000";
     ENABLE_TOOL_SEARCH = "true";
+    BASH_DEFAULT_TIMEOUT_MS = "60000";
+    BASH_MAX_TIMEOUT_MS = "300000";
   };
 
   # autoCompactThresholdPercent is a curated option (options-settings.nix),
