@@ -130,6 +130,11 @@ in
     expected = true;
   };
 
+  "test (settings): deny includes iCloud Drive reads" = {
+    expr = builtins.elem "Read(~/Library/Mobile Documents/**)" withPerms.permissions.deny;
+    expected = true;
+  };
+
   "test (settings): deny commands wrapped as Bash(<cmd> *)" = {
     expr = builtins.any (s: s == "Bash(sudo rm *)") withPerms.permissions.deny;
     expected = true;

@@ -199,5 +199,7 @@ _:
     "~/.aws/credentials"
     "~/.gnupg/**"
     "~/.ssh/id_*"
+    # iCloud Drive: reads of files not yet downloaded block the tool call.
+    "~/Library/Mobile Documents/**"
   ];
 }
