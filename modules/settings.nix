@@ -82,9 +82,13 @@ let
   # not a real settings.json key — Claude Code only exposes this via the
   # CLAUDE_AUTOCOMPACT_PCT_OVERRIDE env var. Merged before cfg.settings.env
   # so a caller-supplied raw env entry for the same var still wins.
-  autoCompactEnv = lib.optionalAttrs (cfg.settings.autoCompactThresholdPercent != null) {
-    CLAUDE_AUTOCOMPACT_PCT_OVERRIDE = toString cfg.settings.autoCompactThresholdPercent;
-  };
+  autoCompactEnv =
+    lib.optionalAttrs (cfg.settings.autoCompactThresholdPercent != null) {
+      CLAUDE_AUTOCOMPACT_PCT_OVERRIDE = toString cfg.settings.autoCompactThresholdPercent;
+    }
+    // lib.optionalAttrs (cfg.settings.autoCompactWindow != null) {
+      CLAUDE_CODE_AUTO_COMPACT_WINDOW = cfg.settings.autoCompactWindow;
+    };
 
   # Subagent model pinning (options-subagents.nix). With
   # CLAUDE_CODE_SUBAGENT_MODEL_FORCE = "1", Claude Code v2.1.257+ applies
@@ -172,6 +176,7 @@ let
     "schemaUrl"
     "sandbox"
     "autoCompactThresholdPercent"
+    "autoCompactWindow"
     "subagentModel"
     "forceSubagentModel"
     "forkSubagents"
