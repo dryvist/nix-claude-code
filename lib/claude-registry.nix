@@ -1,6 +1,6 @@
 # Claude Registry Functions
 #
-# Generates known_marketplaces.json structure that Claude Code expects.
+# Converts Nix marketplace definitions into the marketplace source format Claude Code expects.
 #
 # CRITICAL FIELDS (must match Claude's expectations exactly):
 # ============================================================================
@@ -18,7 +18,6 @@
 #
 # Parameters:
 #   lib: nixpkgs lib (required)
-#   lastUpdated: ISO 8601 timestamp (default: epoch, caller should provide current time)
 #   homeDir: absolute home path used to build `directory`-source paths for
 #     local (synthetic) marketplaces. Default is a placeholder; the deployed
 #     module (modules/settings.nix) imports with the real home directory.
@@ -30,7 +29,6 @@
 #     then brings installed plugins to the version in the Nix-pinned catalog.
 {
   lib,
-  lastUpdated ? "1970-01-01T00:00:00.000Z",
   homeDir ? "/home/user",
   configDir ? ".claude",
   nixManagedAutoUpdate ? true,
@@ -123,41 +121,6 @@ in
 {
   # Export the transformation function for use by other modules
   inherit toClaudeMarketplaceFormat;
-  # Generate the full known_marketplaces.json structure
-  # Matches native Claude Code format exactly
-  mkKnownMarketplaces =
-    {
-      marketplaces,
-      homeDir ? "/home/user",
-      configDir ? ".claude",
-    }:
-    let
-      # Extract marketplace name from the identifier
-      # e.g., "anthropics/claude-plugins-official" -> "claude-plugins-official"
-      #       "org/team/repo" -> "repo"
-      getMarketplaceName = name: lib.last (lib.splitString "/" name);
-
-      # Convert marketplace config to native format
-      # Uses toClaudeMarketplaceFormat for consistent source formatting
-      toNativeFormat =
-        name: m:
-        let
-          marketplaceName = getMarketplaceName name;
-          # Native format uses local paths, not Nix store
-          localPath = "${homeDir}/${configDir}/plugins/marketplaces/${marketplaceName}";
-          # Reuse single source of truth for marketplace format
-          formatted = toClaudeMarketplaceFormat name m;
-        in
-        lib.nameValuePair marketplaceName {
-          # Field order matches native: source, installLocation, lastUpdated
-          inherit (formatted) source;
-          installLocation = localPath;
-          inherit lastUpdated;
-        };
-    in
-    # NOTE: "local" marketplace removed - Claude Code doesn't create one by default.
-    lib.listToAttrs (lib.mapAttrsToList toNativeFormat marketplaces);
-
   # Generate installed_plugins.json structure
   mkInstalledPlugins =
     {
