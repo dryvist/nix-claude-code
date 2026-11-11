@@ -45,6 +45,20 @@
       '';
     };
 
+    # Not a settings.json key — Claude Code reads the context-window size
+    # from this environment variable when calculating the auto-compact
+    # threshold. null leaves Claude Code's own default in effect.
+    autoCompactWindow = lib.mkOption {
+      type = lib.types.nullOr lib.types.str;
+      default = null;
+      example = "500000";
+      description = ''
+        Context-window size used by auto-compaction. Emitted as
+        `CLAUDE_CODE_AUTO_COMPACT_WINDOW` in the `env` block. null = unset
+        (Claude Code's own default).
+      '';
+    };
+
     outputStyle = lib.mkOption {
       type = lib.types.nullOr lib.types.str;
       default = null;
@@ -133,6 +147,19 @@
         Fallback model(s) tried in order when the primary model is
         overloaded (capped at 3 upstream). null = upstream default
         (unset, no fallback).
+      '';
+    };
+
+    # Not a settings.json key — Claude Code reads the native subagent model
+    # from this environment variable. null leaves Claude Code's own default.
+    subagentModel = lib.mkOption {
+      type = lib.types.nullOr lib.types.str;
+      default = null;
+      example = "claude-sonnet-5[1m]";
+      description = ''
+        Model id used for native subagents. Emitted as
+        `CLAUDE_CODE_SUBAGENT_MODEL` in the `env` block. null = unset
+        (Claude Code's own default).
       '';
     };
   };

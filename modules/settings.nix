@@ -76,20 +76,26 @@ let
     ENABLE_TOOL_SEARCH = "true";
   };
 
-  # autoCompactThresholdPercent is a curated option (options-settings.nix),
-  # not a real settings.json key — Claude Code only exposes this via the
-  # CLAUDE_AUTOCOMPACT_PCT_OVERRIDE env var. Merged before cfg.settings.env
-  # so a caller-supplied raw env entry for the same var still wins.
-  autoCompactEnv = lib.optionalAttrs (cfg.settings.autoCompactThresholdPercent != null) {
-    CLAUDE_AUTOCOMPACT_PCT_OVERRIDE = toString cfg.settings.autoCompactThresholdPercent;
-  };
+  # Curated settings that Claude Code exposes only through environment
+  # variables, not as settings.json keys. Merged before cfg.settings.env so
+  # a caller-supplied raw env entry for the same variable still wins.
+  curatedEnv =
+    lib.optionalAttrs (cfg.settings.autoCompactThresholdPercent != null) {
+      CLAUDE_AUTOCOMPACT_PCT_OVERRIDE = toString cfg.settings.autoCompactThresholdPercent;
+    }
+    // lib.optionalAttrs (cfg.settings.autoCompactWindow != null) {
+      CLAUDE_CODE_AUTO_COMPACT_WINDOW = cfg.settings.autoCompactWindow;
+    }
+    // lib.optionalAttrs (cfg.settings.subagentModel != null) {
+      CLAUDE_CODE_SUBAGENT_MODEL = cfg.settings.subagentModel;
+    };
 
   # Build the env attribute (merge upstream defaults, the auto-compact
   # threshold, user env vars, and API_KEY_HELPER if enabled — later entries
   # win on key conflict).
   envAttrs =
     upstreamEnvDefaults
-    // autoCompactEnv
+    // curatedEnv
     // cfg.settings.env
     // lib.optionalAttrs cfg.apiKeyHelper.enable {
       API_KEY_HELPER = "${homeDir}/${cfg.apiKeyHelper.scriptPath}";
@@ -137,10 +143,10 @@ let
   # that this builder emits *explicitly* below. Curated `nullOr` options are
   # deliberately NOT added here — they ride this freeform path instead, and
   # the null-filter is what keeps their default (unset) from ever emitting.
-  # Exception: `autoCompactThresholdPercent` IS listed here even though it's
-  # a curated `nullOr` option, because it has no settings.json key of its
-  # own — it's consumed above into `autoCompactEnv`/`envAttrs` instead, so
-  # letting it ride freeform would leak a bogus top-level JSON key.
+  # The curated environment-only settings are listed here even though they
+  # are `nullOr` options: they have no settings.json key of their own and are
+  # consumed above into `curatedEnv`/`envAttrs`, so letting them ride freeform
+  # would leak bogus top-level JSON keys.
   # `hooks` is listed here because it needs the typed-hooks merge above,
   # not a verbatim passthrough — see `hooksAttrs`.
   knownSettingsKeys = [
@@ -154,6 +160,8 @@ let
     "schemaUrl"
     "sandbox"
     "autoCompactThresholdPercent"
+    "autoCompactWindow"
+    "subagentModel"
     "hooks"
     "outputStyle"
   ];

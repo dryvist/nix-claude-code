@@ -74,6 +74,16 @@ let
       outputStyle = "concise";
     };
   };
+  sessionSettingsActivation = mkActivation {
+    programs.claude = {
+      enable = true;
+      package = null;
+      settings = {
+        autoCompactWindow = "500000";
+        subagentModel = "test-subagent-model";
+      };
+    };
+  };
   # Exercises the sandbox sub-keys and one policy key. Before the renderer
   # emitted the whole attrset, everything except enabled /
   # autoAllowBashIfSandboxed / excludedCommands was dropped, so this fixture
@@ -151,6 +161,21 @@ in
         expect '.useAutoModeDuringPlan' 'true'
         expect 'has("advisorModel")' 'false'
         expect 'has("outputStyle")' 'false'
+        expect '(.env // {}) | has("CLAUDE_CODE_AUTO_COMPACT_WINDOW")' 'false'
+        expect '(.env // {}) | has("CLAUDE_CODE_SUBAGENT_MODEL")' 'false'
+        echo ok > $out
+      '';
+
+  claude-session-settings-env-render =
+    pkgs.runCommand "claude-session-settings-env-render-test" { nativeBuildInputs = [ pkgs.jq ]; }
+      ''
+        set -euo pipefail
+        settings_json=$(grep -o '/nix/store/[a-z0-9]*-claude-settings\.json' \
+          ${sessionSettingsActivation}/activate | head -1)
+        jq -e '.env.CLAUDE_CODE_AUTO_COMPACT_WINDOW == "500000"' "$settings_json" > /dev/null
+        jq -e '.env.CLAUDE_CODE_SUBAGENT_MODEL == "test-subagent-model"' "$settings_json" > /dev/null
+        jq -e 'has("autoCompactWindow") | not' "$settings_json" > /dev/null
+        jq -e 'has("subagentModel") | not' "$settings_json" > /dev/null
         echo ok > $out
       '';
 
