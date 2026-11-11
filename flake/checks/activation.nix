@@ -337,3 +337,4 @@ in
       '';
 }
 // (import ./hook-events.nix { inherit pkgs mkActivation; })
+// (import ./auto-compact.nix { inherit pkgs mkActivation; })
