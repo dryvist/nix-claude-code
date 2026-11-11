@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 with a permanent pre-1.0 cadence — see `release-please-config.json`.
 
+## [2.8.0](https://github.com/dryvist/nix-claude-code/compare/v2.7.0...v2.8.0) (2026-11-10)
+
+
+### Features
+
+* **settings:** default Bash tool timeouts to 60s, max 300s ([#458](https://github.com/dryvist/nix-claude-code/issues/458)) ([b5459b5](https://github.com/dryvist/nix-claude-code/commit/b5459b578f5dcb6f82ecb7c2c4fc85c137554547))
+
 ## [2.7.0](https://github.com/dryvist/nix-claude-code/compare/v2.6.0...v2.7.0) (2026-11-09)
 
 
