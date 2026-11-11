@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 with a permanent pre-1.0 cadence — see `release-please-config.json`.
 
+## [2.10.0](https://github.com/dryvist/nix-claude-code/compare/v2.9.0...v2.10.0) (2026-11-11)
+
+
+### Features
+
+* **settings:** optional autoCompactWindow option ([#464](https://github.com/dryvist/nix-claude-code/issues/464)) ([5a03687](https://github.com/dryvist/nix-claude-code/commit/5a036872284d7190737c807d320f8666812a0b93))
+
 ## [2.9.0](https://github.com/dryvist/nix-claude-code/compare/v2.8.0...v2.9.0) (2026-11-11)
 
 
