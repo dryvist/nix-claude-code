@@ -25,11 +25,15 @@
 #   configDir: home-relative path to Claude's config tree (mirrors
 #     `programs.claude.configDir`). Default matches upstream's own default,
 #     so a caller that doesn't pass this keeps today's paths unchanged.
+#   nixManagedAutoUpdate: `autoUpdate` value rendered for every Nix-managed
+#     marketplace (one with a `flakeInput`). Claude Code's native auto-update
+#     then brings installed plugins to the version in the Nix-pinned catalog.
 {
   lib,
   lastUpdated ? "1970-01-01T00:00:00.000Z",
   homeDir ? "/home/user",
   configDir ? ".claude",
+  nixManagedAutoUpdate ? true,
 }:
 
 let
@@ -64,6 +68,9 @@ let
   #     modules/plugins-catalog/marketplaces.nix). This keeps Claude Code from
   #     git-cloning the upstream repo over Nix-generated content.
   #   - Any other type keeps its source type and url unchanged
+  #   - A Nix-managed marketplace (non-null `flakeInput`) of any type becomes
+  #     the same "directory" source with `autoUpdate = nixManagedAutoUpdate`:
+  #     Claude reads the Nix-linked dir and never refreshes it from a remote
   #
   # Usage: Import this function in any module that needs to transform marketplaces:
   #   claudeRegistry = import ../lib/claude-registry.nix { inherit lib homeDir; };
@@ -101,10 +108,17 @@ let
         local = directorySource;
         directory = directorySource;
       };
+      nixManaged = (m.flakeInput or null) != null;
     in
-    {
-      source = byType.${m.source.type} or passthroughSource;
-    };
+    if nixManaged then
+      {
+        source = directorySource;
+        autoUpdate = nixManagedAutoUpdate;
+      }
+    else
+      {
+        source = byType.${m.source.type} or passthroughSource;
+      };
 in
 {
   # Export the transformation function for use by other modules
