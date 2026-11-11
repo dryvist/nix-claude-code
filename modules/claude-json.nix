@@ -89,8 +89,8 @@ let
       formatted = toClaudeMarketplaceFormat name m;
       marketplaceName = lib.last (lib.splitString "/" name);
     in
-    {
-      inherit (formatted) source;
+    formatted
+    // {
       installLocation = "${cfg.configDirAbs}/plugins/marketplaces/${marketplaceName}";
       lastUpdated = "1970-01-01T00:00:00.000Z";
     }

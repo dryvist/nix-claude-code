@@ -35,8 +35,34 @@ let
       url = "danielmiessler/fabric";
     };
   };
+
+  # Nix-managed marketplace declared as github: must still render the local
+  # directory source (a github source over a Nix symlink is refused by Claude).
+  nixManaged = reg.toClaudeMarketplaceFormat "jacobpevans-cc-plugins" {
+    source = {
+      type = "github";
+      url = "JacobPEvans/claude-code-plugins";
+    };
+    flakeInput = ./fixtures;
+  };
 in
 {
+  "test (registry): Nix-managed marketplace renders a directory source with autoUpdate" = {
+    expr = nixManaged;
+    expected = {
+      source = {
+        source = "directory";
+        path = "/home/tester/.claude/plugins/marketplaces/jacobpevans-cc-plugins";
+      };
+      autoUpdate = true;
+    };
+  };
+
+  "test (registry): marketplace without flakeInput renders no autoUpdate" = {
+    expr = github ? autoUpdate;
+    expected = false;
+  };
+
   "test (registry): github type stays a github source with repo" = {
     expr = github.source;
     expected = {
