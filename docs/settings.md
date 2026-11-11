@@ -117,20 +117,24 @@ Human-wait dialogs are capped at five minutes — see [Never wait for a human](n
 Declared in `modules/options-settings.nix`, all default to `null` — meaning
 "omit the key, use Claude's own upstream default" — until you set one:
 
-| Option                       | Type                  | Upstream default when unset  |
-| ---------------------------- | --------------------- | ---------------------------- |
-| `autoCompactEnabled`         | bool                  | `true`                       |
-| `outputStyle`                | str                   | unset                        |
-| `includeCoAuthoredBy`        | bool                  | `true`                       |
-| `enableAllProjectMcpServers` | bool                  | `false`                      |
-| `editorMode`                 | `"normal"` \| `"vim"` | `"normal"`                   |
-| `includeGitInstructions`     | bool                  | `true`                       |
-| `fileCheckpointingEnabled`   | bool                  | `true`                       |
-| `plansDirectory`             | str                   | `~/.claude/plans`            |
-| `language`                   | str                   | unset (follows conversation) |
-| `fallbackModel`              | list of str           | unset (no fallback)          |
+| Option                       | Type                                          | Upstream default when unset  |
+| ---------------------------- | --------------------------------------------- | ---------------------------- |
+| `autoCompactEnabled`         | bool                                          | `true`                       |
+| `effortLevel`                | `"low"` \| `"medium"` \| `"high"` \| `"xhigh"` | varies by model              |
+| `outputStyle`                | str                                           | unset                        |
+| `includeCoAuthoredBy`        | bool                                          | `true`                       |
+| `enableAllProjectMcpServers` | bool                                          | `false`                      |
+| `editorMode`                 | `"normal"` \| `"vim"`                         | `"normal"`                   |
+| `includeGitInstructions`     | bool                                          | `true`                       |
+| `fileCheckpointingEnabled`   | bool                                          | `true`                       |
+| `plansDirectory`             | str                                           | `~/.claude/plans`            |
+| `language`                   | str                                           | unset (follows conversation) |
+| `fallbackModel`              | list of str                                   | unset (no fallback)          |
 
 `outputStyle` can also be set via top-level `programs.claude.outputStyle` (e.g. `"concise"`), matching `programs.claude.model`.
+`effortLevel` can also be set via top-level `programs.claude.effortLevel`; when both are set, the `settings` option wins
+(same precedence as `outputStyle`). `"max"` is session-only and not accepted in settings.json — override per session
+with the `/effort` command.
 
 ## Builder-merged settings
 

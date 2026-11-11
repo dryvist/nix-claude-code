@@ -135,6 +135,12 @@ let
   resolvedOutputStyle =
     if cfg.settings.outputStyle != null then cfg.settings.outputStyle else cfg.outputStyle;
 
+  # `effortLevel` precedence (same shape as `outputStyle`):
+  #   1. cfg.settings.effortLevel (if non-null)  → wins
+  #   2. cfg.effortLevel                         → fallback
+  resolvedEffortLevel =
+    if cfg.settings.effortLevel != null then cfg.settings.effortLevel else cfg.effortLevel;
+
   # Auto-mode classifier configuration. Sub-fields exactly equal to the
   # literal default `[ "$defaults" ]` are filtered (they're semantically
   # a no-op — the classifier already uses defaults when unset). Only
@@ -162,7 +168,10 @@ let
   # own — it's consumed above into `autoCompactEnv`/`envAttrs` instead, so
   # letting it ride freeform would leak a bogus top-level JSON key. Same
   # for the subagent trio (`options-subagents.nix`), consumed into
-  # `subagentEnv`/`envAttrs` above.
+  # `subagentEnv`/`envAttrs` above. `outputStyle` and `effortLevel` are
+  # listed for the same class of reason: each is consumed into its
+  # `resolved*` value below (catalog option wins, top-level alias falls
+  # back), so the raw curated option must not also ride freeform.
   # `hooks` is listed here because it needs the typed-hooks merge above,
   # not a verbatim passthrough — see `hooksAttrs`.
   knownSettingsKeys = [
@@ -182,6 +191,7 @@ let
     "forkSubagents"
     "hooks"
     "outputStyle"
+    "effortLevel"
   ];
   # Null-valued keys are dropped so a curated option left at its `null`
   # ("use Claude's upstream default") default is omitted from the generated
@@ -201,7 +211,7 @@ let
       ;
   }
   // lib.optionalAttrs (autoModeAttrs != { }) { autoMode = autoModeAttrs; }
-  // lib.optionalAttrs (cfg.effortLevel != null) { inherit (cfg) effortLevel; }
+  // lib.optionalAttrs (resolvedEffortLevel != null) { effortLevel = resolvedEffortLevel; }
   // lib.optionalAttrs (cfg.attribution != { }) { inherit (cfg) attribution; }
   // lib.optionalAttrs (hooksAttrs != { }) { hooks = hooksAttrs; }
   // {

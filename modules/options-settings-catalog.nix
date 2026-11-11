@@ -59,6 +59,28 @@
       '';
     };
 
+    # Also settable via the top-level `programs.claude.effortLevel`
+    # (./options-runtime.nix); this option wins when both are set, matching
+    # `outputStyle`. "max" is session-only — Claude Code does not accept it
+    # in settings.json (per-session override: the /effort command).
+    effortLevel = lib.mkOption {
+      type = lib.types.nullOr (
+        lib.types.enum [
+          "low"
+          "medium"
+          "high"
+          "xhigh"
+        ]
+      );
+      default = null;
+      example = "medium";
+      description = ''
+        Adaptive reasoning effort persisted across sessions. null =
+        upstream default (varies by model).
+        See: https://code.claude.com/docs/en/model-config
+      '';
+    };
+
     outputStyle = lib.mkOption {
       type = lib.types.nullOr lib.types.str;
       default = null;
