@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 with a permanent pre-1.0 cadence — see `release-please-config.json`.
 
+## [2.11.0](https://github.com/dryvist/nix-claude-code/compare/v2.10.0...v2.11.0) (2026-11-12)
+
+
+### Features
+
+* **agent:** autonomous zcode run j-f9e17959bdc4053c ([#470](https://github.com/dryvist/nix-claude-code/issues/470)) ([be68498](https://github.com/dryvist/nix-claude-code/commit/be68498d333d641bb35555b3865757b9df8963ef))
+
 ## [2.10.0](https://github.com/dryvist/nix-claude-code/compare/v2.9.0...v2.10.0) (2026-11-11)
 
 
