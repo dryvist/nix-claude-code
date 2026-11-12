@@ -1,5 +1,32 @@
-{ pkgs, mkActivation }:
+# `programs.claude.settings.effortLevel` render checks for nix-claude-code.
+# Kept in its own file, with its own mkActivation copy, so
+# ./activation.nix stays under the 12KB per-file size gate — the same
+# reason ./config-dir.nix and ./auto-compact.nix were split out of it.
+{
+  inputs,
+  self,
+  pkgs,
+  lib,
+  ...
+}:
 let
+  mkActivation =
+    extraModule:
+    (inputs.home-manager.lib.homeManagerConfiguration {
+      inherit pkgs;
+      modules = [
+        self.homeModules.default
+        {
+          home = {
+            username = "ci-tester";
+            homeDirectory = "/tmp/ci-tester-home";
+            stateVersion = "25.11";
+          };
+        }
+        extraModule
+      ];
+    }).activationPackage;
+
   effortLevelSet = mkActivation {
     programs.claude = {
       enable = true;
