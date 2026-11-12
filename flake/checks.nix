@@ -77,6 +77,15 @@
           lib
           ;
       };
+
+      effortLevelChecks = import ./checks/effort-level.nix {
+        inherit
+          inputs
+          self
+          pkgs
+          lib
+          ;
+      };
     in
     {
       checks = {
@@ -256,6 +265,7 @@
       // activationChecks
       // configDirChecks
       // installModeChecks
+      // effortLevelChecks
       // marketplaceDeliveryChecks;
     };
 }
