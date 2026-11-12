@@ -63,57 +63,13 @@ let
     text = builtins.readFile ./scripts/validate-settings.sh;
   };
 
-  # Env defaults: MCP timeouts, deferred MCP tool-schema loading, and the
-  # Bash tool's default (60s) and maximum (300s) timeouts.
-  # Merged *under* `cfg.settings.env` so overriding any single key wins
-  # per-key rather than requiring the whole map to be redeclared.
-  # ENABLE_TOOL_SEARCH=true always defers MCP schemas; an `auto:N` threshold
-  # loads them all upfront until they pass N% of the window, which on a
-  # 1M-token window is never.
-  upstreamEnvDefaults = {
-    MCP_TIMEOUT = "300000";
-    MCP_TOOL_TIMEOUT = "300000";
-    ENABLE_TOOL_SEARCH = "true";
-    BASH_DEFAULT_TIMEOUT_MS = "60000";
-    BASH_MAX_TIMEOUT_MS = "300000";
+  # Builder-merged `env` defaults: upstream timeouts, the curated
+  # auto-compact options, the subagent pin, caller env, and API_KEY_HELPER
+  # if enabled. Merge order and the per-key override contract live in
+  # ./settings-env.nix; settings-assertions.nix validates the result.
+  envAttrs = import ./settings-env.nix {
+    inherit lib cfg homeDir;
   };
-
-  # autoCompactThresholdPercent is a curated option (options-settings.nix),
-  # not a real settings.json key — Claude Code only exposes this via the
-  # CLAUDE_AUTOCOMPACT_PCT_OVERRIDE env var. Merged before cfg.settings.env
-  # so a caller-supplied raw env entry for the same var still wins.
-  autoCompactEnv =
-    lib.optionalAttrs (cfg.settings.autoCompactThresholdPercent != null) {
-      CLAUDE_AUTOCOMPACT_PCT_OVERRIDE = toString cfg.settings.autoCompactThresholdPercent;
-    }
-    // lib.optionalAttrs (cfg.settings.autoCompactWindow != null) {
-      CLAUDE_CODE_AUTO_COMPACT_WINDOW = cfg.settings.autoCompactWindow;
-    };
-
-  # Subagent model pinning (options-subagents.nix). With
-  # CLAUDE_CODE_SUBAGENT_MODEL_FORCE = "1", Claude Code v2.1.257+ applies
-  # CLAUDE_CODE_SUBAGENT_MODEL to every subagent, teammate, and workflow
-  # agent, and CLAUDE_CODE_FORK_SUBAGENT = "0" keeps forks — which inherit
-  # the main session's model — off. settings-assertions.nix holds the
-  # rendered values to this. Merged before cfg.settings.env so a
-  # caller-supplied raw env entry for the same var still wins.
-  subagentEnv = {
-    CLAUDE_CODE_SUBAGENT_MODEL = cfg.settings.subagentModel;
-    CLAUDE_CODE_SUBAGENT_MODEL_FORCE = if cfg.settings.forceSubagentModel then "1" else "0";
-    CLAUDE_CODE_FORK_SUBAGENT = if cfg.settings.forkSubagents then "1" else "0";
-  };
-
-  # Build the env attribute (merge upstream defaults, the auto-compact
-  # threshold, the subagent pin, user env vars, and API_KEY_HELPER if
-  # enabled — later entries win on key conflict).
-  envAttrs =
-    upstreamEnvDefaults
-    // autoCompactEnv
-    // subagentEnv
-    // cfg.settings.env
-    // lib.optionalAttrs cfg.apiKeyHelper.enable {
-      API_KEY_HELPER = "${homeDir}/${cfg.apiKeyHelper.scriptPath}";
-    };
 
   # Build-time validation (env-var names, autoCompact range, the empty-`ask`
   # rule, and the five-minute human-wait cap). Split into its own file to
@@ -134,6 +90,12 @@ let
   #   2. cfg.outputStyle                         → fallback
   resolvedOutputStyle =
     if cfg.settings.outputStyle != null then cfg.settings.outputStyle else cfg.outputStyle;
+
+  # `effortLevel` precedence (same shape as `outputStyle`):
+  #   1. cfg.settings.effortLevel (if non-null)  → wins
+  #   2. cfg.effortLevel                         → fallback
+  resolvedEffortLevel =
+    if cfg.settings.effortLevel != null then cfg.settings.effortLevel else cfg.effortLevel;
 
   # Auto-mode classifier configuration. Sub-fields exactly equal to the
   # literal default `[ "$defaults" ]` are filtered (they're semantically
@@ -162,7 +124,10 @@ let
   # own — it's consumed above into `autoCompactEnv`/`envAttrs` instead, so
   # letting it ride freeform would leak a bogus top-level JSON key. Same
   # for the subagent trio (`options-subagents.nix`), consumed into
-  # `subagentEnv`/`envAttrs` above.
+  # `subagentEnv`/`envAttrs` above. `outputStyle` and `effortLevel` are
+  # listed for the same class of reason: each is consumed into its
+  # `resolved*` value below (catalog option wins, top-level alias falls
+  # back), so the raw curated option must not also ride freeform.
   # `hooks` is listed here because it needs the typed-hooks merge above,
   # not a verbatim passthrough — see `hooksAttrs`.
   knownSettingsKeys = [
@@ -182,6 +147,7 @@ let
     "forkSubagents"
     "hooks"
     "outputStyle"
+    "effortLevel"
   ];
   # Null-valued keys are dropped so a curated option left at its `null`
   # ("use Claude's upstream default") default is omitted from the generated
@@ -201,7 +167,7 @@ let
       ;
   }
   // lib.optionalAttrs (autoModeAttrs != { }) { autoMode = autoModeAttrs; }
-  // lib.optionalAttrs (cfg.effortLevel != null) { inherit (cfg) effortLevel; }
+  // lib.optionalAttrs (resolvedEffortLevel != null) { effortLevel = resolvedEffortLevel; }
   // lib.optionalAttrs (cfg.attribution != { }) { inherit (cfg) attribution; }
   // lib.optionalAttrs (hooksAttrs != { }) { hooks = hooksAttrs; }
   // {
