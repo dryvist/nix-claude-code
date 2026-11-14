@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 with a permanent pre-1.0 cadence — see `release-please-config.json`.
 
+## [2.12.0](https://github.com/dryvist/nix-claude-code/compare/v2.11.0...v2.12.0) (2026-11-14)
+
+
+### Features
+
+* **settings:** optional settings.effortLevel catalog option ([#469](https://github.com/dryvist/nix-claude-code/issues/469)) ([212fbf8](https://github.com/dryvist/nix-claude-code/commit/212fbf867ccb887376489fe5ccf8d15fc791b6ee))
+
 ## [2.11.0](https://github.com/dryvist/nix-claude-code/compare/v2.10.0...v2.11.0) (2026-11-12)
 
 
