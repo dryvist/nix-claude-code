@@ -67,11 +67,11 @@
     "browser-use-skills": {
       "flake": false,
       "locked": {
-        "lastModified": 1794631931,
-        "narHash": "sha256-S37jtW0SOVPXjMovvyZzbpHGkQuGdGt1C1tI+PAO7pw=",
+        "lastModified": 1794644653,
+        "narHash": "sha256-DYH8DrJtCP6c/Q8SRFNy3y+miK++0eTONbGfcfidEQQ=",
         "owner": "browser-use",
         "repo": "browser-use",
-        "rev": "e029e404ecd83cf893345e5493cfc56b50f077b9",
+        "rev": "e717df1839a2d7368b108de6694f01e9c659b0de",
         "type": "github"
       },
       "original": {
@@ -115,11 +115,11 @@
     "claude-code-plugins": {
       "flake": false,
       "locked": {
-        "lastModified": 1794636116,
-        "narHash": "sha256-nSMu1njk7lp5N6e2VJ9R/seqFzSfs/JX/2e1Mj8Vd8M=",
+        "lastModified": 1794640953,
+        "narHash": "sha256-5G4zrl6DyhIiCNHD97bvtGX+tYEhV/qiWza11+nr8zs=",
         "owner": "anthropics",
         "repo": "claude-code",
-        "rev": "f1011887894ba0095fd052f6fd218dea8c1acc46",
+        "rev": "f1f87e56d3b823cedf87c55d7b972150644ae310",
         "type": "github"
       },
       "original": {
